@@ -23,3 +23,4 @@ deploy/env/*.env
 # Application de bureau : compilation et fichiers régénérés par Tauri
 apps/desktop/src-tauri/target/
 apps/desktop/src-tauri/gen/
+*.egg-info/
