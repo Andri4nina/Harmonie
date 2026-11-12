@@ -16,3 +16,6 @@ workers/audio-analyzer/evaluation/out/
 .pytest_cache/
 .env.*
 !.env.example
+
+# Valeurs de déploiement remplies (contiennent des secrets)
+deploy/env/*.env

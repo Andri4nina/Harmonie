@@ -1,10 +1,9 @@
 # Construit le site (moteur WASM + pré-rendu) et le publie sur Vercel.
 #
 # Secrets du dépôt : VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID.
-# Variables du dépôt : SITE_URL (ex. https://harmonie.vercel.app),
-# API_URL (ex. https://harmonie-api.onrender.com), SUPABASE_URL,
-# SUPABASE_PUBLISHABLE_KEY (clé publique du projet, faite pour le navigateur),
-# GOOGLE_SITE_VERIFICATION (facultatif).
+# Variables du dépôt : celles de deploy/env/vercel.env.example, mêmes noms
+# (VITE_SITE_URL, VITE_API_URL, VITE_SUPABASE_URL,
+# VITE_SUPABASE_PUBLISHABLE_KEY, VITE_GOOGLE_SITE_VERIFICATION).
 
 name: Site web
 
@@ -40,11 +39,11 @@ jobs:
       - run: npm run wasm
       - run: npm run build
         env:
-          VITE_SITE_URL: ${{ vars.SITE_URL }}
-          VITE_GOOGLE_SITE_VERIFICATION: ${{ vars.GOOGLE_SITE_VERIFICATION }}
-          VITE_API_URL: ${{ vars.API_URL }}
-          VITE_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
+          VITE_GOOGLE_SITE_VERIFICATION: ${{ vars.VITE_GOOGLE_SITE_VERIFICATION }}
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
       - run: cp vercel.json dist/
       - run: npx --yes vercel@latest deploy dist --prod --yes --token "$VERCEL_TOKEN"
         env:

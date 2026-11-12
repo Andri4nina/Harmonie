@@ -1,5 +1,12 @@
 # Mise en ligne
 
+Les fichiers prêts à remplir sont dans `deploy/env/` : `supabase`,
+`render-api`, `render-worker`, `vercel` (variables GitHub du site) et
+`github-secrets`. Les `.env.example` sont versionnés ; les copies `.env`
+(non versionnées) contiennent déjà un `WORKER_TOKEN` généré, commun à l'API et
+au worker. Ordre : Supabase d'abord (ses valeurs remplissent les autres
+fichiers), puis Render, puis Vercel.
+
 | Élément | Hébergeur | Rôle |
 |---|---|---|
 | Base de données | **Supabase** (PostgreSQL 17+) | Morceaux, file d'analyse, résultats, corrections. Joignable de partout. |
@@ -82,9 +89,10 @@ HARMONIE_API_URL=https://harmonie-api.onrender.com WORKER_TOKEN=… python -m ha
    relever l'identifiant d'équipe et celui du projet.
 3. Sur GitHub, *Settings* → *Secrets and variables* → *Actions* :
    - secrets : `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` ;
-   - variables : `SITE_URL` (ex. `https://harmonie.vercel.app`), `API_URL`
-     (adresse de l'API Render), `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` et,
-     facultatif, `GOOGLE_SITE_VERIFICATION`. Sans `API_URL` ni Supabase, la
+   - variables : celles de `deploy/env/vercel.env`, mêmes noms
+     (`VITE_SITE_URL`, `VITE_API_URL`, `VITE_SUPABASE_URL`,
+     `VITE_SUPABASE_PUBLISHABLE_KEY`, facultatif
+     `VITE_GOOGLE_SITE_VERIFICATION`). Sans `API_URL` ni Supabase, la
      page « Analyser un morceau » explique ce qui manque au lieu de proposer
      une connexion qui échouerait.
 4. Chaque poussée sur `main` qui touche le site le publie
@@ -94,7 +102,7 @@ HARMONIE_API_URL=https://harmonie-api.onrender.com WORKER_TOKEN=… python -m ha
 
 1. *Google Search Console* → ajouter la propriété avec l'adresse du site →
    méthode « balise HTML » : copier la valeur `content` dans la variable
-   `GOOGLE_SITE_VERIFICATION`, republier, valider.
+   `VITE_GOOGLE_SITE_VERIFICATION`, republier, valider.
 2. Soumettre `https://<site>/sitemap.xml`.
 3. Le titre de l'accueil est « Andrianina Rasoamanana - Harmonie » ; les
    données structurées déclarent le site, l'application et leur auteur.
