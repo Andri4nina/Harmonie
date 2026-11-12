@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { Link } from "react-router";
-import { explorerPath, hueOf, shortLabelOf } from "../theory/labels";
+import { hueOf, shortLabelOf } from "../theory/labels";
+import { pathOf } from "../theory/routes";
 
 /** Style portant la teinte d'une classe de hauteur (à associer à data-hue). */
 export function hueStyle(pitchClass: number): CSSProperties {
@@ -45,7 +46,7 @@ export function NodeChip({
 }) {
   return (
     <Link
-      to={explorerPath(id)}
+      to={pathOf(id)}
       data-hue
       style={hueStyle(pitchClass)}
       className={`group inline-flex items-baseline gap-2 rounded-xl border px-3 py-1.5 text-sm transition-colors duration-150 ${

@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { nodeView, resolveQuery } from "../theory/engine";
-import { KIND_LABEL, explorerPath, labelOf } from "../theory/labels";
+import { KIND_LABEL, labelOf } from "../theory/labels";
 import { Icon, hueStyle } from "./ui";
+import { pathOf } from "../theory/routes";
 
 /** Recherche libre : le moteur interprète la saisie (note, accord, tonalité, gamme). */
 export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
@@ -21,7 +22,7 @@ export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
   const go = (id: string) => {
     setText("");
     setOpen(false);
-    navigate(explorerPath(id));
+    navigate(pathOf(id));
   };
 
   return (

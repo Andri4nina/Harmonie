@@ -53,7 +53,7 @@ export function Piano({ tones, played }: { tones: Tone[]; played: number[] }) {
     const keyHeight = key.black ? BLACK_HEIGHT : WHITE_HEIGHT;
     return (
       <g key={key.midi} onPointerDown={() => playNote(key.midi)} className="cursor-pointer">
-        <title>{tone ? `${tone.note} — ${tone.role}` : undefined}</title>
+        {tone && <title>{`${tone.note} — ${tone.role}`}</title>}
         <rect
           x={key.x + 0.75}
           y={0}

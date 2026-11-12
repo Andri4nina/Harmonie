@@ -67,7 +67,7 @@ export function Sidebar() {
         )}
       </nav>
 
-      <div className="eyebrow px-2 !text-[10px] max-lg:hidden">v1.2 · en cours</div>
+      <div className="eyebrow px-2 !text-[10px] max-lg:hidden">v1.2</div>
     </aside>
   );
 }

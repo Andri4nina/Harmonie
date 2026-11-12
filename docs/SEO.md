@@ -11,8 +11,18 @@ balises.
 | **Site public** | Accueil, cours, référence de théorie, pages légales | **Pré-rendu statique** au build (HTML complet) puis hydratation | Oui |
 | **Application** | Analyseur, ear training, générateur, bibliothèque, réglages | Rendu client, derrière connexion | Non (`noindex`) |
 
-Les deux partagent le design system et le moteur de théorie (WASM). L'outil de
-pré-rendu sera choisi au début de la Phase 3, à sa dernière version stable.
+Les deux partagent le design system et le moteur de théorie (WASM).
+
+**Mise en œuvre (v1.2.0)** : une seule application React. Au build, un script
+(`apps/web/scripts/prerender.mjs`) rend en HTML l'accueil et chaque page du
+catalogue fourni par le moteur, puis le navigateur « hydrate » ce HTML. Aucun
+outil supplémentaire n'a été nécessaire. Les adresses hors catalogue
+(renversements, progressions dans d'autres tonalités, réglages) sont servies par
+une coquille `200.html` marquée `noindex`.
+
+Avant la mise en ligne, définir `VITE_SITE_URL` au build : c'est elle qui produit
+les adresses canoniques absolues et `sitemap.xml`. L'hébergeur doit servir
+`dossier/index.html` pour `/dossier` et `200.html` pour les adresses inconnues.
 
 ## Le levier principal : la référence de théorie
 

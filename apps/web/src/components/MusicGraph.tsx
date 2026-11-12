@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router";
 import type { NodeView } from "../theory/engine";
-import { GROUP_LABEL, detailLabel, explorerPath, hueOf, labelOf, shortLabelOf } from "../theory/labels";
+import { GROUP_LABEL, detailLabel, hueOf, labelOf, shortLabelOf } from "../theory/labels";
+import { pathOf } from "../theory/routes";
 
 const SIZE = 560;
 const CENTER = SIZE / 2;
+
+// Arrondi commun au pré-rendu et au navigateur : le HTML doit être identique.
+const round = (value: number) => Math.round(value * 100) / 100;
 
 interface Placed {
   key: string;
@@ -35,8 +39,8 @@ function layout(view: NodeView): { nodes: Placed[]; sectors: { key: string; angl
         group: group.key,
         detail: item.detail,
         pitchClass: item.pitchClass,
-        x: CENTER + radius * Math.cos(angle),
-        y: CENTER + radius * Math.sin(angle),
+        x: round(CENTER + radius * Math.cos(angle)),
+        y: round(CENTER + radius * Math.sin(angle)),
         angle,
       });
       slot++;
@@ -84,10 +88,10 @@ export function MusicGraph({ view }: { view: NodeView }) {
       {sectors.map((sector) => {
         // Texte tangent au cercle, retourné dans la moitié basse pour rester lisible.
         const below = Math.sin(sector.angle) > 0;
-        const degrees = (sector.angle * 180) / Math.PI + (below ? -90 : 90);
+        const degrees = round((sector.angle * 180) / Math.PI + (below ? -90 : 90));
         const radius = below ? 268 : 262;
-        const x = CENTER + radius * Math.cos(sector.angle);
-        const y = CENTER + radius * Math.sin(sector.angle);
+        const x = round(CENTER + radius * Math.cos(sector.angle));
+        const y = round(CENTER + radius * Math.sin(sector.angle));
         return (
           <text
             key={sector.key}
@@ -113,10 +117,10 @@ export function MusicGraph({ view }: { view: NodeView }) {
             key={node.key}
             role="link"
             tabIndex={0}
-            aria-label={`${labelOf(node.id)}${detail ? `, ${detail}` : ""}`}
-            onClick={() => navigate(explorerPath(node.id))}
+            aria-label={`${label} : ${labelOf(node.id)}${detail ? `, ${detail}` : ""}`}
+            onClick={() => navigate(pathOf(node.id))}
             onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") navigate(explorerPath(node.id));
+              if (event.key === "Enter" || event.key === " ") navigate(pathOf(node.id));
             }}
             className="group cursor-pointer outline-none"
             style={{

@@ -10,6 +10,8 @@ interface Settings {
   instrumentId: string;
   /** Derniers nœuds visités, du plus récent au plus ancien. */
   history: string[];
+  /** Vrai une fois les réglages enregistrés relus (jamais avant l'hydratation). */
+  ready: boolean;
   setLite: (lite: boolean) => void;
   setA4: (a4: number) => void;
   setInstrument: (id: string) => void;
@@ -26,6 +28,7 @@ export const useSettings = create<Settings>()(
       a4: 440,
       instrumentId: "guitar",
       history: [],
+      ready: false,
       setLite: (lite) => set({ lite }),
       setA4: (a4) => set({ a4: Math.min(A4_MAX, Math.max(A4_MIN, a4)) }),
       setInstrument: (instrumentId) => set({ instrumentId }),
@@ -34,7 +37,14 @@ export const useSettings = create<Settings>()(
           history: [id, ...state.history.filter((other) => other !== id)].slice(0, 12),
         })),
     }),
-    { name: "harmonia-settings", version: 1 },
+    // La relecture est déclenchée après l'hydratation (voir App) pour que le
+    // premier rendu soit identique au HTML pré-rendu.
+    {
+      name: "harmonia-settings",
+      version: 1,
+      skipHydration: true,
+      partialize: ({ lite, a4, instrumentId, history }) => ({ lite, a4, instrumentId, history }),
+    },
   ),
 );
 

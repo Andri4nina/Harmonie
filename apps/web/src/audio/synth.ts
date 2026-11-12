@@ -7,6 +7,12 @@ import { type PlayMode, midiToFrequency } from "../theory/engine";
 
 let context: AudioContext | undefined;
 let master: GainNode | undefined;
+let analyser: AnalyserNode | undefined;
+
+/** Analyseur branché sur la sortie, disponible après le premier son joué. */
+export function getAnalyser(): AnalyserNode | undefined {
+  return analyser;
+}
 
 function audio(): { ctx: AudioContext; out: GainNode } {
   if (!context || !master) {
@@ -14,7 +20,10 @@ function audio(): { ctx: AudioContext; out: GainNode } {
     const compressor = context.createDynamicsCompressor();
     master = context.createGain();
     master.gain.value = 0.9;
-    master.connect(compressor).connect(context.destination);
+    analyser = context.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.75;
+    master.connect(compressor).connect(analyser).connect(context.destination);
   }
   if (context.state === "suspended") void context.resume();
   return { ctx: context, out: master };

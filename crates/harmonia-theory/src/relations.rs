@@ -55,6 +55,8 @@ pub enum Relation {
     DegreeOfKey(u8),
     /// La note est la tonique de ce mode.
     TonicOfMode,
+    /// La note est la tonique de cette gamme (hors modes de la gamme majeure).
+    TonicOfScale,
     /// La note tient ce rôle dans l'accord (fondamentale = `P1`, tierce…).
     ToneOfChord(Interval),
     // Gamme →
@@ -121,6 +123,20 @@ fn spell(
         std::cmp::Ordering::Equal if minor_like => flat,
         std::cmp::Ordering::Equal => sharp,
     }
+}
+
+/// Tonique usuelle d'une gamme pour une classe de hauteur : l'orthographe qui
+/// demande le moins d'altérations (Ré♭ majeur plutôt que Do♯ majeur).
+pub fn conventional_tonic(pc: PitchClass, kind: ScaleType) -> Note {
+    let minor_like = kind.intervals().contains(&m3);
+    spell(pc, None, minor_like, |t| Scale::new(t, kind).notes())
+}
+
+/// Fondamentale usuelle d'un accord pour une classe de hauteur.
+pub fn conventional_root(pc: PitchClass, quality: ChordQuality) -> Note {
+    spell(pc, None, quality.has_minor_third(), |r| {
+        Chord::new(r, quality).notes()
+    })
 }
 
 /// Les douze classes de hauteur en partant de celle de `note`.
@@ -221,6 +237,11 @@ fn note_edges(note: Note, out: &mut Vec<Edge>) {
     }
     for kind in ScaleType::DIATONIC_MODES {
         push(Relation::TonicOfMode, Node::Scale(Scale::new(note, kind)));
+    }
+    for &kind in ScaleType::ALL {
+        if kind != ScaleType::Chromatic && !ScaleType::DIATONIC_MODES.contains(&kind) {
+            push(Relation::TonicOfScale, Node::Scale(Scale::new(note, kind)));
+        }
     }
     for (chord, role) in chords_containing(note, EXPLORER_CHORDS) {
         push(Relation::ToneOfChord(role), Node::Chord(chord));
@@ -526,6 +547,25 @@ mod tests {
         let modes = targets("note:C", |r| *r == Relation::TonicOfMode);
         assert_eq!(modes.len(), 7);
         assert!(modes.contains(&"scale:C:lydian".to_string()));
+        let others = targets("note:A", |r| *r == Relation::TonicOfScale);
+        assert_eq!(others.len(), 8);
+        assert!(others.contains(&"scale:A:blues".to_string()));
+        assert!(others.contains(&"scale:A:harmonic_minor".to_string()));
+        assert!(!others.iter().any(|id| id.ends_with(":chromatic") || id.ends_with(":dorian")));
+    }
+
+    #[test]
+    fn conventional_spellings() {
+        let tonic = |pc: i32, kind| conventional_tonic(PitchClass::new(pc), kind).to_string();
+        assert_eq!(tonic(1, ScaleType::Major), "Db");
+        assert_eq!(tonic(6, ScaleType::Major), "F#");
+        assert_eq!(tonic(8, ScaleType::NaturalMinor), "G#");
+        assert_eq!(tonic(3, ScaleType::NaturalMinor), "Eb");
+        assert_eq!(tonic(10, ScaleType::Blues), "Bb");
+        let root = |pc: i32, quality| conventional_root(PitchClass::new(pc), quality).to_string();
+        assert_eq!(root(1, ChordQuality::Major), "Db");
+        assert_eq!(root(1, ChordQuality::Minor), "C#");
+        assert_eq!(root(10, ChordQuality::Dominant7), "Bb");
     }
 
     #[test]

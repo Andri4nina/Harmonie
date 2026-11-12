@@ -3,10 +3,10 @@
 //! Ce module ne contient aucune règle musicale : il met en forme ce que
 //! `harmonia-theory` calcule. Il est en Rust pur, donc testable sans navigateur.
 
-use harmonia_theory::relations::{Node, Relation, edges};
+use harmonia_theory::relations::{Node, Relation, conventional_root, conventional_tonic, edges};
 use harmonia_theory::{
-    A4_STANDARD_HZ, Chord, CommonProgression, Instrument, Key, Layout, Note, Pitch, Scale,
-    ScaleType, Spelling,
+    A4_STANDARD_HZ, Chord, ChordQuality, CommonProgression, Instrument, Key, Layout, Mode, Note,
+    Pitch, PitchClass, Scale, ScaleType, Spelling, Transposition,
 };
 use serde::Serialize;
 
@@ -95,6 +95,7 @@ fn classify(relation: &Relation) -> (&'static str, Option<String>) {
         Relation::IntervalAbove(interval) => ("intervals", Some(interval.to_string())),
         Relation::DegreeOfKey(degree) => ("keys", Some(degree.to_string())),
         Relation::TonicOfMode => ("modes", None),
+        Relation::TonicOfScale => ("scales", None),
         Relation::ToneOfChord(role) => ("chords", Some(role.to_string())),
         Relation::ScaleDegree(degree) => ("degrees", Some(degree.to_string())),
         Relation::HarmonizedChord(degree) => ("harmonized", Some(degree.to_string())),
@@ -466,6 +467,121 @@ pub fn circle_of_fifths() -> Vec<CircleSector> {
         .collect()
 }
 
+/// Identifiants des pages de référence : chaque élément musical une seule
+/// fois, sous son orthographe usuelle.
+///
+/// - les 17 notes naturelles, diésées et bémolisées ;
+/// - les 24 tonalités du cercle des quintes ;
+/// - chaque type de gamme sur les 12 toniques (sauf la gamme chromatique, la
+///   même partout, et les gammes majeure et mineure naturelle, décrites par
+///   leur tonalité) ;
+/// - chaque qualité d'accord sur les 12 fondamentales, en position fondamentale ;
+/// - chaque progression usuelle dans une tonalité d'exemple (Do majeur ou
+///   La mineur).
+pub fn catalog() -> Vec<String> {
+    let mut nodes: Vec<Node> = Vec::new();
+    for pc in 0..12 {
+        for spelling in [Spelling::Sharps, Spelling::Flats] {
+            let node = Node::Note(Note::from_pitch_class(PitchClass::new(pc), spelling));
+            if !nodes.contains(&node) {
+                nodes.push(node);
+            }
+        }
+    }
+    for key in Key::circle_of_fifths() {
+        nodes.push(Node::Key(key));
+        nodes.push(Node::Key(key.relative()));
+    }
+    for &kind in ScaleType::ALL {
+        if matches!(
+            kind,
+            ScaleType::Chromatic | ScaleType::Major | ScaleType::NaturalMinor
+        ) {
+            continue;
+        }
+        for pc in 0..12 {
+            let tonic = conventional_tonic(PitchClass::new(pc), kind);
+            nodes.push(Node::Scale(Scale::new(tonic, kind)));
+        }
+    }
+    for &quality in ChordQuality::ALL {
+        for pc in 0..12 {
+            let root = conventional_root(PitchClass::new(pc), quality);
+            nodes.push(Node::Chord(Chord::new(root, quality)));
+        }
+    }
+    for progression in CommonProgression::ALL {
+        let tonic: Note = match progression.mode {
+            Mode::Major => "C",
+            Mode::Minor => "A",
+        }
+        .parse()
+        .expect("tonique d'exemple valide");
+        nodes.push(Node::Progression {
+            key: Key {
+                tonic,
+                mode: progression.mode,
+            },
+            id: progression.id,
+        });
+    }
+    nodes.iter().map(Node::id).collect()
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct WrittenTone {
+    /// Note entendue.
+    pub sounding: String,
+    /// Note à écrire (et à doigter) pour l'obtenir.
+    pub written: String,
+}
+
+/// Ce qu'un instrument à vent doit lire pour faire entendre des notes données.
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct WindView {
+    pub id: String,
+    pub name: String,
+    /// Intervalle de transposition (`"M6"`), ou `None` pour un instrument en ut.
+    pub interval: Option<String>,
+    /// `true` si l'instrument sonne plus bas que l'écrit.
+    pub sounds_below: bool,
+    pub tones: Vec<WrittenTone>,
+}
+
+/// Notes écrites correspondantes pour chaque instrument à vent fourni.
+pub fn winds(notes: &[String]) -> Vec<WindView> {
+    let notes: Vec<Note> = notes.iter().filter_map(|n| n.parse().ok()).collect();
+    Instrument::presets()
+        .into_iter()
+        .filter(|instrument| instrument.layout == Layout::Wind)
+        .map(|instrument| {
+            let (interval, sounds_below) = match instrument.transposition {
+                Transposition::Concert => (None, false),
+                Transposition::SoundsBelow(interval) => (Some(interval.to_string()), true),
+                Transposition::SoundsAbove(interval) => (Some(interval.to_string()), false),
+            };
+            let tones = notes
+                .iter()
+                .map(|&note| WrittenTone {
+                    sounding: note.to_string(),
+                    written: instrument
+                        .transposition
+                        .to_written(Pitch::new(note, 4))
+                        .note
+                        .to_string(),
+                })
+                .collect();
+            WindView {
+                id: instrument.id,
+                name: instrument.name,
+                interval,
+                sounds_below,
+                tones,
+            }
+        })
+        .collect()
+}
+
 /// Fréquence d'une note MIDI pour un La4 donné.
 pub fn midi_to_frequency(midi: i32, a4_hz: f64) -> f64 {
     Pitch::from_midi(midi, Spelling::Sharps).frequency(a4_hz)
@@ -499,6 +615,7 @@ mod tests {
         assert_eq!(group(&c, "keys").len(), 14);
         assert_eq!(group(&c, "chords").len(), 24);
         assert_eq!(group(&c, "modes").len(), 7);
+        assert_eq!(group(&c, "scales").len(), 8);
     }
 
     #[test]
@@ -617,6 +734,46 @@ mod tests {
         assert_eq!(circle[11].signature, -1);
         assert!((midi_to_frequency(69, 440.0) - 440.0).abs() < 1e-9);
         assert!((midi_to_frequency(57, 442.0) - 221.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn catalog_lists_each_reference_page_once() {
+        let ids = catalog();
+        let unique: std::collections::HashSet<&String> = ids.iter().collect();
+        assert_eq!(unique.len(), ids.len());
+        let count = |prefix: &str| ids.iter().filter(|id| id.starts_with(prefix)).count();
+        assert_eq!(count("note:"), 17);
+        assert_eq!(count("key:"), 24);
+        assert_eq!(count("scale:"), 13 * 12);
+        assert_eq!(count("chord:"), 28 * 12);
+        assert_eq!(count("progression:"), CommonProgression::ALL.len());
+        for id in ["note:Bb", "key:F#:major", "key:D#:minor", "scale:A:blues", "chord:Dbmaj7",
+                   "chord:C#m7", "progression:andalusian:A:minor"] {
+            assert!(ids.contains(&id.to_string()), "{id} absent du catalogue");
+        }
+        // Chaque identifiant désigne un nœud valide et affichable.
+        for id in &ids {
+            let node = Node::from_id(id).unwrap_or_else(|| panic!("identifiant invalide : {id}"));
+            assert_eq!(&node_view(&node).id, id);
+        }
+    }
+
+    #[test]
+    fn wind_instruments_read_transposed_notes() {
+        let views = winds(&["C".to_string(), "E".to_string(), "G".to_string()]);
+        let written = |id: &str| -> Vec<String> {
+            let view = views.iter().find(|v| v.id == id).unwrap();
+            view.tones.iter().map(|t| t.written.clone()).collect()
+        };
+        // Pour entendre Do majeur, l'alto lit La majeur, le ténor Ré majeur.
+        assert_eq!(written("alto-saxophone"), ["A", "C#", "E"]);
+        assert_eq!(written("tenor-saxophone"), ["D", "F#", "A"]);
+        assert_eq!(written("flute"), ["C", "E", "G"]);
+        let alto = views.iter().find(|v| v.id == "alto-saxophone").unwrap();
+        assert_eq!(alto.interval.as_deref(), Some("M6"));
+        assert!(alto.sounds_below);
+        assert_eq!(views.iter().find(|v| v.id == "flute").unwrap().interval, None);
+        assert!(views.iter().all(|v| v.id != "guitar"));
     }
 
     #[test]

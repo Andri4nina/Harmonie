@@ -96,6 +96,7 @@ export const GROUP_LABEL: Record<string, string> = {
   intervals: "Intervalles depuis cette note",
   keys: "Tonalités contenant cette note",
   modes: "Modes sur cette tonique",
+  scales: "Autres gammes sur cette tonique",
   chords: "Accords contenant cette note",
   degrees: "Notes de la gamme",
   harmonized: "Accords de la gamme",
@@ -128,10 +129,14 @@ const INTERVAL_LABEL: Record<string, string> = {
   d7: "septième diminuée",
   m7: "septième mineure",
   M7: "septième majeure",
-  M9: "neuvième",
+  M9: "neuvième majeure",
   P11: "onzième",
   M13: "treizième",
 };
+
+export function intervalLabel(interval: string): string {
+  return INTERVAL_LABEL[interval] ?? interval;
+}
 
 const RELATED_KEY_LABEL: Record<string, string> = {
   relative: "relatif",
@@ -207,8 +212,4 @@ export function factValue(key: string, value: string): string {
  */
 export function hueOf(pitchClass: number): number {
   return (((pitchClass * 7) % 12) * 30 + 170) % 360;
-}
-
-export function explorerPath(id: string): string {
-  return `/explorer/${encodeURIComponent(id)}`;
 }

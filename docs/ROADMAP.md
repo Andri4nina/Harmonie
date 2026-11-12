@@ -9,7 +9,7 @@ Une version n'est publiée que si ses tests passent.
 |---|---|---|---|---|
 | **v1.0.0** | 1 + 2 | Architecture, modèle de données, API, licences, risques. Moteur de théorie : notes, intervalles, gammes, accords, tonalités, progressions, cadences, instruments. | Documents dans `docs/` ; `cargo test` vert. | ✅ Publiée |
 | **v1.1.0** | 2b | Graphe de relations, dominantes secondaires, basse chiffrée, progressions usuelles, harmonisation de mélodie, sérialisation. Direction artistique, SEO. | `cargo test --all-features` vert. | ✅ Publiée |
-| v1.2.0 | 3 | Bindings WASM, design system (verre + relief), navigation, Theory Explorer, piano, manche, cercle des quintes, graphe musical, synthèse Web Audio. Site public pré-rendu. | Explorer utilisable hors ligne ; aucun bouton inerte ; Lighthouse aux seuils de [SEO.md](SEO.md). | 🟡 En cours — explorateur fait ; site public pré-rendu, Lighthouse et tests d'interface à faire |
+| **v1.2.0** | 3 | Bindings WASM, design system (verre + relief), navigation, Theory Explorer, piano, manche, cercle des quintes, graphe musical, synthèse Web Audio, spectre. Site public pré-rendu (547 pages). | Tests Rust et interface verts ; aucun bouton inerte ; Lighthouse : SEO, accessibilité et bonnes pratiques à 100, performance 85 à 100. | ✅ Publiée |
 | v1.3.0 | 4 | API Rust, file de jobs, stockage, worker Python, BPM, tonalité, accords, mélodie, timeline synchronisée, corrections manuelles. | Précision mesurée sur un jeu d'essai synthétique ; tests d'intégration API + stockage. | ⬜ |
 | v1.4.0 | 5 | Ear training : notes, intervalles, accords, progressions, rythme ; niveaux ; répétition espacée. | Questions générées par le moteur ; statistiques persistées. | ⬜ |
 | v1.5.0 | 6 | Cours interactifs, générateur de progressions et de mélodies, export MIDI et MusicXML. | Chaque cours manipulable et audible ; MIDI relu sans erreur. | ⬜ |
@@ -27,7 +27,7 @@ Une version n'est publiée que si ses tests passent.
 
 ### Liste de contrôle d'une version
 
-1. Tests verts (`cargo test --workspace --all-features`, puis tests web et workers quand ils existent).
+1. Tests verts : `cargo test --workspace --all-features`, puis `npm test` et `npm run build` dans `apps/web` (et les workers quand ils existent).
 2. Aucun avertissement du compilateur.
 3. Critère de sortie de la phase vérifié.
 4. `CHANGELOG.md` et ce tableau mis à jour.

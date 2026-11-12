@@ -9,7 +9,7 @@ import { useSettings } from "../state/store";
 
 const CELL = 14;
 const LEVELS = 15;
-const FRAME_INTERVAL = 80;
+const FRAME_INTERVAL = 100;
 
 // [fréquence x, fréquence y, phase, vitesse, amplitude]
 const WAVES: [number, number, number, number, number][] = [
@@ -143,13 +143,28 @@ export function TopoBackground({ hue }: { hue: number }) {
       last = 0;
       frame = requestAnimationFrame(render);
     };
-    restart();
-    window.addEventListener("resize", restart);
-    document.addEventListener("visibilitychange", restart);
+    // Le relief ne démarre qu'une fois la page chargée et le navigateur au
+    // repos : il ne doit retarder ni l'affichage ni l'interactivité.
+    const idle = window.requestIdleCallback ?? ((callback: () => void) => window.setTimeout(callback, 200));
+    let started = false;
+    const start = () =>
+      idle(() => {
+        started = true;
+        restart();
+      });
+    if (document.readyState === "complete") start();
+    else window.addEventListener("load", start, { once: true });
+    const onChange = () => {
+      if (started) restart();
+    };
+    window.addEventListener("resize", onChange);
+    document.addEventListener("visibilitychange", onChange);
     return () => {
+      started = false;
       cancelAnimationFrame(frame);
-      window.removeEventListener("resize", restart);
-      document.removeEventListener("visibilitychange", restart);
+      window.removeEventListener("load", start);
+      window.removeEventListener("resize", onChange);
+      document.removeEventListener("visibilitychange", onChange);
     };
   }, [hue, lite]);
 

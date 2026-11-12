@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { circleOfFifths } from "../theory/engine";
-import { explorerPath, hueOf } from "../theory/labels";
+import { hueOf } from "../theory/labels";
+import { pathOf } from "../theory/routes";
 
 const CENTER = 190;
 const RINGS = { outer: [112, 156], inner: [70, 110] } as const;
@@ -15,7 +16,8 @@ function arc(inner: number, outer: number, index: number): string {
 
 function position(radius: number, index: number): [number, number] {
   const angle = ((index * 30 - 90) * Math.PI) / 180;
-  return [CENTER + radius * Math.cos(angle), CENTER + radius * Math.sin(angle)];
+  const round = (value: number) => Math.round(value * 100) / 100;
+  return [round(CENTER + radius * Math.cos(angle)), round(CENTER + radius * Math.sin(angle))];
 }
 
 function signatureLabel(signature: number): string {
@@ -42,9 +44,9 @@ export function CircleOfFifths({ current, related }: { current?: string; related
         role="link"
         tabIndex={0}
         aria-label={`Tonalité ${label}`}
-        onClick={() => navigate(explorerPath(id))}
+        onClick={() => navigate(pathOf(id))}
         onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") navigate(explorerPath(id));
+          if (event.key === "Enter" || event.key === " ") navigate(pathOf(id));
         }}
         className="group cursor-pointer outline-none"
       >

@@ -3,6 +3,9 @@
 // fait que charger le module et typer ses réponses.
 
 import init, {
+  catalog as wasmCatalog,
+  initSync,
+  winds as wasmWinds,
   circleOfFifths as wasmCircleOfFifths,
   fretboard as wasmFretboard,
   instruments as wasmInstruments,
@@ -83,8 +86,32 @@ export interface CircleSector {
   pitchClass: number;
 }
 
+export interface WindView {
+  id: string;
+  name: string;
+  /** Intervalle de transposition ("M6"), ou `null` pour un instrument en ut. */
+  interval: string | null;
+  sounds_below: boolean;
+  tones: { sounding: string; written: string }[];
+}
+
 export async function loadEngine(): Promise<void> {
   await init();
+}
+
+/** Chargement synchrone à partir du fichier .wasm (pré-rendu, tests). */
+export function loadEngineSync(wasm: BufferSource): void {
+  initSync({ module: wasm });
+}
+
+/** Identifiants des pages de référence indexables. */
+export function catalog(): string[] {
+  return wasmCatalog();
+}
+
+/** Notes écrites pour chaque instrument à vent. */
+export function winds(notes: string[]): WindView[] {
+  return wasmWinds(notes) as WindView[];
 }
 
 const views = new Map<string, NodeView | null>();

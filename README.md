@@ -3,7 +3,7 @@
 Environnement interactif pour comprendre, explorer, écouter, analyser et pratiquer
 la musique.
 
-**Version actuelle : 1.1.0** — voir le [journal des versions](CHANGELOG.md) et le
+**Version actuelle : 1.2.0** — voir le [journal des versions](CHANGELOG.md) et le
 [suivi jusqu'à la version finale](docs/ROADMAP.md).
 
 ## Documentation
@@ -53,3 +53,11 @@ npm install
 npm run wasm   # compile le moteur en WebAssembly
 npm run dev    # http://localhost:5173
 ```
+
+```bash
+npm test        # tests de l'interface
+npm run build   # site statique pré-rendu dans dist/
+```
+
+Pour la mise en ligne, définir `VITE_SITE_URL` (adresse publique du site) avant
+`npm run build` : elle produit les adresses canoniques et `sitemap.xml`.

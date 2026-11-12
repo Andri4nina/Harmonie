@@ -46,6 +46,18 @@ pub fn fretboard(instrument_id: &str, notes: Vec<String>) -> Result<JsValue, JsE
     to_js(&view::fretboard(instrument_id, &notes))
 }
 
+/// Identifiants des pages de référence (voir [`view::catalog`]).
+#[wasm_bindgen]
+pub fn catalog() -> Vec<String> {
+    view::catalog()
+}
+
+/// Notes écrites pour chaque instrument à vent.
+#[wasm_bindgen]
+pub fn winds(notes: Vec<String>) -> Result<JsValue, JsError> {
+    to_js(&view::winds(&notes))
+}
+
 #[wasm_bindgen(js_name = circleOfFifths)]
 pub fn circle_of_fifths() -> Result<JsValue, JsError> {
     to_js(&view::circle_of_fifths())

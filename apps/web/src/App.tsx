@@ -7,33 +7,34 @@ import { Explorer } from "./pages/Explorer";
 import { Settings } from "./pages/Settings";
 import { useSettings } from "./state/store";
 import { nodeView } from "./theory/engine";
-import { explorerPath, hueOf } from "./theory/labels";
+import { applyHead, headFor } from "./theory/head";
+import { hueOf } from "./theory/labels";
+import { idOf, pathOf } from "./theory/routes";
 
-const EXPLORER_PREFIX = "/explorer/";
-
-/** Teinte de la page : celle de l'élément exploré, sinon le vert de la marque. */
-function usePageHue(): number {
-  const { pathname } = useLocation();
-  if (!pathname.startsWith(EXPLORER_PREFIX)) return hueOf(0);
-  let id = pathname.slice(EXPLORER_PREFIX.length);
-  try {
-    id = decodeURIComponent(id);
-  } catch {
-    // Adresse mal encodée : on garde la teinte par défaut.
-  }
-  return hueOf(nodeView(id)?.pitchClass ?? 0);
+/** Teinte d'une page : celle de l'élément exploré, sinon le vert de la marque. */
+export function hueForPath(pathname: string): number {
+  const id = idOf(pathname);
+  return hueOf((id ? nodeView(id)?.pitchClass : undefined) ?? 0);
 }
 
 export function App() {
-  const hue = usePageHue();
+  const { pathname } = useLocation();
+  const hue = hueForPath(pathname);
   const lite = useSettings((state) => state.lite);
 
+  // Les réglages enregistrés ne sont relus qu'après l'hydratation.
+  useEffect(() => {
+    void Promise.resolve(useSettings.persist.rehydrate()).then(() => useSettings.setState({ ready: true }));
+  }, []);
   useEffect(() => {
     document.documentElement.style.setProperty("--h", String(hue));
   }, [hue]);
   useEffect(() => {
     document.documentElement.dataset.lite = String(lite);
   }, [lite]);
+  useEffect(() => {
+    applyHead(headFor(pathname));
+  }, [pathname]);
 
   return (
     <>
@@ -43,10 +44,9 @@ export function App() {
         <main className="min-w-0 flex-1 pb-10">
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/explorer" element={<Navigate to={explorerPath("note:C")} replace />} />
-            <Route path="/explorer/*" element={<Explorer />} />
+            <Route path="/explorer" element={<Navigate to={pathOf("note:C")} replace />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Explorer />} />
           </Routes>
         </main>
       </div>

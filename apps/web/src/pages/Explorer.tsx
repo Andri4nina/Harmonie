@@ -1,15 +1,26 @@
 import { useEffect, useMemo } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useLocation } from "react-router";
 import { play, stop } from "../audio/synth";
 import { CircleOfFifths } from "../components/CircleOfFifths";
 import { Fretboard } from "../components/Fretboard";
 import { MusicGraph } from "../components/MusicGraph";
 import { Piano } from "../components/Piano";
 import { SearchBox } from "../components/SearchBox";
+import { Spectrum } from "../components/Spectrum";
 import { Icon, NodeChip, Panel, hueStyle } from "../components/ui";
 import { usePlayer, useSettings } from "../state/store";
-import { type NodeView, instruments, nodeView } from "../theory/engine";
-import { FACT_LABEL, GROUP_LABEL, KIND_LABEL, detailLabel, factValue, labelOf } from "../theory/labels";
+import { type NodeView, instruments, nodeView, winds } from "../theory/engine";
+import { introOf } from "../theory/head";
+import {
+  FACT_LABEL,
+  GROUP_LABEL,
+  KIND_LABEL,
+  detailLabel,
+  factValue,
+  intervalLabel,
+  labelOf,
+} from "../theory/labels";
+import { idOf, pathOf } from "../theory/routes";
 
 const PLAY_LABEL: Record<string, string> = {
   melodic: "Écouter",
@@ -40,17 +51,22 @@ function Hero({ view }: { view: NodeView }) {
           <div className="eyebrow !text-[var(--accent)]">{KIND_LABEL[view.kind]}</div>
           <h1 className="mt-1 text-5xl font-semibold tracking-tight">{labelOf(view.id)}</h1>
         </div>
-        <button
-          type="button"
-          onClick={() => (playing ? stop() : play(view.playback.steps, view.playback.mode, view.id))}
-          disabled={view.playback.steps.length === 0}
-          aria-pressed={playing}
-          className="flex items-center gap-2 rounded-2xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-ink transition-transform duration-150 hover:bg-[var(--accent-strong)] active:scale-95 disabled:opacity-40"
-        >
-          <Icon name={playing ? "stop" : "play"} className="size-4" />
-          {playing ? "Arrêter" : PLAY_LABEL[view.playback.mode]}
-        </button>
+        <div className="flex flex-col items-end gap-3">
+          <button
+            type="button"
+            onClick={() => (playing ? stop() : play(view.playback.steps, view.playback.mode, view.id))}
+            disabled={view.playback.steps.length === 0}
+            aria-pressed={playing}
+            className="flex items-center gap-2 rounded-2xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-ink transition-transform duration-150 hover:bg-[var(--accent-strong)] active:scale-95 disabled:opacity-40"
+          >
+            <Icon name={playing ? "stop" : "play"} className="size-4" />
+            {playing ? "Arrêter" : PLAY_LABEL[view.playback.mode]}
+          </button>
+          <Spectrum />
+        </div>
       </div>
+
+      <p className="mt-4 max-w-3xl text-sm leading-relaxed text-fg-2">{introOf(view)}</p>
 
       <div className="mt-5 flex flex-wrap gap-2">
         {view.tones.map((tone) => {
@@ -67,7 +83,7 @@ function Hero({ view }: { view: NodeView }) {
               }`}
             >
               <span className="font-mono text-lg leading-none font-semibold">{tone.note}</span>
-              <span className={`mt-1 font-mono text-[10px] ${sounding ? "text-ink/70" : "text-fg-3"}`}>{tone.role}</span>
+              <span className={`mt-1 font-mono text-[10px] ${sounding ? "text-ink/70" : "text-fg-2"}`}>{tone.role}</span>
             </div>
           );
         })}
@@ -82,6 +98,40 @@ function Hero({ view }: { view: NodeView }) {
         ))}
       </dl>
     </section>
+  );
+}
+
+/** Ce que lisent les instruments à vent pour faire entendre ces notes. */
+function Winds({ view }: { view: NodeView }) {
+  const notes = view.tones.map((tone) => tone.note);
+  const rows = useMemo(() => winds(notes), [view.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  return (
+    <Panel title="Instruments à vent">
+      <p className="mb-4 max-w-3xl text-sm text-fg-2">
+        Un instrument transpositeur ne joue pas la note qu'il lit. Pour faire entendre{" "}
+        <span className="font-mono text-fg">{notes.join(" ")}</span>, voici ce que chacun doit lire.
+      </p>
+      <ul className="flex flex-col gap-3">
+        {rows.map((row) => (
+          <li key={row.id} className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <div className="w-56">
+              <div className="font-medium">{row.name}</div>
+              <div className="text-xs text-fg-2">
+                {row.interval
+                  ? `sonne une ${intervalLabel(row.interval)} plus ${row.sounds_below ? "bas" : "haut"}`
+                  : "en ut : lit ce qu'il joue"}
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {row.tones.map((tone, index) => {
+                const target = nodeView(`note:${tone.written}`);
+                return target ? <NodeChip key={index} id={target.id} pitchClass={target.pitchClass} /> : null;
+              })}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </Panel>
   );
 }
 
@@ -109,26 +159,34 @@ function Relations({ view }: { view: NodeView }) {
 }
 
 export function Explorer() {
-  const nodeId = useParams()["*"] ?? "";
-  const view = useMemo(() => nodeView(nodeId), [nodeId]);
+  const { pathname } = useLocation();
+  const view = useMemo(() => {
+    const id = idOf(pathname);
+    return id ? nodeView(id) : null;
+  }, [pathname]);
   const visit = useSettings((state) => state.visit);
+  const ready = useSettings((state) => state.ready);
   const instrumentId = useSettings((state) => state.instrumentId);
   const setInstrument = useSettings((state) => state.setInstrument);
 
   useEffect(() => {
     stop();
-    if (view) visit(view.id);
-  }, [view, visit]);
+  }, [view]);
+  // L'historique n'est écrit qu'une fois les réglages relus, pour ne pas les écraser.
+  useEffect(() => {
+    if (view && ready) visit(view.id);
+  }, [view, ready, visit]);
 
   if (!view) {
     return (
       <div className="flex flex-col gap-4">
         <SearchBox autoFocus />
-        <Panel title="Introuvable">
-          <p className="text-fg-2">
-            « {nodeId} » ne correspond à aucun élément musical connu du moteur.{" "}
-            <Link to="/explorer" className="text-[var(--accent)] underline underline-offset-4">
-              Revenir à Do
+        <Panel>
+          <h1 className="text-2xl font-semibold">Page introuvable</h1>
+          <p className="mt-2 text-fg-2">
+            Cette adresse ne correspond à aucun élément musical connu du moteur.{" "}
+            <Link to={pathOf("note:C")} className="text-[var(--accent)] underline underline-offset-4">
+              Revenir à la note Do
             </Link>
             .
           </p>
@@ -174,7 +232,7 @@ export function Explorer() {
                   className={`rounded-lg px-3 py-1 text-xs transition-colors duration-150 ${
                     candidate.id === instrument.id
                       ? "bg-[var(--accent-soft)] text-[var(--accent-strong)]"
-                      : "text-fg-3 hover:bg-white/5 hover:text-fg"
+                      : "text-fg-2 hover:bg-white/5 hover:text-fg"
                   }`}
                 >
                   {candidate.name}
@@ -187,6 +245,7 @@ export function Explorer() {
         </Panel>
       )}
 
+      <Winds view={view} />
       <Relations view={view} />
     </div>
   );

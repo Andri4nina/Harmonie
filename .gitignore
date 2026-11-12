@@ -9,3 +9,4 @@ __pycache__/
 # Web
 apps/web/src/theory/pkg/
 .claude/
+dist-ssr/

@@ -17,7 +17,7 @@ const STARTING_POINTS = [
 
 const MODULES: { name: string; state: string; done: boolean }[] = [
   { name: "Moteur de théorie", state: "v1.1", done: true },
-  { name: "Theory Explorer", state: "v1.2 · en cours", done: true },
+  { name: "Theory Explorer", state: "v1.2", done: true },
   { name: "Song Analyzer", state: "v1.3", done: false },
   { name: "Ear Training", state: "v1.4", done: false },
   { name: "Learning · Music Generator", state: "v1.5", done: false },
