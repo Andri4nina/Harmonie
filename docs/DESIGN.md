@@ -1,0 +1,100 @@
+# Direction artistique, motion et identité
+
+Ce document fixe l'identité visuelle d'Harmonia. Il sera traduit en design system
+(tokens, composants) au début de la Phase 3.
+
+## Concept : la topographie du son
+
+Deux matières, superposées :
+
+1. **Le relief** — un fond de lignes de niveau topographiques. Ce n'est pas un
+   décor : les courbes sont *calculées*. Sur les écrans d'exploration elles sont
+   générées par un champ de bruit lent ; sur les écrans d'écoute elles sont
+   déformées par la musique (énergie du spectre, chroma). Le son dessine le
+   terrain.
+2. **Le verre** — les panneaux d'interface flottent au-dessus du relief :
+   translucides, floutés, bordés d'un filet lumineux. On lit l'outil sans jamais
+   perdre le paysage.
+
+Le mélange donne la signature d'Harmonia : un instrument de mesure posé sur une
+carte vivante.
+
+## Graphisme
+
+### Lignes topographiques
+
+| Règle | Valeur |
+|---|---|
+| Génération | Isolignes (marching squares) d'un champ scalaire, rendues en SVG ou Canvas. Jamais d'image bitmap. |
+| Trait | 1 px, continu pour les courbes maîtresses (une sur cinq), **tireté** pour les intermédiaires. |
+| Opacité | 6 à 14 % au repos ; jusqu'à 30 % sous un élément actif. |
+| Couleur | Teinte de l'accent courant, désaturée. |
+| Sens | La densité des courbes encode une grandeur réelle (énergie, tension harmonique, distance sur le cercle des quintes). Pas de courbes purement décoratives sur les écrans d'analyse. |
+| Cotes | Petites étiquettes d'altitude en chiffres tabulaires : elles portent des valeurs utiles (Hz, BPM, degré). |
+
+### Verre
+
+| Règle | Valeur |
+|---|---|
+| Fond de panneau | Blanc à 4–8 % d'opacité sur fond sombre. |
+| Flou d'arrière-plan | 16 à 24 px, saturation légèrement relevée. |
+| Bordure | 1 px, dégradé du blanc 18 % (haut-gauche) au blanc 4 % (bas-droite). |
+| Rayons | 12 px (contrôles), 20 px (panneaux), 28 px (surfaces principales). |
+| Profondeur | Trois niveaux seulement : relief, verre, verre surélevé (modales, menus). |
+| Ombre | Large, très diffuse, teintée par le fond — jamais noire pure. |
+
+### Couleur
+
+Base sombre, froide, quasi neutre. Un seul accent à la fois, choisi par le contexte.
+
+| Rôle | Intention |
+|---|---|
+| Fond | Bleu-noir profond, pas de noir pur. |
+| Texte | Blanc cassé ; secondaire à 64 % ; tertiaire à 40 %. |
+| Accent principal | Cyan-menthe lumineux (signal, sélection, lecture). |
+| Accent secondaire | Ambre chaud (attention, estimé). |
+| Sémantique d'analyse | `detected` = accent plein ; `estimated` = ambre ; `uncertain` = contour tireté sans remplissage. Le tireté signifie partout « incertain ». |
+| Douze classes de hauteur | Une roue de 12 teintes ordonnée selon le cercle des quintes : deux notes voisines harmoniquement ont des couleurs voisines. |
+
+Les valeurs exactes seront fixées avec un contrôle de contraste WCAG AA (4,5:1 pour
+le texte) mesuré sur le verre, fond le plus défavorable compris.
+
+### Typographie
+
+- Titres et interface : une grotesque géométrique variable.
+- Données musicales (notes, accords, degrés, temps) : une mono ou des chiffres
+  tabulaires, pour que les colonnes ne dansent pas pendant la lecture.
+- Polices sous licence libre (SIL OFL), hébergées localement : aucun appel à un
+  service tiers.
+
+## Motion design
+
+Le mouvement explique, il ne décore pas.
+
+| Principe | Application |
+|---|---|
+| **Le son mène** | Toute animation liée à l'audio est pilotée par l'horloge audio (`AudioContext.currentTime`), jamais par un minuteur indépendant. |
+| **Continuité** | Passer d'une gamme à son accord, d'un accord à sa tonalité : les notes communes restent en place, les autres glissent. L'utilisateur voit la relation. |
+| **Durées** | 120 ms (retour immédiat), 240 ms (transition d'état), 480 ms (changement de vue). Rien au-delà de 600 ms hors lecture musicale. |
+| **Courbes** | Sortie douce pour les entrées, ressort amorti léger pour les objets manipulés (touches, cordes). Pas de rebond gratuit. |
+| **Relief vivant** | Dérive très lente du fond (cycle de plusieurs dizaines de secondes) ; réaction à la musique limitée en amplitude. |
+| **Verre** | Les panneaux apparaissent par opacité + léger déplacement vertical (8 px) ; le flou ne s'anime pas (trop coûteux). |
+| **Micro-interactions** | Une touche enfoncée, une corde qui vibre, un accord qui s'allume : retour visuel sous 16 ms, synchrone avec l'attaque du son. |
+
+### Contraintes non négociables
+
+- `prefers-reduced-motion` : relief figé, transitions réduites à des fondus.
+- `prefers-reduced-transparency` et **mode léger** : verre remplacé par des aplats
+  opaques, flou désactivé. Le flou d'arrière-plan est l'effet le plus coûteux de
+  l'interface ; le cahier des charges exige de tourner sur des machines modestes.
+- Animations sur `transform` et `opacity` uniquement ; visualisations lourdes dans
+  un Canvas, hors du thread principal quand c'est possible (`OffscreenCanvas`).
+- Budget : 60 images par seconde pendant la lecture sur une machine modeste, sinon
+  dégradation automatique vers le mode léger.
+
+## Ce qu'on évite
+
+- Le tableau de bord administratif générique (cartes de statistiques alignées).
+- Le verre partout : au-delà de trois niveaux, la hiérarchie disparaît.
+- Les dégradés arc-en-ciel et le néon : un accent à la fois.
+- Toute ressemblance avec l'interface d'un logiciel de production existant.

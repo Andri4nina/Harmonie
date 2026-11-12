@@ -7,6 +7,7 @@ use crate::error::TheoryError;
 use crate::pitch::{Note, Pitch};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(rename_all = "snake_case"))]
 pub enum IntervalQuality {
     Perfect,
     Major,

@@ -10,6 +10,7 @@ use crate::pitch::{parse_note_prefix, Note};
 use crate::scale::{Scale, ScaleType};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(rename_all = "snake_case"))]
 pub enum Mode {
     Major,
     Minor,
@@ -163,6 +164,7 @@ impl fmt::Display for Key {
 
 /// Une tonalité candidate et sa corrélation avec l'histogramme analysé.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(rename_all = "snake_case"))]
 pub struct KeyEstimate {
     pub key: Key,
     /// Coefficient de Pearson, de -1 à 1.

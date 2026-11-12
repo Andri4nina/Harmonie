@@ -4,6 +4,13 @@
 > voisins détaillent : [bibliothèques et licences](LIBRARIES.md), [API](API.md),
 > [plan par phases](ROADMAP.md), [risques de la transcription polyphonique](POLYPHONIC-RISKS.md).
 
+## Rôles tenus sur le projet
+
+Architecte logiciel · spécialiste de théorie musicale · ingénieur DSP audio ·
+designer UX/UI · **graphiste** et **motion designer** ([DESIGN.md](DESIGN.md)) ·
+**référenceur SEO** ([SEO.md](SEO.md)). Les versions sont suivies dans
+[ROADMAP.md](ROADMAP.md) et [CHANGELOG.md](../CHANGELOG.md).
+
 ## 1. Principes directeurs
 
 | # | Décision | Raison |
@@ -16,6 +23,8 @@
 | D6 | **Un résultat d'analyse n'est jamais écrasé.** Les corrections manuelles sont une couche séparée appliquée à la lecture. | Traçabilité, ré-analyse possible sans perdre le travail de l'utilisateur. |
 | D7 | **Mobile** : le moteur est exposé à React Native par un module natif généré (UniFFI) ; à défaut, par les endpoints `/theory` de l'API. Décision finale en Phase 7 après prototype. | Hermes n'exécute pas WASM de façon fiable ; ne pas réécrire le moteur en TypeScript. |
 | D8 | **Stockage derrière un trait** `ObjectStore` : RustFS (S3) en serveur, système de fichiers local en desktop hors ligne. Idem base : PostgreSQL en serveur, SQLite envisagé en desktop (SQLx supporte les deux). | Fonctionnement local sans imposer Postgres + RustFS à un utilisateur desktop. |
+| D10 | **Deux surfaces web** : un site public pré-rendu en HTML statique (accueil, cours, référence de théorie générée par le moteur) et l'application en rendu client. | L'application sera hébergée et doit être indexable ; voir [SEO.md](SEO.md). |
+| D11 | **Dernières versions stables partout**, édition Rust 2024, versions verrouillées par lockfiles. | Voir la politique dans [ROADMAP.md](ROADMAP.md). |
 | D9 | **Analyse à la demande** : chaque job porte la liste exacte des features voulues ; le planificateur n'exécute que les étapes nécessaires (graphe de dépendances). | Exigence §5 et §13. |
 
 ## 2. Vue d'ensemble des services

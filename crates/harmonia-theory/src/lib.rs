@@ -27,14 +27,20 @@ pub mod harmony;
 pub mod instrument;
 pub mod interval;
 pub mod key;
+pub mod melody;
 pub mod pitch;
+pub mod relations;
 pub mod scale;
+#[cfg(feature = "serde")]
+mod serde_impl;
 
 pub use chord::{Chord, ChordQuality};
 pub use error::TheoryError;
-pub use harmony::{Cadence, Progression, RomanNumeral};
+pub use harmony::{Cadence, CommonProgression, Progression, RomanNumeral};
 pub use instrument::{Family, Instrument, Layout, PercussionPiece, StringPosition, Transposition};
 pub use interval::{Interval, IntervalQuality};
 pub use key::{estimate_key, Key, KeyEstimate, Mode};
+pub use melody::{chords_for_note, harmonize_melody};
 pub use pitch::{Letter, Note, Pitch, PitchClass, Spelling, A4_STANDARD_HZ};
+pub use relations::{Edge, Graph, Link, Node, Relation};
 pub use scale::{Scale, ScaleType};

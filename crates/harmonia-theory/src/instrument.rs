@@ -7,6 +7,7 @@ use crate::interval::Interval;
 use crate::pitch::{Note, Pitch, Spelling};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(rename_all = "snake_case"))]
 pub enum Family {
     Keyboard,
     PluckedString,
@@ -19,6 +20,7 @@ pub enum Family {
 
 /// Rapport entre la note écrite et la note entendue.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(rename_all = "snake_case"))]
 pub enum Transposition {
     /// Instrument en ut : écrit = entendu.
     Concert,
@@ -47,6 +49,7 @@ impl Transposition {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(rename_all = "snake_case"))]
 pub struct PercussionPiece {
     pub name: String,
     /// Note du plan de percussions General MIDI.
@@ -55,6 +58,7 @@ pub struct PercussionPiece {
 
 /// Façon dont l'instrument se représente et produit ses notes.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(rename_all = "snake_case"))]
 pub enum Layout {
     /// Une touche par demi-ton sur toute la tessiture.
     Keyboard,
@@ -74,6 +78,7 @@ pub enum Layout {
 
 /// Position d'une note sur un instrument à cordes.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(rename_all = "snake_case"))]
 pub struct StringPosition {
     /// Index dans `Layout::Strings::open` : 0 = corde la plus grave.
     pub string: usize,
@@ -82,6 +87,7 @@ pub struct StringPosition {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(rename_all = "snake_case"))]
 pub struct Instrument {
     pub id: String,
     pub name: String,

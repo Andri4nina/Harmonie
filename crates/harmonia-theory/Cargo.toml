@@ -1,7 +1,15 @@
 [package]
 name = "harmonia-theory"
-description = "Moteur de théorie musicale d'Harmonia : pur, sans I/O, sans dépendance."
+description = "Moteur de théorie musicale d'Harmonia : pur, sans I/O."
 version.workspace = true
 edition.workspace = true
 
+[features]
+# Sérialisation JSON des types du moteur (API, WASM, stockage des instruments).
+serde = ["dep:serde"]
+
 [dependencies]
+serde = { version = "1", features = ["derive"], optional = true }
+
+[dev-dependencies]
+serde_json = "1"

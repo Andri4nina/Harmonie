@@ -14,6 +14,7 @@ use crate::pitch::{parse_note_prefix, Note, Pitch};
 /// - `11` contient l'empilement complet (1 3 5 ♭7 9 11) ;
 /// - `13` omet la onzième (1 3 5 ♭7 9 13), comme dans la pratique.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(rename_all = "snake_case"))]
 pub enum ChordQuality {
     Major,
     Minor,
@@ -240,6 +241,24 @@ impl Chord {
         })
     }
 
+    /// Chiffrage de basse continue du renversement : `""` (état fondamental),
+    /// `6`, `6/4` pour les triades ; `7`, `6/5`, `4/3`, `4/2` pour les accords
+    /// de septième.
+    ///
+    /// `None` pour les accords qui ne sont pas un empilement de trois ou
+    /// quatre tierces (sus, add, extensions) et quand la basse est étrangère
+    /// à l'accord : le chiffrage classique ne les décrit pas.
+    pub fn figured_bass(&self) -> Option<&'static str> {
+        use ChordQuality::*;
+        let inversion = self.inversion()?;
+        match self.quality {
+            Major | Minor | Diminished | Augmented => ["", "6", "6/4"].get(inversion).copied(),
+            Dominant7 | Major7 | Minor7 | MinorMajor7 | Diminished7 | HalfDiminished7
+            | Augmented7 | AugmentedMajor7 => ["7", "6/5", "4/3", "4/2"].get(inversion).copied(),
+            _ => None,
+        }
+    }
+
     /// Notes de la plus grave à la plus aiguë, basse en premier.
     pub fn notes_from_bass(&self) -> Vec<Note> {
         let mut notes = self.notes();
@@ -463,6 +482,24 @@ mod tests {
         assert_eq!("Cmaj7/B".parse::<Chord>().unwrap().inversion(), Some(3));
         // Basse étrangère à l'accord : ce n'est pas un renversement.
         assert_eq!("C/D".parse::<Chord>().unwrap().inversion(), None);
+    }
+
+    #[test]
+    fn figured_bass() {
+        let figure = |s: &str| s.parse::<Chord>().unwrap().figured_bass();
+        assert_eq!(figure("C"), Some(""));
+        assert_eq!(figure("C/E"), Some("6"));
+        assert_eq!(figure("C/G"), Some("6/4"));
+        assert_eq!(figure("Bdim/D"), Some("6"));
+        assert_eq!(figure("G7"), Some("7"));
+        assert_eq!(figure("G7/B"), Some("6/5"));
+        assert_eq!(figure("G7/D"), Some("4/3"));
+        assert_eq!(figure("G7/F"), Some("4/2"));
+        assert_eq!(figure("Dm7/F"), Some("6/5"));
+        // Hors du champ du chiffrage classique.
+        assert_eq!(figure("C/D"), None);
+        assert_eq!(figure("Csus4"), None);
+        assert_eq!(figure("C9"), None);
     }
 
     #[test]

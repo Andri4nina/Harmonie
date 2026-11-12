@@ -83,6 +83,7 @@ impl Letter {
 
 /// Classe de hauteur : 0 (`C`) à 11 (`B`), sans orthographe ni octave.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(rename_all = "snake_case"))]
 pub struct PitchClass(u8);
 
 impl PitchClass {
@@ -97,6 +98,7 @@ impl PitchClass {
 
 /// Préférence d'orthographe quand une classe de hauteur doit être nommée.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(rename_all = "snake_case"))]
 pub enum Spelling {
     Sharps,
     Flats,
