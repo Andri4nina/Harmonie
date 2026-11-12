@@ -39,6 +39,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "harmonia-audio"
+version = "1.2.0"
+dependencies = [
+ "harmonia-theory",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "harmonia-theory"
 version = "1.2.0"
 dependencies = [

@@ -42,6 +42,12 @@ let graph = Graph::around(Node::from_id("note:C").unwrap(), 1);
 println!("{} relations", graph.links.len());
 ```
 
+## Analyse audio
+
+Extraction en Python, interprétation en Rust : voir
+[`workers/audio-analyzer`](workers/audio-analyzer/README.md) pour
+l'installation, l'utilisation et les résultats mesurés.
+
 ## Application web
 
 Nécessite Node.js 22 ou plus, la cible Rust `wasm32-unknown-unknown` et

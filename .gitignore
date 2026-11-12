@@ -10,3 +10,7 @@ __pycache__/
 apps/web/src/theory/pkg/
 .claude/
 dist-ssr/
+
+# Worker audio
+workers/audio-analyzer/evaluation/out/
+.pytest_cache/

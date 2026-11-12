@@ -4,6 +4,31 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Numérotation : [SemVer](https://semver.org/lang/fr/). Chaque version correspond à
 une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
+## [Non publié] — vers 1.3.0
+
+Phase 4, première partie : analyser un fichier audio sans serveur.
+
+### Ajouté
+
+- `workers/audio-analyzer` : worker Python (librosa 1.0) qui mesure le signal —
+  chroma, chroma grave, temps, attaques, accordage, netteté de la pulsation —
+  sans aucune interprétation musicale. Ligne de commande
+  `python -m harmonia_worker extract`.
+- `harmonia-audio` : interprétation en Rust, appuyée sur le moteur de théorie :
+  accords (gabarits + Viterbi, renversements par la basse), tonalité et
+  modulations (Krumhansl-Kessler départagé par les accords), degrés, cadences,
+  tempo, mesure et premiers temps ; confiance et certitude sur chaque résultat.
+  Exécutable `harmonia-analyze`.
+- Corpus d'évaluation de 36 morceaux écrits par le moteur et rendus en audio,
+  dont 16 réservés à la validation. Sur la validation : 97 % de la durée avec
+  l'accord exact, 16 tonalités sur 16, 14 tempos sur 16.
+
+### Limites
+
+- Mesuré uniquement sur des sons synthétiques ; aucun enregistrement réel.
+- Erreurs d'octave du tempo aux extrêmes (60–80 et 168–180 BPM).
+- Pas encore d'API, de file de jobs, de stockage ni d'interface.
+
 ## [1.2.0] — 2026-11-12
 
 Phase 3 : le Theory Explorer, en ligne et référençable.

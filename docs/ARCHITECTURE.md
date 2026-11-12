@@ -143,16 +143,16 @@ harmonia/
 ├── Cargo.toml                      ✅ workspace Rust
 ├── crates/
 │   ├── harmonia-theory/            ✅ Phase 2 — moteur de théorie (pur)
-│   ├── harmonia-theory-wasm/          Phase 3 — bindings wasm-bindgen
+│   ├── harmonia-theory-wasm/       ✅ Phase 3 — bindings wasm-bindgen
 │   ├── harmonia-domain/               Phase 4 — entités : Track, AnalysisJob, AnalysisEvent…
 │   ├── harmonia-application/          Phase 4 — cas d'usage, planificateur, ports (traits)
 │   ├── harmonia-infrastructure/       Phase 4 — SQLx, ObjectStore S3/local, file de jobs
-│   ├── harmonia-audio/                Phase 4 — interprétation des features (accords, tonalité)
+│   ├── harmonia-audio/             ✅ Phase 4 — interprétation des features (accords, tonalité, mesure)
 │   └── harmonia-api/                  Phase 4 — Axum : REST, WebSocket, API interne workers
 ├── workers/
-│   └── audio-analyzer/                Phase 4 — Python : étapes DSP, client de l'API interne
+│   └── audio-analyzer/             ✅ Phase 4 — Python : extraction des descripteurs (client de l'API interne : à venir)
 ├── apps/
-│   ├── web/                           Phase 3 — React + Vite + Tailwind
+│   ├── web/                        ✅ Phase 3 — React + Vite + Tailwind
 │   ├── desktop/                       Phase 7 — Tauri 2 (enveloppe apps/web)
 │   └── mobile/                        Phase 7 — Expo / React Native
 ├── packages/

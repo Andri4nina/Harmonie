@@ -171,7 +171,7 @@ impl ChordQuality {
     }
 
     /// Classes de hauteur relatives à la fondamentale, triées, sans doublon.
-    fn pitch_class_set(self) -> Vec<u8> {
+    pub fn pitch_class_set(self) -> Vec<u8> {
         let mut set: Vec<u8> = self
             .intervals()
             .iter()
