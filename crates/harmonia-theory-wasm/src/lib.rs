@@ -67,3 +67,75 @@ pub fn circle_of_fifths() -> Result<JsValue, JsError> {
 pub fn midi_to_frequency(midi: i32, a4_hz: f64) -> f64 {
     view::midi_to_frequency(midi, a4_hz)
 }
+
+// ------------------------------------------------------------------ oreille
+
+use harmonia_theory::ear::{self, Card, Exercise};
+
+fn exercise(id: &str) -> Result<Exercise, JsError> {
+    Exercise::from_id(id).ok_or_else(|| JsError::new(&format!("exercice inconnu : {id}")))
+}
+
+fn cards(value: JsValue) -> Result<Vec<Card>, JsError> {
+    if value.is_undefined() || value.is_null() {
+        return Ok(Vec::new());
+    }
+    serde_wasm_bindgen::from_value(value).map_err(|error| JsError::new(&error.to_string()))
+}
+
+#[derive(Serialize)]
+struct LevelView {
+    level: usize,
+    items: Vec<String>,
+}
+
+#[derive(Serialize)]
+struct ExerciseView {
+    id: &'static str,
+    levels: Vec<LevelView>,
+}
+
+/// Les exercices et, pour chaque niveau, ses éléments.
+#[wasm_bindgen(js_name = earExercises)]
+pub fn ear_exercises() -> Result<JsValue, JsError> {
+    let views: Vec<ExerciseView> = Exercise::ALL
+        .into_iter()
+        .map(|exercise| ExerciseView {
+            id: exercise.id(),
+            levels: (1..=exercise.levels()).map(|level| LevelView { level, items: ear::level_items(exercise, level) }).collect(),
+        })
+        .collect();
+    to_js(&views)
+}
+
+/// Une question. `item` (facultatif) impose l'élément ; `seed` est un entier < 2^53.
+#[wasm_bindgen(js_name = earQuestion)]
+pub fn ear_question(exercise_id: &str, level: usize, item: Option<String>, seed: f64) -> Result<JsValue, JsError> {
+    let question = ear::question(exercise(exercise_id)?, level, item.as_deref(), seed as u64)
+        .ok_or_else(|| JsError::new("niveau ou élément inconnu"))?;
+    to_js(&question)
+}
+
+/// Élément à interroger, d'après les fiches de répétition.
+#[wasm_bindgen(js_name = earPick)]
+pub fn ear_pick(items: Vec<String>, known: JsValue, now_ms: f64, last: Option<String>, seed: f64) -> Result<Option<String>, JsError> {
+    Ok(ear::pick(&items, &cards(known)?, now_ms as i64, last.as_deref(), seed as u64))
+}
+
+/// Fiche mise à jour après une réponse (nouvelle fiche si `card` est absente).
+#[wasm_bindgen(js_name = earReview)]
+pub fn ear_review(item: &str, card: JsValue, correct: bool, now_ms: f64) -> Result<JsValue, JsError> {
+    let current = if card.is_undefined() || card.is_null() {
+        Card::new(item)
+    } else {
+        serde_wasm_bindgen::from_value(card).map_err(|error| JsError::new(&error.to_string()))?
+    };
+    to_js(&ear::review(&current, correct, now_ms as i64))
+}
+
+/// Éléments maîtrisés d'un niveau : `[maîtrisés, total]`.
+#[wasm_bindgen(js_name = earProgress)]
+pub fn ear_progress(exercise_id: &str, level: usize, known: JsValue) -> Result<Vec<usize>, JsError> {
+    let (mastered, total) = ear::level_progress(exercise(exercise_id)?, level, &cards(known)?);
+    Ok(vec![mastered, total])
+}

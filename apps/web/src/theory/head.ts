@@ -117,6 +117,17 @@ export function headFor(pathname: string): Head {
       "Harmonie, par Andrianina Rasoamanana : la théorie musicale sur une même carte. Notes, gammes, accords et tonalités à écouter, à voir au piano et à la guitare, avec leurs relations.";
     return { title: SITE_NAME, description, indexable: true, path, jsonLd: website(description) };
   }
+  if (path === "/oreille") {
+    const description =
+      "Entraînement de l'oreille musicale gratuit : reconnaître les intervalles, les accords, les degrés et les progressions, par niveaux, avec répétition espacée. Par Andrianina Rasoamanana.";
+    return {
+      title: `Entraînement de l'oreille : intervalles, accords, progressions | ${SITE_NAME}`,
+      description,
+      indexable: true,
+      path,
+      jsonLd: website(description),
+    };
+  }
   if (path === "/telecharger") {
     const description =
       "Télécharger Harmonie d'Andrianina Rasoamanana pour Windows, macOS, Linux et Android (APK) : la théorie musicale interactive, même hors connexion.";

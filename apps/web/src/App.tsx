@@ -5,6 +5,7 @@ import { Sidebar } from "./components/Sidebar";
 import { TopoBackground } from "./components/TopoBackground";
 import { Dashboard } from "./pages/Dashboard";
 import { Downloads } from "./pages/Downloads";
+import { EarTraining } from "./pages/EarTraining";
 import { Explorer } from "./pages/Explorer";
 import { Settings } from "./pages/Settings";
 import { useSettings } from "./state/store";
@@ -62,6 +63,7 @@ export function App() {
             <Route path="/explorer" element={<Navigate to={pathOf("note:C")} replace />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/telecharger" element={<Downloads />} />
+            <Route path="/oreille" element={<EarTraining />} />
             <Route path="/analyser" element={<OnDemand><Analyzer /></OnDemand>} />
             <Route path="/analyser/:id" element={<OnDemand><TrackPage /></OnDemand>} />
             <Route path="/bibliotheque" element={<OnDemand><Library /></OnDemand>} />

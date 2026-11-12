@@ -42,7 +42,7 @@ const SCALE_SHORT: Record<string, string> = {
   melodic_minor: "mél",
 };
 
-const PROGRESSION_LABEL: Record<string, string> = {
+export const PROGRESSION_LABEL: Record<string, string> = {
   pop: "Progression pop",
   fifties: "Années 50",
   "three-chord": "Trois accords",
@@ -129,6 +129,7 @@ const INTERVAL_LABEL: Record<string, string> = {
   d7: "septième diminuée",
   m7: "septième mineure",
   M7: "septième majeure",
+  P8: "octave",
   M9: "neuvième majeure",
   P11: "onzième",
   M13: "treizième",

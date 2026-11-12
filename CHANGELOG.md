@@ -4,6 +4,31 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Numérotation : [SemVer](https://semver.org/lang/fr/). Chaque version correspond à
 une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
+## [Non publié] — vers 1.4.0
+
+Phase 5, première partie : entraînement de l'oreille, thèmes, logo.
+
+### Ajouté
+
+- Module `ear` du moteur : quatre exercices (intervalles, accords, degrés
+  après cadence, progressions), 17 niveaux, questions générées par la
+  théorie à partir d'une graine, répétition espacée (SM-2 simplifié) et
+  maîtrise par élément. Exporté en WebAssembly.
+- Page « Entraîner l'oreille » (pré-rendue, indexée) : choix de l'exercice et
+  du niveau, écoute, réponses au clavier, correction expliquée, progrès
+  enregistrés sur l'appareil.
+- Thèmes clair, sombre et « système », appliqués avant le premier affichage.
+- Logo : la quinte juste en figure de Lissajous (3:2), parcourue par une note ;
+  loader et écran de démarrage animés sur cette figure.
+- Barres de défilement arrondies.
+- Fichiers d'environnement pour Supabase, Render, Vercel et GitHub
+  (`deploy/env`).
+
+### Reste à faire pour la 1.4.0
+
+- Exercices de rythme et de mélodie (dictée), suivi de f0 dans l'analyse.
+- Statistiques synchronisées avec le compte (aujourd'hui : sur l'appareil).
+
 ## [1.3.0] — 2026-11-12
 
 Phase 4 : analyse audio, API, base de données, hébergement et écran
