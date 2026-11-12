@@ -1,6 +1,6 @@
 # API Harmonie — v1
 
-## Implémenté (v1.3.0)
+## Implémenté (v1.4.0)
 
 Code : `crates/harmonia-api`. Base : `/v1` (pas de préfixe `/api`). Erreurs :
 `{ "error": "code", "message": "…" }`. Authentification : jeton d'accès
@@ -16,6 +16,8 @@ Supabase Auth (`Authorization: Bearer`).
 | GET | `/v1/tracks/{id}/audio` | Fichier audio d'origine. |
 | GET | `/v1/tracks/{id}/analysis` | Dernière analyse réussie : résumé et événements, corrections appliquées. |
 | POST | `/v1/tracks/{id}/corrections` | `delete` / `replace` / `insert` ; un accord saisi doit être lisible par le moteur. |
+| GET | `/v1/ear/cards` | Fiches de répétition de l'entraînement de l'oreille (v1.4.0). |
+| PUT | `/v1/ear/cards` | Envoi de fiches ; la plus avancée (`seen`) l'emporte. |
 
 Routes des workers (`WORKER_TOKEN`) : `POST /internal/jobs/claim`,
 `GET /internal/jobs/{id}/audio`, `POST /internal/jobs/{id}/heartbeat`,

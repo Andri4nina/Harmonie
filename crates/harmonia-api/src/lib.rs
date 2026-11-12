@@ -9,6 +9,7 @@
 
 pub mod auth;
 pub mod config;
+pub mod ear;
 pub mod error;
 pub mod events;
 pub mod jobs;
@@ -58,7 +59,7 @@ pub fn router(state: AppState) -> Router {
     let origins: Vec<HeaderValue> = state.config.cors_origins.iter().filter_map(|origin| origin.parse().ok()).collect();
     let cors = CorsLayer::new()
         .allow_origin(origins)
-        .allow_methods([Method::GET, Method::POST, Method::DELETE])
+        .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE])
         .allow_headers([header::AUTHORIZATION, header::CONTENT_TYPE]);
     let upload_limit = state.config.max_upload_bytes + 64 * 1024;
 
@@ -68,7 +69,8 @@ pub fn router(state: AppState) -> Router {
         .route("/tracks/{id}", get(routes::get_track))
         .route("/tracks/{id}/audio", get(routes::track_audio))
         .route("/tracks/{id}/analysis", get(routes::track_analysis))
-        .route("/tracks/{id}/corrections", post(routes::add_correction));
+        .route("/tracks/{id}/corrections", post(routes::add_correction))
+        .route("/ear/cards", get(ear::list).put(ear::save));
 
     let internal = Router::new()
         .route("/jobs/claim", post(jobs::claim))

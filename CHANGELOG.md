@@ -4,9 +4,10 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Numérotation : [SemVer](https://semver.org/lang/fr/). Chaque version correspond à
 une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
-## [Non publié] — vers 1.4.0
+## [1.4.0] — 2026-11-12
 
-Phase 5, première partie : entraînement de l'oreille, thèmes, logo.
+Phase 5 : entraînement de l'oreille complet, mélodie dans l'analyse,
+thèmes, logo.
 
 ### Ajouté
 
@@ -23,11 +24,19 @@ Phase 5, première partie : entraînement de l'oreille, thèmes, logo.
 - Barres de défilement arrondies.
 - Fichiers d'environnement pour Supabase, Render, Vercel et GitHub
   (`deploy/env`).
+- Exercices de rythme (mesure à 4/4 après décompte, quatre notations proches,
+  dessinées en SVG) et de dictée mélodique (degrés note par note).
+- Mélodie dans l'analyse : ligne supérieure par saillance harmonique, notes
+  découpées par le moteur, piste dans la frise. Rappel 75 % (validation) ;
+  jamais annoncée « détectée » (voir les limites).
+- Progrès de l'oreille synchronisés avec le compte (migration `0003`,
+  `GET/PUT /v1/ear/cards`) ; la fiche la plus avancée l'emporte.
 
-### Reste à faire pour la 1.4.0
+### Limites
 
-- Exercices de rythme et de mélodie (dictée), suivi de f0 dans l'analyse.
-- Statistiques synchronisées avec le compte (aujourd'hui : sur l'appareil).
+- La ligne supérieure n'est pas toujours la mélodie : sans mélodie, elle
+  suit la voix aiguë des accords (130 notes par minute sur le corpus).
+- Sans compte, les progrès restent sur l'appareil.
 
 ## [1.3.0] — 2026-11-12
 

@@ -19,7 +19,7 @@ const MODULES: { name: string; state: string; done: boolean }[] = [
   { name: "Moteur de théorie", state: "version 1.1", done: true },
   { name: "Explorer la théorie", state: "version 1.2", done: true },
   { name: "Analyser un morceau", state: "version 1.3", done: true },
-  { name: "Entraîner l'oreille", state: "version 1.4", done: true },
+  { name: "Entraîner l'oreille (six exercices)", state: "version 1.4", done: true },
   { name: "Apprendre et composer", state: "version 1.5", done: false },
   { name: "Applications ordinateur et Android", state: "versions 1.6 et 1.7", done: false },
 ];

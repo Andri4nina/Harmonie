@@ -10,6 +10,7 @@
 pub mod analysis;
 pub mod chords;
 pub mod features;
+pub mod melody;
 pub mod meter;
 pub mod tonality;
 

@@ -19,7 +19,11 @@
       "chord_with_bass": 0.9696875,
       "tuning_error_cents": 3.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 104.19161676646706
     },
     {
       "set": "tuning",
@@ -40,7 +44,11 @@
       "chord_with_bass": 0.975,
       "tuning_error_cents": 5.0,
       "beats_found": 0.984375,
-      "downbeats_found": 0.9375
+      "downbeats_found": 0.9375,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 97.10144927536233
     },
     {
       "set": "tuning",
@@ -61,7 +69,11 @@
       "chord_with_bass": 0.9664600802041561,
       "tuning_error_cents": 1.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 145.68663498560477
     },
     {
       "set": "tuning",
@@ -82,7 +94,11 @@
       "chord_with_bass": 0.9713549126324835,
       "tuning_error_cents": 4.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 166.9007684045278
     },
     {
       "set": "tuning",
@@ -103,7 +119,11 @@
       "chord_with_bass": 0.965,
       "tuning_error_cents": 3.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 184.251968503937
     },
     {
       "set": "tuning",
@@ -124,7 +144,11 @@
       "chord_with_bass": 0.9875,
       "tuning_error_cents": 3.0,
       "beats_found": 0.3958333333333333,
-      "downbeats_found": 0.8333333333333334
+      "downbeats_found": 0.8333333333333334,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 54.54545454545455
     },
     {
       "set": "tuning",
@@ -145,7 +169,11 @@
       "chord_with_bass": 0.9814236111111111,
       "tuning_error_cents": 1.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 200.33898305084747
     },
     {
       "set": "tuning",
@@ -166,7 +194,11 @@
       "chord_with_bass": 0.9789995624908853,
       "tuning_error_cents": 1.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 130.33971216646896
     },
     {
       "set": "tuning",
@@ -187,7 +219,11 @@
       "chord_with_bass": 0.9728125,
       "tuning_error_cents": 3.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 195.80838323353294
     },
     {
       "set": "tuning",
@@ -208,7 +244,11 @@
       "chord_with_bass": 0.9753925474572299,
       "tuning_error_cents": 3.0,
       "beats_found": 0.984375,
-      "downbeats_found": 0.9375
+      "downbeats_found": 0.9375,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 133.43318129212335
     },
     {
       "set": "tuning",
@@ -229,7 +269,11 @@
       "chord_with_bass": 0.974375,
       "tuning_error_cents": 1.0,
       "beats_found": 0.5,
-      "downbeats_found": 0.0
+      "downbeats_found": 0.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 141.91616766467067
     },
     {
       "set": "tuning",
@@ -250,7 +294,11 @@
       "chord_with_bass": 0.9921875,
       "tuning_error_cents": 4.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 25.149700598802397
     },
     {
       "set": "tuning",
@@ -271,7 +319,11 @@
       "chord_with_bass": 0.96625,
       "tuning_error_cents": 3.0,
       "beats_found": 0.9791666666666666,
-      "downbeats_found": 0.9375
+      "downbeats_found": 0.9375,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 95.20958083832336
     },
     {
       "set": "tuning",
@@ -292,7 +344,11 @@
       "chord_with_bass": 0.9729144095341279,
       "tuning_error_cents": 4.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": 0.738255033557047,
+      "melody_recall": 0.859375,
+      "melody_recall_octave": 0.875,
+      "melody_false_per_minute": null
     },
     {
       "set": "tuning",
@@ -313,7 +369,11 @@
       "chord_with_bass": 0.9583333333333334,
       "tuning_error_cents": 1.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 174.87437185929647
     },
     {
       "set": "tuning",
@@ -334,7 +394,11 @@
       "chord_with_bass": 0.9710348706411699,
       "tuning_error_cents": 5.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 126.63708193527438
     },
     {
       "set": "tuning",
@@ -355,7 +419,11 @@
       "chord_with_bass": 0.9775,
       "tuning_error_cents": 4.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 84.43113772455091
     },
     {
       "set": "tuning",
@@ -376,7 +444,11 @@
       "chord_with_bass": 0.8877604166666667,
       "tuning_error_cents": 1.0,
       "beats_found": 0.0,
-      "downbeats_found": 0.0
+      "downbeats_found": 0.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 223.11557788944722
     },
     {
       "set": "tuning",
@@ -397,7 +469,11 @@
       "chord_with_bass": 0.9786265584801108,
       "tuning_error_cents": 0.0,
       "beats_found": 1.0,
-      "downbeats_found": 0.0
+      "downbeats_found": 0.0,
+      "melody_precision": 0.5333333333333333,
+      "melody_recall": 0.6875,
+      "melody_recall_octave": 0.890625,
+      "melody_false_per_minute": null
     },
     {
       "set": "tuning",
@@ -418,7 +494,11 @@
       "chord_with_bass": 0.969488188976378,
       "tuning_error_cents": 1.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 107.29075166269294
     },
     {
       "set": "validation",
@@ -439,7 +519,11 @@
       "chord_with_bass": 0.9752520623281393,
       "tuning_error_cents": 1.0,
       "beats_found": 0.984375,
-      "downbeats_found": 0.9375
+      "downbeats_found": 0.9375,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 70.61017852384758
     },
     {
       "set": "validation",
@@ -460,7 +544,11 @@
       "chord_with_bass": 0.9687177724303885,
       "tuning_error_cents": 4.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 112.1642451871044
     },
     {
       "set": "validation",
@@ -481,7 +569,11 @@
       "chord_with_bass": 0.9697885196374623,
       "tuning_error_cents": 3.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 177.37588035822972
     },
     {
       "set": "validation",
@@ -502,7 +594,11 @@
       "chord_with_bass": 0.975,
       "tuning_error_cents": 4.0,
       "beats_found": 0.984375,
-      "downbeats_found": 0.9375
+      "downbeats_found": 0.9375,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 53.62318840579711
     },
     {
       "set": "validation",
@@ -523,7 +619,11 @@
       "chord_with_bass": 0.9497616428309498,
       "tuning_error_cents": 4.0,
       "beats_found": 0.9833333333333333,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 167.4048756670038
     },
     {
       "set": "validation",
@@ -544,7 +644,11 @@
       "chord_with_bass": 0.9747974797479748,
       "tuning_error_cents": 1.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 107.10275530475342
     },
     {
       "set": "validation",
@@ -565,7 +669,11 @@
       "chord_with_bass": 0.9802083333333333,
       "tuning_error_cents": 3.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 126.5984654731458
     },
     {
       "set": "validation",
@@ -586,7 +694,11 @@
       "chord_with_bass": 0.9715973003374578,
       "tuning_error_cents": 1.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 97.41313995021106
     },
     {
       "set": "validation",
@@ -607,7 +719,11 @@
       "chord_with_bass": 0.974185079851236,
       "tuning_error_cents": 3.0,
       "beats_found": 0.984375,
-      "downbeats_found": 0.9375
+      "downbeats_found": 0.9375,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 109.52158594048478
     },
     {
       "set": "validation",
@@ -628,7 +744,11 @@
       "chord_with_bass": 0.9738859607091519,
       "tuning_error_cents": 3.0,
       "beats_found": 0.984375,
-      "downbeats_found": 0.9375
+      "downbeats_found": 0.9375,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 196.1102482672292
     },
     {
       "set": "validation",
@@ -649,7 +769,11 @@
       "chord_with_bass": 0.9696875,
       "tuning_error_cents": 1.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": 0.676056338028169,
+      "melody_recall": 0.75,
+      "melody_recall_octave": 0.8125,
+      "melody_false_per_minute": null
     },
     {
       "set": "validation",
@@ -670,7 +794,11 @@
       "chord_with_bass": 0.9793755370953882,
       "tuning_error_cents": 2.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 109.06386846236471
     },
     {
       "set": "validation",
@@ -691,7 +819,11 @@
       "chord_with_bass": 0.9618425575799243,
       "tuning_error_cents": 1.0,
       "beats_found": 1.0,
-      "downbeats_found": 0.0
+      "downbeats_found": 0.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 78.71175100849432
     },
     {
       "set": "validation",
@@ -712,7 +844,11 @@
       "chord_with_bass": 0.9757946923301254,
       "tuning_error_cents": 1.0,
       "beats_found": 0.5,
-      "downbeats_found": 0.0
+      "downbeats_found": 0.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 216.89177828840442
     },
     {
       "set": "validation",
@@ -733,7 +869,11 @@
       "chord_with_bass": 0.9690022602518567,
       "tuning_error_cents": 4.0,
       "beats_found": 1.0,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 187.22194760257045
     },
     {
       "set": "validation",
@@ -754,7 +894,11 @@
       "chord_with_bass": 0.9845490477901545,
       "tuning_error_cents": 1.0,
       "beats_found": 0.953125,
-      "downbeats_found": 1.0
+      "downbeats_found": 1.0,
+      "melody_precision": null,
+      "melody_recall": null,
+      "melody_recall_octave": null,
+      "melody_false_per_minute": 90.33052761239992
     }
   ],
   "summary": {
@@ -767,6 +911,10 @@
       "downbeats_found": 0.8322916666666667,
       "key_exact": 1.0,
       "key_time": 0.9994093626950562,
+      "melody_false_per_minute": 132.84569568874358,
+      "melody_precision": 0.6357941834451901,
+      "melody_recall": 0.7734375,
+      "melody_recall_octave": 0.8828125,
       "meter_exact": 0.8,
       "meter_none": 0.05,
       "pieces": 20.0,
@@ -783,6 +931,10 @@
       "downbeats_found": 0.859375,
       "key_exact": 1.0,
       "key_time": 0.9988118489583333,
+      "melody_false_per_minute": 126.67629573680271,
+      "melody_precision": 0.676056338028169,
+      "melody_recall": 0.75,
+      "melody_recall_octave": 0.8125,
       "meter_exact": 1.0,
       "meter_none": 0.0,
       "pieces": 16.0,

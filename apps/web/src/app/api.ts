@@ -2,6 +2,7 @@
 // chargement du haut de l'écran reste visible pendant la requête.
 
 import { track } from "../state/loading";
+import type { Card } from "../theory/ear";
 import { API_URL, useSession } from "./session";
 
 export type JobStatus = "queued" | "running" | "succeeded" | "failed" | "cancelled";
@@ -110,4 +111,19 @@ export function formatDuration(ms: number | null): string {
   if (ms === null) return "durée inconnue";
   const seconds = Math.round(ms / 1000);
   return `${Math.floor(seconds / 60)} min ${String(seconds % 60).padStart(2, "0")}`;
+}
+
+// ------------------------------------------------------------------ oreille
+
+
+export async function getEarCards(): Promise<Card[]> {
+  return (await request("/v1/ear/cards", {}, "Lecture de vos progrès")).json() as Promise<Card[]>;
+}
+
+export async function putEarCards(cards: Card[]): Promise<void> {
+  await request(
+    "/v1/ear/cards",
+    { method: "PUT", body: JSON.stringify(cards), headers: { "Content-Type": "application/json" } },
+    "Enregistrement de vos progrès",
+  );
 }

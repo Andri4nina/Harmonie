@@ -89,3 +89,17 @@ def test_command_line_reports_unreadable_files(tmp_path) -> None:
     )
     assert result.returncode == 1
     assert "extraction impossible" in result.stderr
+
+
+def test_top_line_follows_the_highest_salient_note() -> None:
+    # Accord de Do en bas, Sol 5 (MIDI 79) tenu au-dessus : la ligne supérieure est ce Sol.
+    signal = 0.15 * c_major(6.0) + 0.12 * tone(79, 6.0)
+    pitch = extract_from_signal(signal)["pitch"]
+    midis = [69 + 12 * np.log2(hz / 440) for hz in pitch["hz"][20:-20] if hz > 0]
+    assert len(midis) > 0.8 * len(pitch["hz"][20:-20])
+    assert abs(np.median(midis) - 79) < 0.5
+    assert np.median(pitch["clarity"][20:-20]) > 0.5
+
+
+def test_melody_can_be_skipped() -> None:
+    assert extract_from_signal(0.2 * c_major(), melody=False)["pitch"] is None

@@ -33,10 +33,26 @@ export function EarTraining() {
   const [entry, setEntry] = useState<string[]>([]);
   const [score, setScore] = useState({ right: 0, total: 0 });
 
-  // Progrès enregistrés relus après l'hydratation de la page pré-rendue.
+  const [sync, setSync] = useState<"off" | "signed-out" | "synced" | "error">("off");
+
+  // Progrès enregistrés relus après l'hydratation de la page pré-rendue, puis
+  // fusionnés avec ceux du compte si l'analyse en ligne est configurée.
   useEffect(() => {
-    void Promise.resolve(useEar.persist.rehydrate()).then(() => setReady(true));
-    return () => stop();
+    let disconnect: (() => void) | undefined;
+    let cancelled = false;
+    void Promise.resolve(useEar.persist.rehydrate()).then(async () => {
+      setReady(true);
+      if (!import.meta.env.VITE_API_URL) return;
+      const { connect } = await import("../app/earSync");
+      const stopSync = await connect((status) => !cancelled && setSync(status));
+      if (cancelled) stopSync();
+      else disconnect = stopSync;
+    });
+    return () => {
+      cancelled = true;
+      disconnect?.();
+      stop();
+    };
   }, []);
 
   const catalog = useMemo(() => exercises(), []);
@@ -125,7 +141,7 @@ export function EarTraining() {
         </h1>
         <p className="mt-4 max-w-[62ch] text-ivory-2">
           Écoutez, répondez, recommencez. Les éléments que vous manquez reviennent vite{" "}; ceux que vous reconnaissez
-          s'espacent. Vos progrès restent sur cet appareil.
+          s'espacent. {sync === "synced" ? "Vos progrès suivent votre compte." : "Vos progrès restent sur cet appareil."}
         </p>
       </section>
 
@@ -318,6 +334,16 @@ export function EarTraining() {
           </div>
         )}
       </Panel>
+      {sync === "signed-out" && (
+        <p className="caption">
+          Connectez-vous depuis{" "}
+          <a href="/analyser" className="underline underline-offset-4 hover:text-ivory">
+            Analyser un morceau
+          </a>{" "}
+          pour retrouver vos progrès sur tous vos appareils.
+        </p>
+      )}
+      {sync === "error" && <p className="caption text-danger">Vos progrès n'ont pas pu être synchronisés ; ils restent sur cet appareil.</p>}
       <p className="caption hidden sm:block">Raccourcis{" "}: chiffres pour répondre (dictée : un chiffre par note, retour arrière pour effacer), espace pour réécouter, Entrée pour continuer.</p>
     </div>
   );

@@ -11,6 +11,7 @@
 //! | `key_segment` | segment | tonalité locale (modulations) |
 //! | `chord` | segment | `chord`, `roman`, `alternatives` |
 //! | `cadence` | instant | `cadence`, `key` |
+//! | `note` | durée de la note | `pitch`, `midi` (ligne supérieure, mélodie probable) |
 //!
 //! Les informations sans confiance propre (durée, accordage, grille des
 //! temps) vont dans le résumé du job. Les trames sans accord ne produisent
@@ -69,6 +70,9 @@ pub fn from_analysis(analysis: &Analysis) -> Vec<NewEvent> {
             let payload = json!({ "chord": chord, "roman": span.roman, "alternatives": span.alternatives });
             push("chord", ms(span.start_ms), ms(span.end_ms), span.confidence, span.certainty, payload);
         }
+    }
+    for note in &analysis.melody {
+        push("note", ms(note.start_ms), ms(note.end_ms), note.confidence, note.certainty, json!({ "pitch": note.pitch, "midi": note.midi }));
     }
     for cadence in &analysis.cadences {
         let at = ms(cadence.at_ms);
@@ -197,7 +201,7 @@ mod tests {
                 frames.boundaries.push(frames.boundaries.last().unwrap() + 0.5);
             }
         }
-        let features = Features { schema: SCHEMA, duration_s: 24.0, sample_rate: 22050, tuning_cents: 0.0, beats_tracked: true, pulse_clarity: 0.8, frames };
+        let features = Features { schema: SCHEMA, duration_s: 24.0, sample_rate: 22050, tuning_cents: 0.0, beats_tracked: true, pulse_clarity: 0.8, pitch: None, frames };
         analyze(&features, &Params::default()).unwrap()
     }
 

@@ -104,7 +104,7 @@ fn features() -> Features {
             frames.boundaries.push(frames.boundaries.last().unwrap() + 0.5);
         }
     }
-    Features { schema: SCHEMA, duration_s: 24.0, sample_rate: 22050, tuning_cents: 0.0, beats_tracked: true, pulse_clarity: 0.8, frames }
+    Features { schema: SCHEMA, duration_s: 24.0, sample_rate: 22050, tuning_cents: 0.0, beats_tracked: true, pulse_clarity: 0.8, pitch: None, frames }
 }
 
 #[tokio::test]
@@ -227,6 +227,23 @@ async fn run(pool: sqlx::PgPool) {
     }
     let failed = api.user("GET", &format!("/v1/tracks/{}", second_track["id"].as_str().unwrap()), alice, None).await.1;
     assert_eq!((failed["status"].as_str(), failed["error"].as_str()), (Some("failed"), Some("décodage impossible")));
+
+    // Progrès de l'oreille : chacun les siens, et la fiche la plus avancée l'emporte.
+    let card = |seen: u32| json!({ "item": "interval:P5:asc", "ease": 2.5, "streak": 1, "seen": seen, "correct": 1, "interval_ms": 60000, "due_ms": 0 });
+    let put = |user: Uuid, body: Value| {
+        Request::put("/v1/ear/cards")
+            .header("authorization", format!("Bearer {}", token(user)))
+            .header("content-type", "application/json")
+            .body(Body::from(body.to_string()))
+            .unwrap()
+    };
+    assert_eq!(api.send(put(alice, json!([card(5)]))).await.0, StatusCode::NO_CONTENT);
+    assert_eq!(api.send(put(alice, json!([card(2)]))).await.0, StatusCode::NO_CONTENT);
+    let (_, cards) = api.user("GET", "/v1/ear/cards", alice, None).await;
+    assert_eq!(cards[0]["seen"], 5, "une fiche moins avancée n'écrase pas la plus récente");
+    assert_eq!(api.user("GET", "/v1/ear/cards", bob, None).await.1.as_array().unwrap().len(), 0);
+    let bad = json!([{ "item": "x", "ease": 2.5, "streak": 0, "seen": 1, "correct": 3, "interval_ms": 0, "due_ms": 0 }]);
+    assert_eq!(api.send(put(alice, bad)).await.0, StatusCode::BAD_REQUEST);
 
     let _ = std::fs::remove_dir_all(storage_dir);
 }

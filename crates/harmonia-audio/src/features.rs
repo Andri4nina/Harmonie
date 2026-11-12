@@ -25,7 +25,22 @@ pub struct Features {
     pub beats_tracked: bool,
     /// Netteté de la pulsation, de 0 (rien ne marque les temps) à 1.
     pub pulse_clarity: f64,
+    /// Suivi de la hauteur fondamentale, s'il a été calculé.
+    #[serde(default)]
+    pub pitch: Option<PitchTrack>,
     pub frames: Frames,
+}
+
+/// Ligne supérieure à pas réguliers (voir le worker).
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PitchTrack {
+    /// Durée d'un pas, en secondes.
+    pub hop_s: f64,
+    /// Fréquence de chaque pas en hertz ; 0 quand rien n'est voisé.
+    pub hz: Vec<f64>,
+    /// Clarté de la hauteur retenue, de 0 (rien ne se détache) à 1.
+    #[serde(alias = "voiced_prob")]
+    pub clarity: Vec<f64>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -79,6 +94,12 @@ impl Features {
         let chroma_ok = frames.chroma.iter().chain(&frames.bass_chroma).all(|c| finite(c));
         if !chroma_ok || !finite(&frames.rms) || !finite(&frames.onset_strength) || !finite(&frames.boundaries) {
             return Err("les descripteurs doivent être finis et positifs".into());
+        }
+        if let Some(pitch) = &self.pitch {
+            let finite = pitch.hz.iter().chain(&pitch.clarity).all(|v| v.is_finite() && *v >= 0.0);
+            if pitch.hz.len() != pitch.clarity.len() || !finite || pitch.hop_s.partial_cmp(&0.0) != Some(std::cmp::Ordering::Greater) {
+                return Err("suivi de hauteur incohérent".into());
+            }
         }
         if !self.duration_s.is_finite() || !self.tuning_cents.is_finite() || !self.pulse_clarity.is_finite() {
             return Err("durée ou accordage invalide".into());

@@ -21,7 +21,7 @@ from dataclasses import dataclass
 
 from .features import extract
 
-VERSION = "1.3.0"
+VERSION = "1.4.0"
 HEARTBEAT_S = 20.0
 log = logging.getLogger("harmonia_worker")
 

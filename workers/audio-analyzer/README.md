@@ -47,6 +47,7 @@ qu'une portion.
 | Temps | Suivi par programmation dynamique (Ellis) sur l'enveloppe des attaques. |
 | Trames | Deux par temps ; trames fixes de 0,5 s si aucun temps n'est suivi. |
 | Netteté de la pulsation | Autocorrélation de l'enveloppe des attaques à la période des temps. |
+| Ligne supérieure | Saillance par sommation harmonique sur la CQT (Sol 3 à Sol 6) ; à chaque pas, la plus aiguë des hauteurs saillantes, et sa clarté. |
 
 L'interprétation (gabarits d'accords + Viterbi, profils de Krumhansl-Kessler
 départagés par les accords, tempo, mesure) est documentée en tête de chaque
@@ -93,6 +94,27 @@ Fiabilité de la certitude annoncée, sur la validation : les accords marqués
 Temps de calcul : 2 à 4 s d'extraction pour 30 à 70 s d'audio (hors premier
 lancement, qui compile les fonctions de librosa : environ 20 s).
 
+### Mélodie (ligne supérieure, v1.4.0)
+
+Sur les trois morceaux du corpus qui ont une mélodie (attaque à 100 ms près,
+même hauteur) :
+
+| Mesure | Réglage (2 morceaux) | Validation (1 morceau) |
+|---|---|---|
+| Rappel | 77 % | 75 % |
+| Rappel à l'octave près | 88 % | 81 % |
+| Précision | 64 % | 68 % |
+
+Sur les 33 morceaux **sans** mélodie, la méthode trouve en moyenne
+**130 notes par minute** : la voix supérieure des accords. C'est sa limite
+de principe — rien ne distingue, dans le signal, une mélodie de la voix
+aiguë d'un accompagnement. Les notes sont donc présentées comme « ligne
+supérieure (mélodie probable) » et jamais marquées `detected`.
+
+Un premier essai avec pYIN (suivi de hauteur pour une voix seule) ne
+trouvait **aucune** note dans ces mélanges : probabilité de voisement
+proche de 0,01 partout. Il a été remplacé.
+
 ### Ce que ces chiffres ne disent pas
 
 - **Ce ne sont pas des enregistrements.** Pas de voix, de réverbération, de
@@ -110,5 +132,6 @@ lancement, qui compile les fonctions de librosa : environ 20 s).
   ils ne sont pas trouvés.
 - **Vocabulaire** : majeur, mineur, 7, maj7, m7, diminué, sus4. Les autres
   accords sont ramenés au plus proche.
-- Mélodie (pYIN), structure (couplet / refrain) et transcription polyphonique
-  ne sont pas encore faites.
+- Structure (couplet / refrain) et transcription polyphonique ne sont pas
+  encore faites. La mélodie n'est pas séparée de l'accompagnement (voir
+  ci-dessus).

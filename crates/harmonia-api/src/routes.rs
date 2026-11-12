@@ -45,7 +45,7 @@ pub async fn health(State(state): State<AppState>) -> Response {
 }
 
 /// Crée ou met à jour la fiche de l'utilisateur authentifié.
-async fn ensure_user(state: &AppState, user: &User) -> ApiResult<()> {
+pub(crate) async fn ensure_user(state: &AppState, user: &User) -> ApiResult<()> {
     let display_name = user.email.as_deref().and_then(|email| email.split('@').next()).filter(|name| !name.is_empty()).unwrap_or("Musicien");
     sqlx::query(
         "INSERT INTO users (id, email, display_name) VALUES ($1, $2, $3)

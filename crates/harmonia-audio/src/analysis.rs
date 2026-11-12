@@ -11,11 +11,12 @@
 //! Les formules de confiance sont documentées sur chaque fonction ; elles sont
 //! des mesures de netteté du signal, pas des probabilités étalonnées.
 
-use harmonia_theory::{Cadence, Chord, Key, Note, PitchClass, RomanNumeral, Spelling};
+use harmonia_theory::{Cadence, Chord, Key, Note, Pitch, PitchClass, RomanNumeral, Spelling};
 use serde::{Deserialize, Serialize};
 
 use crate::chords::{self, Segment};
 use crate::features::Features;
+use crate::melody;
 use crate::meter;
 use crate::tonality::{self, FrameChord, KeySegment};
 
@@ -54,6 +55,9 @@ pub struct Analysis {
     pub key_segments: Vec<KeySpan>,
     pub chords: Vec<ChordSpan>,
     pub cadences: Vec<CadenceEvent>,
+    /// Notes de la ligne mélodique, si la hauteur a été suivie.
+    #[serde(default)]
+    pub melody: Vec<MelodyNote>,
     pub beats_ms: Vec<u64>,
     pub downbeats_ms: Vec<u64>,
 }
@@ -124,6 +128,17 @@ pub struct ChordAlternative {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct MelodyNote {
+    pub start_ms: u64,
+    pub end_ms: u64,
+    /// Hauteur orthographiée selon la tonalité principale (« F#4 », « Bb3 »).
+    pub pitch: Pitch,
+    pub midi: i32,
+    pub confidence: f64,
+    pub certainty: Certainty,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct CadenceEvent {
     /// Instant où l'accord d'arrivée commence.
     pub at_ms: u64,
@@ -138,6 +153,7 @@ pub struct CadenceEvent {
 pub struct Params {
     pub chords: chords::Params,
     pub tonality: tonality::Params,
+    pub melody: melody::Params,
 }
 
 fn ms(seconds: f64) -> u64 {
@@ -314,6 +330,9 @@ pub fn analyze(features: &Features, params: &Params) -> Result<Analysis, String>
         MeterResult { beats_per_bar: m.beats_per_bar, confidence: round(confidence), certainty: Certainty::of(confidence) }
     });
 
+    // Notes de la mélodie : dièses ou bémols selon l'armure de la tonalité principale.
+    let spelling = if key.as_ref().is_some_and(|k| k.key.signature() < 0) { Spelling::Flats } else { Spelling::Sharps };
+
     Ok(Analysis {
         schema: crate::features::SCHEMA,
         duration_ms: ms(features.duration_s),
@@ -336,6 +355,21 @@ pub fn analyze(features: &Features, params: &Params) -> Result<Analysis, String>
             .collect(),
         chords: chord_spans,
         cadences,
+        melody: features.pitch.as_ref().map_or(Vec::new(), |track| {
+            melody::notes(&track.hz, &track.clarity, track.hop_s, features.tuning_cents, &params.melody)
+                .into_iter()
+                .map(|note| MelodyNote {
+                    start_ms: ms(note.start_s),
+                    end_ms: ms(note.end_s),
+                    pitch: Pitch::from_midi(note.midi, spelling),
+                    midi: note.midi,
+                    confidence: round(note.confidence),
+                    // Rien ne garantit que la ligne supérieure soit la
+                    // mélodie : jamais « détectée », au mieux « estimée ».
+                    certainty: if note.confidence >= 0.5 { Certainty::Estimated } else { Certainty::Uncertain },
+                })
+                .collect()
+        }),
         beats_ms: beat_times.iter().map(|&t| ms(t)).collect(),
         downbeats_ms,
     })
@@ -366,7 +400,7 @@ mod tests {
                 frames.boundaries.push(frames.boundaries.last().unwrap() + 0.5);
             }
         }
-        Features { schema: SCHEMA, duration_s: chords.len() as f64 * 2.0, sample_rate: 22050, tuning_cents: 0.0, beats_tracked: true, pulse_clarity: 0.8, frames }
+        Features { schema: SCHEMA, duration_s: chords.len() as f64 * 2.0, sample_rate: 22050, tuning_cents: 0.0, beats_tracked: true, pulse_clarity: 0.8, pitch: None, frames }
     }
 
     fn chord_names(analysis: &Analysis) -> Vec<String> {

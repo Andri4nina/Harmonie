@@ -13,7 +13,10 @@
 //! - **accords**, en part de la durée du morceau : fondamentale juste,
 //!   fondamentale + caractère majeur/mineur, accord exact, accord exact avec
 //!   sa basse ;
-//! - **certitude** : justesse des accords pour chaque niveau annoncé.
+//! - **certitude** : justesse des accords pour chaque niveau annoncé ;
+//! - **mélodie** : sur les morceaux qui en ont une, précision et rappel des
+//!   notes (attaque à 100 ms près, même hauteur ; à l'octave près à part) ;
+//!   sur les autres, notes trouvées à tort par minute.
 
 use std::collections::BTreeMap;
 use std::{env, fs};
@@ -38,6 +41,13 @@ struct Piece {
     tuning_cents: f64,
     keys: Vec<KeyTruth>,
     chords: Vec<ChordTruth>,
+    melody: Vec<MelodyTruth>,
+}
+
+#[derive(Deserialize)]
+struct MelodyTruth {
+    midi: i32,
+    start_beat: f64,
 }
 
 #[derive(Deserialize)]
@@ -80,6 +90,12 @@ struct PieceScore {
     beats_found: f64,
     /// Part des premiers temps réels retrouvés à 70 ms près.
     downbeats_found: f64,
+    /// Mélodie : précision, rappel, rappel à l'octave près (morceaux avec mélodie).
+    melody_precision: Option<f64>,
+    melody_recall: Option<f64>,
+    melody_recall_octave: Option<f64>,
+    /// Notes trouvées par minute sur un morceau sans mélodie.
+    melody_false_per_minute: Option<f64>,
 }
 
 #[derive(Serialize, Default)]
@@ -116,7 +132,17 @@ fn summarize(pieces: &[&PieceScore]) -> BTreeMap<&'static str, f64> {
         ("tuning_error_cents", mean(&|p| p.tuning_error_cents)),
         ("beats_found", mean(&|p| p.beats_found)),
         ("downbeats_found", mean(&|p| p.downbeats_found)),
+        ("melody_precision", mean_of(pieces, |p| p.melody_precision)),
+        ("melody_recall", mean_of(pieces, |p| p.melody_recall)),
+        ("melody_recall_octave", mean_of(pieces, |p| p.melody_recall_octave)),
+        ("melody_false_per_minute", mean_of(pieces, |p| p.melody_false_per_minute)),
     ])
+}
+
+/// Moyenne d'une mesure facultative, sur les morceaux où elle existe (-1 si aucun).
+fn mean_of(pieces: &[&PieceScore], value: impl Fn(&PieceScore) -> Option<f64>) -> f64 {
+    let values: Vec<f64> = pieces.iter().filter_map(|p| value(p)).collect();
+    if values.is_empty() { -1.0 } else { values.iter().sum::<f64>() / values.len() as f64 }
 }
 
 fn same_key(a: &Key, b: &Key) -> bool {
@@ -220,6 +246,35 @@ fn main() {
         let true_downbeats: Vec<f64> = (0..total_beats).step_by(piece.beats_per_bar).map(at).collect();
         let seconds = |ms: &[u64]| ms.iter().map(|&v| v as f64 / 1000.0).collect::<Vec<f64>>();
 
+        // Mélodie : appariement glouton des notes trouvées aux notes écrites.
+        let found_notes: Vec<(f64, i32)> = analysis.melody.iter().map(|n| (n.start_ms as f64 / 1000.0, n.midi)).collect();
+        let (melody_precision, melody_recall, melody_recall_octave, melody_false_per_minute) = if piece.melody.is_empty() {
+            let minutes = analysis.duration_ms as f64 / 60_000.0;
+            (None, None, None, Some(found_notes.len() as f64 / minutes.max(1e-9)))
+        } else {
+            let truth: Vec<(f64, i32)> = piece.melody.iter().map(|n| (corpus.lead_in_s + n.start_beat * beat_s, n.midi)).collect();
+            let matches = |octave: bool| {
+                let mut used = vec![false; found_notes.len()];
+                let mut hits = 0;
+                for (time, midi) in &truth {
+                    if let Some(index) = found_notes.iter().enumerate().position(|(i, (t, m))| {
+                        !used[i] && (t - time).abs() <= 0.1 && if octave { (m - midi).rem_euclid(12) == 0 } else { m == midi }
+                    }) {
+                        used[index] = true;
+                        hits += 1;
+                    }
+                }
+                hits as f64
+            };
+            let exact = matches(false);
+            (
+                Some(if found_notes.is_empty() { 0.0 } else { exact / found_notes.len() as f64 }),
+                Some(exact / truth.len() as f64),
+                Some(matches(true) / truth.len() as f64),
+                None,
+            )
+        };
+
         pieces.push(PieceScore {
             set: piece.set.clone(),
             id: piece.id.clone(),
@@ -240,6 +295,10 @@ fn main() {
             tuning_error_cents: (analysis.tuning.cents - piece.tuning_cents).abs(),
             beats_found: matched(&true_beats, &seconds(&analysis.beats_ms)),
             downbeats_found: matched(&true_downbeats, &seconds(&analysis.downbeats_ms)),
+            melody_precision,
+            melody_recall,
+            melody_recall_octave,
+            melody_false_per_minute,
         });
     }
 
@@ -269,6 +328,20 @@ fn main() {
             pct(p.beats_found),
             pct(p.downbeats_found),
         );
+    }
+    println!("\nmélodie, par morceau :");
+    for p in &pieces {
+        match (p.melody_precision, p.melody_recall, p.melody_false_per_minute) {
+            (Some(precision), Some(recall), _) => println!(
+                "  {:<22} précision {:>3.0} %, rappel {:>3.0} % (à l'octave près {:>3.0} %)",
+                p.id,
+                precision * 100.0,
+                recall * 100.0,
+                p.melody_recall_octave.unwrap_or(0.0) * 100.0
+            ),
+            (_, _, Some(false_rate)) => println!("  {:<22} sans mélodie : {false_rate:.0} notes trouvées par minute", p.id),
+            _ => {}
+        }
     }
     for (set, values) in &summary {
         println!("\n== {set}");

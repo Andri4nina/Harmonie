@@ -63,6 +63,10 @@ export function Timeline({
   const chords = events.filter((event) => event.feature === "chord");
   const keys = events.filter((event) => event.feature === "key_segment");
   const cadences = events.filter((event) => event.feature === "cadence");
+  const notes = events.filter((event) => event.feature === "note");
+  const midis = notes.map((event) => Number(event.payload.midi));
+  const low = Math.min(...midis);
+  const span = Math.max(1, Math.max(...midis) - low);
   const downbeats = new Set(downbeatsMs);
 
   // Pendant la lecture, la tête reste au premier tiers de la zone visible.
@@ -106,6 +110,26 @@ export function Timeline({
             );
           })}
         </div>
+
+        {notes.length > 0 && (
+          <>
+            <div className="caption mt-3 mb-1">Ligne supérieure (mélodie probable)</div>
+            <div className="relative h-20" role="img" aria-label={`Ligne supérieure : ${notes.length} notes`}>
+              {notes.map((event) => (
+                <span
+                  key={event.id}
+                  title={`${String(event.payload.pitch)}, ${CERTAINTY[event.certainty] ?? event.certainty}`}
+                  className={`absolute h-1.5 rounded-full ${event.certainty === "uncertain" ? "bg-ivory/30" : "bg-ivory/70"}`}
+                  style={{
+                    left: at(event.start_ms),
+                    width: Math.max(at(event.end_ms - event.start_ms) - 1, 3),
+                    top: `${(1 - (Number(event.payload.midi) - low) / span) * 88}%`,
+                  }}
+                />
+              ))}
+            </div>
+          </>
+        )}
 
         <div className="caption mt-3 mb-1">Tonalité</div>
         <div className="relative h-7">
