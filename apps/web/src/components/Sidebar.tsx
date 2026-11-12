@@ -18,10 +18,10 @@ const ENTRIES: Entry[] = [
   { label: "Analyser un morceau", icon: "analyzer", to: "/analyser" },
   { label: "Ma bibliothèque", icon: "library", to: "/bibliotheque" },
   { label: "Entraîner l'oreille", icon: "ear", to: "/oreille" },
+  { label: "Composer", icon: "generator", to: "/composer" },
   { label: "Télécharger", icon: "download", to: "/telecharger" },
   { label: "Réglages", icon: "settings", to: "/settings" },
   { label: "Apprendre", icon: "learning", arrives: "v1.5" },
-  { label: "Composer", icon: "generator", arrives: "v1.5" },
 ];
 
 function Brand() {

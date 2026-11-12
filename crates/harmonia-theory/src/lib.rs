@@ -22,7 +22,9 @@
 //! ```
 
 pub mod chord;
+pub mod compose;
 pub mod ear;
+pub mod export;
 pub mod error;
 pub mod harmony;
 pub mod instrument;

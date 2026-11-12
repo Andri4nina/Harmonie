@@ -139,3 +139,40 @@ pub fn ear_progress(exercise_id: &str, level: usize, known: JsValue) -> Result<V
     let (mastered, total) = ear::level_progress(exercise(exercise_id)?, level, &cards(known)?);
     Ok(vec![mastered, total])
 }
+
+// ------------------------------------------------------------------ générateur
+
+use harmonia_theory::compose::{self, Piece, Settings};
+use harmonia_theory::export;
+
+fn piece_from(value: JsValue) -> Result<Piece, JsError> {
+    serde_wasm_bindgen::from_value(value).map_err(|error| JsError::new(&error.to_string()))
+}
+
+/// Compose un morceau. `settings` : `{ key, style, bars, bpm }` ; `seed` < 2^53.
+#[wasm_bindgen]
+pub fn compose(settings: JsValue, seed: f64) -> Result<JsValue, JsError> {
+    let settings: Settings = serde_wasm_bindgen::from_value(settings).map_err(|error| JsError::new(&error.to_string()))?;
+    if !(3..=32).contains(&settings.bars) || !(40.0..=220.0).contains(&settings.bpm) {
+        return Err(JsError::new("de 3 à 32 mesures, de 40 à 220 BPM"));
+    }
+    to_js(&compose::compose(&settings, seed as u64))
+}
+
+/// Le morceau en fichier MIDI standard.
+#[wasm_bindgen(js_name = pieceMidi)]
+pub fn piece_midi(piece: JsValue) -> Result<Vec<u8>, JsError> {
+    Ok(export::to_midi(&piece_from(piece)?))
+}
+
+/// Le morceau en partition MusicXML.
+#[wasm_bindgen(js_name = pieceMusicXml)]
+pub fn piece_musicxml(piece: JsValue, title: &str) -> Result<String, JsError> {
+    Ok(export::to_musicxml(&piece_from(piece)?, title))
+}
+
+/// Événements à jouer pour écouter le morceau.
+#[wasm_bindgen(js_name = piecePlayback)]
+pub fn piece_playback(piece: JsValue) -> Result<JsValue, JsError> {
+    to_js(&export::playback(&piece_from(piece)?))
+}

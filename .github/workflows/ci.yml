@@ -26,6 +26,13 @@ jobs:
       - run: cargo test --workspace --all-features
         env:
           TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+      # Exports du générateur relus par des outils indépendants (mido, XML).
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install mido
+      - run: cargo run -q -p harmonia-theory --features serde --example export_sample -- exports
+      - run: python scripts/check_exports.py exports
 
   web:
     runs-on: ubuntu-latest

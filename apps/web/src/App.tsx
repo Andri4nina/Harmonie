@@ -3,6 +3,7 @@ import { Link, Navigate, Route, Routes, useLocation } from "react-router";
 import { Loader, TopProgress } from "./components/Loader";
 import { Sidebar } from "./components/Sidebar";
 import { TopoBackground } from "./components/TopoBackground";
+import { Composer } from "./pages/Composer";
 import { Dashboard } from "./pages/Dashboard";
 import { Downloads } from "./pages/Downloads";
 import { EarTraining } from "./pages/EarTraining";
@@ -64,6 +65,7 @@ export function App() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/telecharger" element={<Downloads />} />
             <Route path="/oreille" element={<EarTraining />} />
+            <Route path="/composer" element={<Composer />} />
             <Route path="/analyser" element={<OnDemand><Analyzer /></OnDemand>} />
             <Route path="/analyser/:id" element={<OnDemand><TrackPage /></OnDemand>} />
             <Route path="/bibliotheque" element={<OnDemand><Library /></OnDemand>} />
