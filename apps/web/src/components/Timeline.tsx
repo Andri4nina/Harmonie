@@ -125,7 +125,7 @@ export function Timeline({
           {beatsMs.map((beat) => (
             <span
               key={beat}
-              className={`absolute bottom-0 w-px ${downbeats.has(beat) ? "h-full bg-[rgb(236_230_216/0.55)]" : "h-1/2 bg-[rgb(236_230_216/0.22)]"}`}
+              className={`absolute bottom-0 w-px ${downbeats.has(beat) ? "h-full bg-ivory/55" : "h-1/2 bg-ivory/20"}`}
               style={{ left: at(beat) }}
             />
           ))}

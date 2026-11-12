@@ -19,6 +19,7 @@
   --color-brass: #d9b46a;
   --color-brass-deep: #8a6e3a;
   --color-line: rgb(236 230 216 / 0.1);
+  --color-danger: #f0a48c;
 
   /* Alias historiques des composants. */
   --color-ink: #161a2e;
@@ -37,11 +38,12 @@
 @layer base {
 /* Couleur d'une note : teinte de sa classe de hauteur, sourde et lumineuse. */
 [data-hue] {
-  --note: oklch(0.8 0.085 var(--h, 70));
-  --note-soft: oklch(0.8 0.085 var(--h, 70) / 0.14);
-  --note-line: oklch(0.8 0.085 var(--h, 70) / 0.42);
+  --note: oklch(var(--note-l) var(--note-c) var(--h, 70));
+  --note-soft: oklch(var(--note-l) var(--note-c) var(--h, 70) / 0.14);
+  --note-line: oklch(var(--note-l) var(--note-c) var(--h, 70) / 0.42);
 }
 
+/* Thème sombre, par défaut (pages pré-rendues comprises). */
 :root {
   color-scheme: dark;
   /* Accent unique de l'interface. */
@@ -49,6 +51,50 @@
   --accent-strong: #ecd096;
   --accent-soft: rgb(217 180 106 / 0.13);
   --accent-line: rgb(217 180 106 / 0.4);
+  --note-l: 0.8;
+  --logo-bg: #161a2e;
+  --note-c: 0.085;
+  --glow: rgb(60 66 120 / 0.45);
+  --glass-bg: rgb(35 40 70 / 0.55);
+  --glass-border: rgb(236 230 216 / 0.09);
+  --glass-raised: rgb(28 32 56 / 0.94);
+  --shadow: rgb(5 6 14 / 0.9);
+  --topo-dash: rgb(236 230 216 / 0.12);
+  --topo-master: rgb(217 180 106 / 0.28);
+  --scroll-thumb: rgb(236 230 216 / 0.22);
+  --scroll-thumb-hover: rgb(217 180 106 / 0.7);
+}
+
+/*
+ * Thème clair : papier froid (pas de crème), encre bleu nuit, laiton foncé
+ * pour garder un contraste AA sur le fond.
+ */
+[data-theme="light"] {
+  color-scheme: light;
+  --color-night: #eef0f6;
+  --color-velvet: #ffffff;
+  --color-ivory: #161a2e;
+  --color-ivory-2: rgb(22 26 46 / 0.7);
+  --color-ivory-3: rgb(22 26 46 / 0.52);
+  --color-brass: #8a6526;
+  --color-line: rgb(22 26 46 / 0.12);
+  --color-danger: #a8432a;
+  --color-ink-2: #ffffff;
+  --accent-strong: #6e4f1c;
+  --accent-soft: rgb(138 101 38 / 0.12);
+  --accent-line: rgb(138 101 38 / 0.42);
+  --note-l: 0.56;
+  --logo-bg: #ffffff;
+  --note-c: 0.12;
+  --glow: rgb(150 162 225 / 0.35);
+  --glass-bg: rgb(255 255 255 / 0.62);
+  --glass-border: rgb(22 26 46 / 0.1);
+  --glass-raised: rgb(255 255 255 / 0.97);
+  --shadow: rgb(22 26 46 / 0.2);
+  --topo-dash: rgb(22 26 46 / 0.13);
+  --topo-master: rgb(138 101 38 / 0.38);
+  --scroll-thumb: rgb(22 26 46 / 0.22);
+  --scroll-thumb-hover: rgb(138 101 38 / 0.75);
 }
 
 html,
@@ -60,7 +106,7 @@ body,
 body {
   margin: 0;
   background:
-    radial-gradient(90% 60% at 80% -10%, rgb(60 66 120 / 0.45), transparent 70%),
+    radial-gradient(90% 60% at 80% -10%, var(--glow), transparent 70%),
     var(--color-night);
   color: var(--color-ivory);
   font-family: var(--font-sans);
@@ -82,10 +128,10 @@ body {
  */
 .glass {
   position: relative;
-  background: rgb(35 40 70 / 0.55);
+  background: var(--glass-bg);
   backdrop-filter: blur(18px) saturate(1.2);
   -webkit-backdrop-filter: blur(18px) saturate(1.2);
-  border: 1px solid rgb(236 230 216 / 0.09);
+  border: 1px solid var(--glass-border);
   border-radius: 18px;
 }
 
@@ -94,10 +140,10 @@ body {
 }
 
 .glass-raised {
-  background: rgb(28 32 56 / 0.94);
+  background: var(--glass-raised);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  box-shadow: 0 24px 60px -24px rgb(5 6 14 / 0.9);
+  box-shadow: 0 24px 60px -24px var(--shadow);
 }
 
 /* Mode léger et transparence réduite : aplats opaques, aucun flou. */
@@ -210,63 +256,67 @@ a {
 }
 
 ::selection {
-  background: rgb(217 180 106 / 0.35);
+  background: var(--accent-line);
 }
 
-/* Zones défilantes horizontales (piano, manche) : barre discrète. */
+/*
+ * Barres de défilement : une pastille fine et arrondie, qui passe au laiton
+ * au survol. Chromium et Safari prennent la version dessinée ; Firefox, qui
+ * ne la connaît pas, reçoit les couleurs standard.
+ */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scroll-thumb);
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: 999px;
+  min-height: 40px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scroll-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--color-brass);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  html,
+  .scroll-x {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scroll-thumb) transparent;
+  }
+}
+
+/* Zones défilantes horizontales (piano, manche, frise) : barre plus fine. */
 .scroll-x {
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgb(236 230 216 / 0.25) transparent;
+}
+
+.scroll-x::-webkit-scrollbar {
+  height: 9px;
 }
 
 /* ------------------------------------------------------------------ */
 /* Chargement                                                          */
 /* ------------------------------------------------------------------ */
 
-.topo-loader ellipse {
-  fill: none;
-  stroke: var(--color-brass);
-  transform-origin: 50px 50px;
-  animation: topo-breathe 2.4s var(--ease-out-soft) infinite;
-}
-
-.topo-loader-line {
-  stroke-width: 1.4;
-  stroke-dasharray: 3 4;
-  opacity: 0.5;
-}
-
-.topo-loader-master {
-  stroke-width: 2;
-}
-
-.topo-loader-core {
-  fill: var(--color-ivory);
-  animation: topo-pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes topo-breathe {
-  0%,
-  100% {
-    transform: rotate(0deg) scale(0.92);
-    stroke-dashoffset: 0;
-  }
-  50% {
-    transform: rotate(12deg) scale(1.04);
-    stroke-dashoffset: -14;
-  }
-}
-
-@keyframes topo-pulse {
-  50% {
-    opacity: 0.35;
-  }
-}
-
 .skeleton {
-  background: linear-gradient(90deg, rgb(236 230 216 / 0.04), rgb(236 230 216 / 0.1), rgb(236 230 216 / 0.04));
+  background: linear-gradient(90deg, var(--color-line), var(--scroll-thumb), var(--color-line));
   background-size: 200% 100%;
   animation: shimmer 1.4s linear infinite;
 }

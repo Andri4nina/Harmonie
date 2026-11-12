@@ -1,7 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+export type ThemeChoice = "system" | "light" | "dark";
+
 interface Settings {
+  /** Thème choisi ; « system » suit le réglage de l'appareil. */
+  theme: ThemeChoice;
   /** Mode léger : pas de flou, relief figé. */
   lite: boolean;
   /** Fréquence du La4 en hertz. */
@@ -13,6 +17,7 @@ interface Settings {
   /** Vrai une fois les réglages enregistrés relus (jamais avant l'hydratation). */
   ready: boolean;
   setLite: (lite: boolean) => void;
+  setTheme: (theme: ThemeChoice) => void;
   setA4: (a4: number) => void;
   setInstrument: (id: string) => void;
   visit: (id: string) => void;
@@ -24,12 +29,14 @@ export const A4_MAX = 466;
 export const useSettings = create<Settings>()(
   persist(
     (set) => ({
+      theme: "system",
       lite: false,
       a4: 440,
       instrumentId: "guitar",
       history: [],
       ready: false,
       setLite: (lite) => set({ lite }),
+      setTheme: (theme) => set({ theme }),
       setA4: (a4) => set({ a4: Math.min(A4_MAX, Math.max(A4_MIN, a4)) }),
       setInstrument: (instrumentId) => set({ instrumentId }),
       visit: (id) =>
@@ -43,7 +50,7 @@ export const useSettings = create<Settings>()(
       name: "harmonia-settings",
       version: 1,
       skipHydration: true,
-      partialize: ({ lite, a4, instrumentId, history }) => ({ lite, a4, instrumentId, history }),
+      partialize: ({ theme, lite, a4, instrumentId, history }) => ({ theme, lite, a4, instrumentId, history }),
     },
   ),
 );

@@ -118,7 +118,7 @@ function Correction({ trackId, event, onSaved }: { trackId: string; event: Timel
         </>
       )}
       {error && (
-        <p role="alert" className="mt-3 text-[#f0a48c]">
+        <p role="alert" className="mt-3 text-danger">
           {error}
         </p>
       )}
@@ -218,7 +218,7 @@ function Player({ data, onReload }: { data: Analysis; onReload: () => void }) {
           </p>
         </div>
         {!source && !audioError && <Loader label="Chargement du fichier audio" size={48} />}
-        {audioError && <p className="mt-3 text-[#f0a48c]">{audioError}</p>}
+        {audioError && <p className="mt-3 text-danger">{audioError}</p>}
         {source && (
           <audio
             ref={audio}
@@ -286,7 +286,7 @@ function Content({ id }: { id: string }) {
   }, [status, load]);
 
   const title = useMemo(() => data?.track.title ?? "", [data]);
-  if (error) return <p className="text-[#f0a48c]">{error}</p>;
+  if (error) return <p className="text-danger">{error}</p>;
   if (!data) return <Loader label="Chargement de l'analyse" />;
 
   return (

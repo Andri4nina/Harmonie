@@ -38,7 +38,7 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
     <div className="scroll-x -mx-1 px-1 pb-2">
       <svg
         viewBox={`0 0 ${WIDTH} ${height}`}
-        className="w-full min-w-[600px] select-none"
+        className="w-full min-w-[600px] select-none text-ivory"
         role="img"
         aria-label={`${instrument.name} : positions de ${tones.map((tone) => tone.note).join(", ")}`}
       >
@@ -60,7 +60,7 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
           />
         ))}
         {/* Sillet, puis frettes (ou repères en pointillés sur une touche lisse). */}
-        <line x1={NUT} y1={TOP - 10} x2={NUT} y2={bottom + 10} stroke="rgb(236 230 216 / 0.7)" strokeWidth={3} />
+        <line x1={NUT} y1={TOP - 10} x2={NUT} y2={bottom + 10} stroke="currentColor" strokeOpacity={0.7} strokeWidth={3} />
         {Array.from({ length: stops }, (_, index) => index + 1).map((stop) => (
           <g key={stop}>
             <line
@@ -78,7 +78,7 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
               textAnchor="middle"
               fontSize={9}
               fontFamily="var(--font-sans)"
-              fill="rgb(236 230 216 / 0.35)"
+              fill="currentColor" fillOpacity={0.35}
             >
               {stop}
             </text>
@@ -91,7 +91,7 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
               y1={yOf(index)}
               x2={WIDTH - 12}
               y2={yOf(index)}
-              stroke="rgb(236 230 216 / 0.34)"
+              stroke="currentColor" strokeOpacity={0.34}
               strokeWidth={1 + (stringCount - 1 - index) * 0.28}
             />
             <text
@@ -99,7 +99,7 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
               y={yOf(index) + 3}
               fontSize={9}
               fontFamily="var(--font-sans)"
-              fill="rgb(236 230 216 / 0.4)"
+              fill="currentColor" fillOpacity={0.4}
             >
               {string.open}
             </text>
@@ -133,7 +133,7 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
                 fontSize={8.5}
                 fontWeight={600}
                 fontFamily="var(--font-sans)"
-                fill={isRoot || sounding ? "#161a2e" : "#e8eef5"}
+                fill={isRoot || sounding ? "#161a2e" : "currentColor"}
                 pointerEvents="none"
               >
                 {mark.note}

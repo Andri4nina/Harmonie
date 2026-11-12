@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router";
+import { Logo } from "./Logo";
+import { ThemeSwitch } from "./ThemeSwitch";
 import { Icon } from "./ui";
 
 interface Entry {
@@ -25,7 +27,7 @@ const ENTRIES: Entry[] = [
 function Brand() {
   return (
     <NavLink to="/" className="flex items-center gap-3 rounded-xl" aria-label="Harmonie, accueil">
-      <img src="/favicon.svg" alt="" className="size-9 rounded-[10px]" />
+      <Logo className="size-10 shrink-0" />
       <span className="font-display text-[1.2rem] leading-none font-semibold">Harmonie</span>
     </NavLink>
   );
@@ -105,7 +107,8 @@ export function Sidebar() {
         <div className="flex-1 overflow-y-auto">
           <Navigation />
         </div>
-        <div className="px-2">
+        <div className="flex flex-col gap-4 px-2">
+          <ThemeSwitch compact />
           <Credit />
         </div>
       </aside>
@@ -145,7 +148,8 @@ export function Sidebar() {
               </button>
             </div>
             <Navigation onNavigate={() => setOpen(false)} />
-            <div className="mt-auto px-2">
+            <div className="mt-auto flex flex-col gap-4 px-2">
+              <ThemeSwitch />
               <Credit />
             </div>
           </div>

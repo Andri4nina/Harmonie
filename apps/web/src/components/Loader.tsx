@@ -1,25 +1,17 @@
 import { useCurrentTask } from "../state/loading";
+import { FIFTH_PATH } from "./Logo";
 
 /**
- * Le loader de la marque : des lignes de niveau concentriques qui ondulent,
- * comme le relief du fond. Une ligne maîtresse continue, les autres tiretées.
+ * Le loader de la marque : la note du logo parcourt la figure de la quinte.
  */
 export function Loader({ label, size = 72 }: { label?: string; size?: number }) {
   return (
     <div role="status" aria-live="polite" className="flex flex-col items-center gap-4 py-6">
-      <svg viewBox="0 0 100 100" width={size} height={size} className="topo-loader" aria-hidden="true">
-        {[14, 24, 34, 44].map((radius, index) => (
-          <ellipse
-            key={radius}
-            cx="50"
-            cy="50"
-            rx={radius}
-            ry={radius * 0.82}
-            className={index === 1 ? "topo-loader-master" : "topo-loader-line"}
-            style={{ animationDelay: `${index * -0.35}s` }}
-          />
-        ))}
-        <circle cx="50" cy="50" r="3.2" className="topo-loader-core" />
+      <svg viewBox="0 0 64 64" width={size} height={size} aria-hidden="true">
+        <path d={FIFTH_PATH} fill="none" strokeWidth={2.4} strokeLinejoin="round" className="stroke-brass" strokeOpacity={0.55} />
+        <circle r={4.6} className="fill-ivory">
+          <animateMotion dur="2.4s" repeatCount="indefinite" path={FIFTH_PATH} />
+        </circle>
       </svg>
       {label && <span className="caption">{label}</span>}
       {!label && <span className="sr-only">Chargement</span>}

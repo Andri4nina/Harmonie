@@ -1,4 +1,5 @@
 import { playNote } from "../audio/synth";
+import { ThemeSwitch } from "../components/ThemeSwitch";
 import { Icon, Panel } from "../components/ui";
 import { A4_MAX, A4_MIN, useSettings } from "../state/store";
 
@@ -10,6 +11,11 @@ export function Settings() {
         <h1 className="font-display engrave text-[clamp(2.1rem,6vw,3.5rem)] leading-none font-semibold tracking-[-0.015em]">Réglages</h1>
         <p className="mt-3 text-ivory-2">Enregistrés sur cet appareil.</p>
       </section>
+
+      <Panel title="Thème">
+        <p className="mb-4 text-ivory-2">« Système » suit le réglage clair ou sombre de votre appareil.</p>
+        <ThemeSwitch />
+      </Panel>
 
       <Panel title="Affichage">
         <label className="flex cursor-pointer items-start gap-4">

@@ -62,7 +62,7 @@ export function MusicGraph({ view }: { view: NodeView }) {
   const centerHue = hueOf(view.pitchClass);
 
   return (
-    <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="mx-auto w-full max-w-[560px]" aria-label="Graphe des relations">
+    <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="mx-auto w-full max-w-[560px] text-ivory" aria-label="Graphe des relations">
       {[148, 204, 252].map((radius) => (
         <circle
           key={radius}
@@ -81,7 +81,8 @@ export function MusicGraph({ view }: { view: NodeView }) {
           y1={CENTER}
           x2={node.x}
           y2={node.y}
-          stroke={`oklch(0.84 0.09 ${hueOf(node.pitchClass)} / 0.16)`}
+          stroke="currentColor"
+          strokeOpacity={0.16}
           strokeWidth={1}
         />
       ))}
@@ -101,7 +102,7 @@ export function MusicGraph({ view }: { view: NodeView }) {
             textAnchor="middle"
             fontSize={13}
             fontFamily="var(--font-sans)"
-            fill="rgb(236 230 216 / 0.42)"
+            fill="currentColor" fillOpacity={0.42}
           >
             {GROUP_LABEL[sector.key] ?? sector.key}
           </text>
@@ -163,7 +164,7 @@ export function MusicGraph({ view }: { view: NodeView }) {
         fontSize={shortLabelOf(view.id).length > 7 ? 9 : 13}
         fontWeight={700}
         fontFamily="var(--font-display)"
-        fill={`oklch(0.95 0.09 ${centerHue})`}
+        fill="currentColor"
       >
         {shortLabelOf(view.id)}
       </text>

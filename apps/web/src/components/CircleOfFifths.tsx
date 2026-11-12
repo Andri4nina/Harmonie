@@ -65,7 +65,7 @@ export function CircleOfFifths({ current, related }: { current?: string; related
           fontSize={ring === RINGS.outer ? 12.5 : 9.5}
           fontWeight={600}
           fontFamily="var(--font-display)"
-          fill={isCurrent ? "#161a2e" : "#e8eef5"}
+          fill={isCurrent ? "#161a2e" : "currentColor"}
           pointerEvents="none"
         >
           {label}
@@ -75,7 +75,7 @@ export function CircleOfFifths({ current, related }: { current?: string; related
   };
 
   return (
-    <svg viewBox="0 0 380 380" className="mx-auto w-full max-w-[380px]" aria-label="Cercle des quintes">
+    <svg viewBox="0 0 380 380" className="mx-auto w-full max-w-[380px] text-ivory" aria-label="Cercle des quintes">
       {sectors.map((item, index) => {
         const [x, y] = position(172, index);
         return (
@@ -88,17 +88,17 @@ export function CircleOfFifths({ current, related }: { current?: string; related
               textAnchor="middle"
               fontSize={9.5}
               fontFamily="var(--font-sans)"
-              fill="rgb(236 230 216 / 0.45)"
+              fill="currentColor" fillOpacity={0.45}
             >
               {signatureLabel(item.signature)}
             </text>
           </g>
         );
       })}
-      <text x={CENTER} y={CENTER - 2} textAnchor="middle" fontSize={13} fontWeight={500} fontFamily="var(--font-sans)" fill="rgb(236 230 216 / 0.55)">
+      <text x={CENTER} y={CENTER - 2} textAnchor="middle" fontSize={13} fontWeight={500} fontFamily="var(--font-sans)" fill="currentColor" fillOpacity={0.55}>
         Cercle
       </text>
-      <text x={CENTER} y={CENTER + 13} textAnchor="middle" fontSize={13} fontWeight={500} fontFamily="var(--font-sans)" fill="rgb(236 230 216 / 0.55)">
+      <text x={CENTER} y={CENTER + 13} textAnchor="middle" fontSize={13} fontWeight={500} fontFamily="var(--font-sans)" fill="currentColor" fillOpacity={0.55}>
         des quintes
       </text>
     </svg>

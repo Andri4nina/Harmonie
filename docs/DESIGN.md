@@ -22,6 +22,15 @@
 > - Le verre est réservé au cadre (barre latérale, menu) et aux instruments ;
 >   les sections de texte sont posées sur le relief. Rayons : cadre 26 px,
 >   panneau 18 px, pastille 10 px.
+> - **Thèmes** : sombre (par défaut, pages pré-rendues), clair et « système »
+>   (suit l'appareil, en direct). Clair : papier froid `#EEF0F6` (pas de
+>   crème), encre `#161A2E`, laiton foncé `#8A6526` pour le contraste AA,
+>   notes plus saturées (L 0,56, C 0,12). Le thème est posé avant le premier
+>   affichage par un script en ligne : aucun flash.
+> - **Logo** : la quinte juste. Deux sons dans le rapport 3:2 tracent cette
+>   figure de Lissajous ; une tête de note ivoire la parcourt (fixe dans le
+>   logo, en mouvement dans le loader et l'écran de démarrage).
+> - **Barres de défilement** : pastille fine et arrondie, laiton au survol.
 > - Un seul mouvement orchestré : le nom de l'élément se « grave » au
 >   chargement. Le reste ne bouge qu'en réponse à un geste.
 > - Responsive vérifié à 375, 768 et 1440 px : sous 1024 px, barre supérieure

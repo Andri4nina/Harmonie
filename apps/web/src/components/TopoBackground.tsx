@@ -116,13 +116,14 @@ function draw(canvas: HTMLCanvasElement, time: number): void {
   ctx.lineWidth = 1;
   ctx.lineCap = "round";
   // Courbes tiretées à l'ivoire, courbes maîtresses au laiton.
-  ctx.strokeStyle = "rgb(236 230 216 / 0.12)";
+  const theme = getComputedStyle(document.documentElement);
+  ctx.strokeStyle = theme.getPropertyValue("--topo-dash").trim() || "rgb(236 230 216 / 0.12)";
   ctx.stroke(dashed);
-  ctx.strokeStyle = "rgb(217 180 106 / 0.28)";
+  ctx.strokeStyle = theme.getPropertyValue("--topo-master").trim() || "rgb(217 180 106 / 0.28)";
   ctx.stroke(master);
 }
 
-export function TopoBackground() {
+export function TopoBackground({ theme }: { theme: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const lite = useSettings((state) => state.lite);
 
@@ -167,7 +168,7 @@ export function TopoBackground() {
       window.removeEventListener("resize", onChange);
       document.removeEventListener("visibilitychange", onChange);
     };
-  }, [lite]);
+  }, [lite, theme]);
 
   return <canvas ref={ref} aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 h-full w-full" />;
 }

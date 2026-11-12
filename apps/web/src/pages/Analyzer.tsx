@@ -84,7 +84,7 @@ function SignIn() {
           />
         </label>
         {message && (
-          <p role={message.error ? "alert" : "status"} className={message.error ? "text-[#f0a48c]" : "text-ivory-2"}>
+          <p role={message.error ? "alert" : "status"} className={message.error ? "text-danger" : "text-ivory-2"}>
             {message.text}
           </p>
         )}
@@ -153,7 +153,7 @@ function Upload({ onUploaded }: { onUploaded: () => void }) {
           choose(event.dataTransfer.files[0]);
         }}
         className={`flex min-h-40 flex-col items-center justify-center gap-2 rounded-[18px] border-2 border-dashed px-6 py-8 text-center transition-colors duration-150 ${
-          dragging ? "border-brass bg-[var(--accent-soft)]" : "border-[rgb(236_230_216/0.18)] hover:border-[var(--accent-line)]"
+          dragging ? "border-brass bg-[var(--accent-soft)]" : "border-ivory/20 hover:border-[var(--accent-line)]"
         }`}
       >
         <Icon name="analyzer" className="size-7 text-brass" />
@@ -178,7 +178,7 @@ function Upload({ onUploaded }: { onUploaded: () => void }) {
         </div>
       )}
       {error && (
-        <p role="alert" className="text-[#f0a48c]">
+        <p role="alert" className="text-danger">
           {error}
         </p>
       )}
@@ -211,7 +211,7 @@ export function TrackList({ version = 0 }: { version?: number }) {
     return () => window.clearInterval(timer);
   }, [pending, load]);
 
-  if (error) return <p className="text-[#f0a48c]">{error}</p>;
+  if (error) return <p className="text-danger">{error}</p>;
   if (!tracks) return <Loader label="Chargement de la bibliothèque" />;
   if (tracks.length === 0) return <p className="text-ivory-2">Aucun morceau pour l'instant. Déposez-en un pour lancer sa première analyse.</p>;
   return (
@@ -221,7 +221,7 @@ export function TrackList({ version = 0 }: { version?: number }) {
           <Link to={`/analyser/${track.id}`} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3 hover:text-brass">
             <span className="min-w-0 flex-1 basis-48 truncate font-medium">{track.title}</span>
             <span className="caption">{formatDuration(track.duration_ms)}</span>
-            <span className={`caption ${track.status === "failed" ? "!text-[#f0a48c]" : ""}`}>
+            <span className={`caption ${track.status === "failed" ? "!text-danger" : ""}`}>
               {STATUS[track.status ?? ""] ?? "sans analyse"}
               {track.status === "running" && track.progress !== null ? `, ${Math.round(track.progress * 100)} %` : ""}
             </span>

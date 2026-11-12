@@ -8,6 +8,7 @@ import { Downloads } from "./pages/Downloads";
 import { Explorer } from "./pages/Explorer";
 import { Settings } from "./pages/Settings";
 import { useSettings } from "./state/store";
+import { useTheme } from "./state/theme";
 import { nodeView } from "./theory/engine";
 import { applyHead, headFor } from "./theory/head";
 import { hueOf } from "./theory/labels";
@@ -33,6 +34,7 @@ export function App() {
   const { pathname } = useLocation();
   const hue = hueForPath(pathname);
   const lite = useSettings((state) => state.lite);
+  const theme = useTheme();
 
   // Les réglages enregistrés ne sont relus qu'après l'hydratation.
   useEffect(() => {
@@ -51,7 +53,7 @@ export function App() {
   return (
     <>
       <TopProgress />
-      <TopoBackground />
+      <TopoBackground theme={theme} />
       <div className="mx-auto flex min-h-full max-w-[1440px] flex-col gap-4 p-3 sm:p-4 lg:flex-row lg:gap-6">
         <Sidebar />
         <main id="contenu" className="min-w-0 flex-1 pb-10">
