@@ -1,0 +1,7 @@
+[package]
+name = "harmonia-theory"
+description = "Moteur de théorie musicale d'Harmonia : pur, sans I/O, sans dépendance."
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

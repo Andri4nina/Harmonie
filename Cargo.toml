@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = ["crates/harmonia-theory"]
+
+[workspace.package]
+version = "1.0.0"
+edition = "2021"
