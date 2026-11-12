@@ -56,6 +56,7 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       - name: Publication sautée
         if: env.VERCEL_TOKEN == ''
-        run: echo "Secrets Vercel absents (voir docs/DEPLOYMENT.md) : site construit, non publié."
+        run: |
+          echo "Secrets Vercel absents (voir docs/DEPLOYMENT.md) - site construit, non publié."
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
