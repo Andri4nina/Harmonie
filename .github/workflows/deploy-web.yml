@@ -1,0 +1,48 @@
+# Construit le site (moteur WASM + pré-rendu) et le publie sur Vercel.
+#
+# Secrets du dépôt : VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID.
+# Variables du dépôt : SITE_URL (ex. https://harmonie.vercel.app),
+# GOOGLE_SITE_VERIFICATION (facultatif).
+
+name: Site web
+
+on:
+  push:
+    branches: [main]
+    paths: ["apps/web/**", "crates/harmonia-theory/**", "crates/harmonia-theory-wasm/**"]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-web
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo install wasm-bindgen-cli --version 0.2.130 --locked
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: npm run wasm
+      - run: npm run build
+        env:
+          VITE_SITE_URL: ${{ vars.SITE_URL }}
+          VITE_GOOGLE_SITE_VERIFICATION: ${{ vars.GOOGLE_SITE_VERIFICATION }}
+      - run: cp vercel.json dist/
+      - run: npx --yes vercel@latest deploy dist --prod --yes --token "$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

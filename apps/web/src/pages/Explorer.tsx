@@ -45,11 +45,11 @@ function Hero({ view }: { view: NodeView }) {
   const active = usePlayer((state) => state.active);
   const playing = playingId === view.id;
   return (
-    <section className="glass enter p-6" data-hue style={hueStyle(view.pitchClass)} key={view.id}>
+    <section className="glass glow enter p-6" data-hue style={hueStyle(view.pitchClass)} key={view.id}>
       <div className="flex flex-wrap items-start justify-between gap-6">
         <div>
           <div className="eyebrow !text-[var(--accent)]">{KIND_LABEL[view.kind]}</div>
-          <h1 className="mt-1 text-5xl font-semibold tracking-tight">{labelOf(view.id)}</h1>
+          <h1 className="text-gradient mt-1 text-5xl font-semibold tracking-tight">{labelOf(view.id)}</h1>
         </div>
         <div className="flex flex-col items-end gap-3">
           <button
@@ -57,7 +57,7 @@ function Hero({ view }: { view: NodeView }) {
             onClick={() => (playing ? stop() : play(view.playback.steps, view.playback.mode, view.id))}
             disabled={view.playback.steps.length === 0}
             aria-pressed={playing}
-            className="flex items-center gap-2 rounded-2xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-ink transition-transform duration-150 hover:bg-[var(--accent-strong)] active:scale-95 disabled:opacity-40"
+            className="btn btn-primary px-5 py-3"
           >
             <Icon name={playing ? "stop" : "play"} className="size-4" />
             {playing ? "Arrêter" : PLAY_LABEL[view.playback.mode]}

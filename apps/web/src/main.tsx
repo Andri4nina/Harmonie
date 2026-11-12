@@ -11,11 +11,26 @@ import { normalizePath } from "./theory/routes";
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Élément #root introuvable");
+const boot = document.getElementById("boot");
+
+/** Retire l'écran de démarrage une fois l'application affichée. */
+function dismissBoot(): void {
+  if (!boot) return;
+  boot.classList.add("is-done");
+  boot.addEventListener("transitionend", () => boot.remove(), { once: true });
+  window.setTimeout(() => boot.remove(), 600);
+}
 
 // Le moteur de théorie (WebAssembly) doit être prêt avant le rendu : toutes
 // les vues en dépendent. Sur une page pré-rendue, le HTML est déjà lisible
-// pendant ce chargement.
-await loadEngine();
+// pendant ce chargement ; ailleurs, l'écran de démarrage l'occupe.
+try {
+  await loadEngine();
+} catch (error) {
+  const message = boot?.querySelector(".boot-splash span:last-child");
+  if (message) message.textContent = "Le moteur n'a pas pu se charger. Rechargez la page.";
+  throw error;
+}
 
 const app = (
   <StrictMode>
@@ -30,6 +45,8 @@ const app = (
 if (root.dataset.prerendered === normalizePath(window.location.pathname)) {
   hydrateRoot(root, app);
 } else {
+  delete root.dataset.prerendered;
   root.replaceChildren();
   createRoot(root).render(app);
 }
+requestAnimationFrame(dismissBoot);

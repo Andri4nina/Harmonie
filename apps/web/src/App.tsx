@@ -1,8 +1,10 @@
 import { useEffect } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router";
+import { Link, Navigate, Route, Routes, useLocation } from "react-router";
+import { TopProgress } from "./components/Loader";
 import { Sidebar } from "./components/Sidebar";
 import { TopoBackground } from "./components/TopoBackground";
 import { Dashboard } from "./pages/Dashboard";
+import { Downloads } from "./pages/Downloads";
 import { Explorer } from "./pages/Explorer";
 import { Settings } from "./pages/Settings";
 import { useSettings } from "./state/store";
@@ -38,6 +40,7 @@ export function App() {
 
   return (
     <>
+      <TopProgress />
       <TopoBackground hue={hue} />
       <div className="mx-auto flex min-h-full max-w-[1500px] gap-4 p-4">
         <Sidebar />
@@ -46,8 +49,18 @@ export function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/explorer" element={<Navigate to={pathOf("note:C")} replace />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/telecharger" element={<Downloads />} />
             <Route path="*" element={<Explorer />} />
           </Routes>
+          <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 px-2 text-xs text-fg-3">
+            <span>
+              <span className="text-fg-2">Harmonie</span> — conçu et développé par{" "}
+              <span className="text-fg-2">Andrianina Rasoamanana</span>
+            </span>
+            <Link to="/telecharger" className="hover:text-fg-2">
+              Télécharger l'application
+            </Link>
+          </footer>
         </main>
       </div>
     </>

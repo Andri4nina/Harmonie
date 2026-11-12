@@ -19,7 +19,47 @@ export interface Head {
 /** Adresse publique du site (sans barre finale), si elle est connue au build. */
 export const SITE_URL: string | undefined = (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/+$/, "");
 
-const SITE_NAME = "Harmonia";
+/** Nom affiché dans les résultats de recherche. */
+export const SITE_NAME = "Andrianina Rasoamanana - Harmonie";
+export const AUTHOR = "Andrianina Rasoamanana";
+
+const author = {
+  "@type": "Person",
+  name: AUTHOR,
+  sameAs: ["https://github.com/Andri4nina"],
+};
+
+/** Données structurées communes : le site et son auteur. */
+function website(description: string): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: SITE_NAME,
+        alternateName: ["Harmonie", "Harmonie Andrianina Rasoamanana", "Andrianina Rasoamanana Harmonie"],
+        inLanguage: "fr",
+        description,
+        author,
+        creator: author,
+        ...(SITE_URL ? { url: `${SITE_URL}/` } : {}),
+      },
+      {
+        "@type": "WebApplication",
+        name: "Harmonie",
+        applicationCategory: "EducationalApplication",
+        operatingSystem: "Web, Windows, macOS, Linux, Android",
+        inLanguage: "fr",
+        isAccessibleForFree: true,
+        offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+        description,
+        author,
+        ...(SITE_URL ? { url: `${SITE_URL}/`, downloadUrl: `${SITE_URL}/telecharger` } : {}),
+      },
+      { ...author, url: "https://github.com/Andri4nina" },
+    ],
+  };
+}
 
 let catalogIds: Set<string> | undefined;
 
@@ -74,22 +114,18 @@ export function headFor(pathname: string): Head {
   const path = normalizePath(pathname);
   if (path === "/") {
     const description =
-      "Harmonia relie les notes, gammes, accords et tonalités sur une même carte : cherchez un élément, écoutez-le, voyez-le au piano et à la guitare, suivez ses relations.";
+      "Harmonie, par Andrianina Rasoamanana : la théorie musicale sur une même carte. Notes, gammes, accords et tonalités à écouter, à voir au piano et à la guitare, avec leurs relations.";
+    return { title: SITE_NAME, description, indexable: true, path, jsonLd: website(description) };
+  }
+  if (path === "/telecharger") {
+    const description =
+      "Télécharger Harmonie d'Andrianina Rasoamanana pour Windows, macOS, Linux et Android (APK) : la théorie musicale interactive, même hors connexion.";
     return {
-      title: `${SITE_NAME} : explorer la théorie musicale, notes, gammes et accords`,
+      title: `Télécharger Harmonie pour ordinateur et Android | ${SITE_NAME}`,
       description,
       indexable: true,
       path,
-      jsonLd: {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        name: SITE_NAME,
-        applicationCategory: "EducationalApplication",
-        operatingSystem: "Web",
-        inLanguage: "fr",
-        description,
-        ...(SITE_URL ? { url: `${SITE_URL}/` } : {}),
-      },
+      jsonLd: website(description),
     };
   }
 
@@ -119,6 +155,8 @@ export function headFor(pathname: string): Head {
       description,
       inDefinedTermSet: "Théorie musicale",
       inLanguage: "fr",
+      author,
+      isPartOf: { "@type": "WebSite", name: SITE_NAME },
       ...(SITE_URL ? { url: `${SITE_URL}${canonical}` } : {}),
     },
   };

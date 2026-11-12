@@ -1,0 +1,60 @@
+# Environnement complet en local : PostgreSQL, API, worker d'analyse.
+#
+#   cp .env.example .env      (puis compléter les secrets)
+#   docker compose up --build
+#
+# L'API écoute sur http://localhost:8080 ; le site (npm run dev dans
+# apps/web) sur http://localhost:5173. Les fichiers audio sont rangés dans le
+# volume « storage » (STORAGE_BACKEND=local).
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: harmonie
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?définir POSTGRES_PASSWORD dans .env}
+      POSTGRES_DB: harmonie
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U harmonie -d harmonie"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: deploy/api.Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://harmonie:${POSTGRES_PASSWORD}@db:5432/harmonie
+      WORKER_TOKEN: ${WORKER_TOKEN:?définir WORKER_TOKEN dans .env}
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+      STORAGE_BACKEND: local
+      LOCAL_STORAGE_DIR: /home/harmonie/storage
+      RUST_LOG: info
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - storage:/home/harmonie/storage
+
+  worker:
+    build:
+      context: .
+      dockerfile: deploy/worker.Dockerfile
+    depends_on:
+      - api
+    environment:
+      HARMONIE_API_URL: http://api:8080
+      WORKER_TOKEN: ${WORKER_TOKEN}
+
+volumes:
+  pgdata:
+  storage:

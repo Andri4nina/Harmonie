@@ -12,6 +12,8 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const web = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = resolve(web, "dist");
 const siteUrl = process.env.VITE_SITE_URL?.replace(/\/+$/, "");
+// Jeton de validation de Google Search Console (facultatif).
+const verification = process.env.VITE_GOOGLE_SITE_VERIFICATION;
 
 const { setup, pages, render } = await import(pathToFileURL(resolve(web, "dist-ssr/entry-server.js")).href);
 setup(readFileSync(resolve(web, "src/theory/pkg/harmonia_theory_wasm_bg.wasm")));
@@ -41,15 +43,22 @@ for (const path of pages()) {
   const tags = [
     `<meta name="robots" content="${head.indexable ? "index,follow" : "noindex"}" />`,
     `<meta property="og:type" content="website" />`,
-    `<meta property="og:site_name" content="Harmonia" />`,
+    `<meta property="og:site_name" content="Andrianina Rasoamanana - Harmonie" />`,
     `<meta property="og:locale" content="fr_FR" />`,
     `<meta property="og:title" content="${escape(head.title)}" />`,
     `<meta property="og:description" content="${escape(head.description)}" />`,
-    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${escape(head.title)}" />`,
+    `<meta name="twitter:description" content="${escape(head.description)}" />`,
   ];
+  if (verification) tags.push(`<meta name="google-site-verification" content="${escape(verification)}" />`);
   if (siteUrl) {
     tags.push(`<link rel="canonical" href="${siteUrl}${head.path}" />`);
     tags.push(`<meta property="og:url" content="${siteUrl}${head.path}" />`);
+    tags.push(`<meta property="og:image" content="${siteUrl}/og-image.png" />`);
+    tags.push(`<meta property="og:image:width" content="1200" />`, `<meta property="og:image:height" content="630" />`);
+    tags.push(`<meta property="og:image:alt" content="Andrianina Rasoamanana - Harmonie" />`);
+    tags.push(`<meta name="twitter:image" content="${siteUrl}/og-image.png" />`);
   }
   if (head.jsonLd) {
     tags.push(`<script type="application/ld+json">${JSON.stringify(head.jsonLd).replaceAll("<", "\\u003c")}</script>`);

@@ -20,7 +20,7 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <section className={`glass p-5 ${className}`}>
+    <section className={`glass enter p-5 ${className}`}>
       {(title || aside) && (
         <header className="mb-4 flex min-h-7 items-center justify-between gap-3">
           {title && <h2 className="eyebrow">{title}</h2>}
@@ -74,6 +74,7 @@ const ICONS: Record<string, string> = {
   play: "M8 5v14l11-7z",
   stop: "M7 7h10v10H7z",
   search: "M11 4a7 7 0 1 0 0 14a7 7 0 0 0 0-14zm5 12l4 4",
+  download: "M12 4v11m-4.5-4.5L12 15l4.5-4.5M5 19h14",
 };
 
 export function Icon({ name, className = "size-5" }: { name: string; className?: string }) {

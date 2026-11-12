@@ -21,6 +21,7 @@ const MODULES: { name: string; state: string; done: boolean }[] = [
   { name: "Song Analyzer", state: "v1.3", done: false },
   { name: "Ear Training", state: "v1.4", done: false },
   { name: "Learning · Music Generator", state: "v1.5", done: false },
+  { name: "Analyse audio : extraction et interprétation", state: "v1.3 (en cours)", done: true },
   { name: "Desktop · Mobile", state: "v1.6 – v1.7", done: false },
 ];
 
@@ -39,9 +40,9 @@ export function Dashboard() {
   const history = useSettings((state) => state.history);
   return (
     <div className="flex flex-col gap-4">
-      <section className="glass enter p-8">
-        <div className="eyebrow !text-[var(--accent)]">Harmonia</div>
-        <h1 className="mt-2 max-w-2xl text-5xl leading-[1.05] font-semibold tracking-tight">
+      <section className="glass glow enter p-8">
+        <div className="eyebrow !text-[var(--accent)]">Harmonie · Andrianina Rasoamanana</div>
+        <h1 className="text-gradient mt-2 max-w-2xl text-5xl leading-[1.05] font-semibold tracking-tight">
           Voyez ce qui relie les notes.
         </h1>
         <p className="mt-4 max-w-xl text-fg-2">

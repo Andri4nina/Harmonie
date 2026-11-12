@@ -6,13 +6,48 @@
     <meta name="theme-color" content="#070b12" />
     <meta
       name="description"
-      content="Harmonia : explorez les notes, gammes, accords et tonalités, écoutez-les et voyez ce qui les relie."
+      content="Harmonie, par Andrianina Rasoamanana : explorez les notes, gammes, accords et tonalités, écoutez-les et voyez ce qui les relie."
     />
+    <meta name="author" content="Andrianina Rasoamanana" />
+    <meta name="application-name" content="Harmonie" />
+    <meta name="apple-mobile-web-app-title" content="Harmonie" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Harmonia — la topographie du son</title>
+    <link rel="apple-touch-icon" href="/icon-512.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>Andrianina Rasoamanana - Harmonie</title>
+    <style>
+      /* Écran de démarrage : styles en ligne, disponibles avant toute feuille. */
+      #boot { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: #070b12; transition: opacity 320ms ease-out; }
+      #boot.is-done { opacity: 0; pointer-events: none; }
+      #boot .boot-splash { display: flex; flex-direction: column; align-items: center; gap: 18px; color: rgb(232 238 245 / 0.5); font: 500 11px/1 ui-monospace, monospace; letter-spacing: 0.18em; text-transform: uppercase; }
+      #boot .boot-name { font: 600 22px/1 system-ui, sans-serif; letter-spacing: -0.01em; text-transform: none; color: #e8eef5; }
+      #boot ellipse { fill: none; stroke: #7de0c4; transform-origin: 50px 50px; animation: boot-breathe 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) infinite; }
+      #boot ellipse:nth-child(2n + 1) { stroke-dasharray: 3 4; opacity: 0.5; stroke-width: 1.4; }
+      #boot ellipse:nth-child(2) { stroke-width: 2; }
+      #boot .boot-bar { position: absolute; inset: 0 auto auto 0; height: 2px; width: 40%; background: linear-gradient(90deg, transparent, #9ff0d8, transparent); animation: boot-bar 1.1s ease-in-out infinite; }
+      @keyframes boot-breathe { 50% { transform: rotate(12deg) scale(1.05); stroke-dashoffset: -14; } }
+      @keyframes boot-bar { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
+      /* Page pré-rendue : son contenu est déjà lisible, seule la barre reste. */
+      #root[data-prerendered] + #boot { inset: 0 0 auto; height: 2px; background: none; display: block; overflow: hidden; }
+      #root[data-prerendered] + #boot .boot-splash { display: none; }
+      @media (prefers-reduced-motion: reduce) { #boot * { animation: none !important; } }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <div id="boot" role="status" aria-label="Chargement d'Harmonie">
+      <div class="boot-bar"></div>
+      <div class="boot-splash">
+        <svg viewBox="0 0 100 100" width="84" height="84" aria-hidden="true">
+          <ellipse cx="50" cy="50" rx="14" ry="11.5" />
+          <ellipse cx="50" cy="50" rx="24" ry="19.7" style="animation-delay: -0.35s" />
+          <ellipse cx="50" cy="50" rx="34" ry="27.9" style="animation-delay: -0.7s" />
+          <ellipse cx="50" cy="50" rx="44" ry="36" style="animation-delay: -1.05s" />
+        </svg>
+        <span class="boot-name">Harmonie</span>
+        <span>Accordage du moteur…</span>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -6,7 +6,7 @@ une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
 ## [Non publié] — vers 1.3.0
 
-Phase 4, première partie : analyser un fichier audio sans serveur.
+Phase 4 : analyse audio, API, base de données et hébergement.
 
 ### Ajouté
 
@@ -23,11 +23,30 @@ Phase 4, première partie : analyser un fichier audio sans serveur.
   dont 16 réservés à la validation. Sur la validation : 97 % de la durée avec
   l'accord exact, 16 tonalités sur 16, 14 tempos sur 16.
 
+- `harmonia-api` : API Axum sur PostgreSQL — dépôt de morceaux, file d'analyse
+  (`FOR UPDATE SKIP LOCKED`, reprise des jobs abandonnés, trois tentatives),
+  routes internes des workers, résultats en événements horodatés, corrections
+  manuelles en couche séparée, comptes Supabase Auth, stockage S3 (Supabase
+  Storage) ou local.
+- Mode service du worker : `python -m harmonia_worker serve`.
+- Migration `0002` : comptes gérés par Supabase Auth, RLS activée.
+- Docker (`deploy/`, `docker-compose.yml`), Render (`render.yaml`), Vercel
+  (`apps/web/vercel.json`, publication par GitHub Actions), tests en
+  intégration continue. Guide : `docs/DEPLOYMENT.md`.
+- Site : page « Télécharger » (Windows, macOS, Linux, APK Android) alimentée
+  par les publications GitHub ; écran de démarrage et barre de chargement ;
+  titres en dégradé, halos, boutons et navigation retravaillés ; pied de page.
+- Référencement au nom « Andrianina Rasoamanana - Harmonie » : titres,
+  auteur, données structurées `WebSite` / `WebApplication` / `Person`, image
+  de partage 1200 × 630, manifeste d'application, validation Search Console.
+
 ### Limites
 
-- Mesuré uniquement sur des sons synthétiques ; aucun enregistrement réel.
+- Analyse mesurée uniquement sur des sons synthétiques.
 - Erreurs d'octave du tempo aux extrêmes (60–80 et 168–180 BPM).
-- Pas encore d'API, de file de jobs, de stockage ni d'interface.
+- Pas encore d'écran d'analyse ni de connexion dans le site.
+- Aucun installateur publié : la page « Télécharger » l'indique ; le dépôt
+  GitHub étant privé, ses publications ne sont pas visibles des visiteurs.
 
 ## [1.2.0] — 2026-11-12
 

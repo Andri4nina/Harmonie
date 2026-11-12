@@ -1,0 +1,14 @@
+{
+  "name": "Andrianina Rasoamanana - Harmonie",
+  "short_name": "Harmonie",
+  "description": "La théorie musicale sur une même carte : notes, gammes, accords et tonalités à écouter et à explorer.",
+  "lang": "fr",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070b12",
+  "theme_color": "#070b12",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

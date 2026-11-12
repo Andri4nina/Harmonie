@@ -6,9 +6,9 @@ export function Settings() {
   const { lite, a4, setLite, setA4 } = useSettings();
   return (
     <div className="flex max-w-2xl flex-col gap-4">
-      <section className="glass enter p-6">
+      <section className="glass glow enter p-6">
         <div className="eyebrow !text-[var(--accent)]">Settings</div>
-        <h1 className="mt-1 text-4xl font-semibold tracking-tight">Réglages</h1>
+        <h1 className="text-gradient mt-1 text-4xl font-semibold tracking-tight">Réglages</h1>
         <p className="mt-2 text-sm text-fg-2">Enregistrés sur cet appareil.</p>
       </section>
 
@@ -52,7 +52,7 @@ export function Settings() {
           <button
             type="button"
             onClick={() => playNote(69)}
-            className="flex items-center gap-2 rounded-xl border border-[var(--accent-line)] bg-[var(--accent-soft)] px-4 py-2 text-sm hover:border-[var(--accent)]"
+            className="btn btn-ghost"
           >
             <Icon name="play" className="size-3.5" />
             Écouter le La

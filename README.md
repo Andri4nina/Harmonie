@@ -1,4 +1,6 @@
-# Harmonia
+# Harmonie
+
+Par **Andrianina Rasoamanana**.
 
 Environnement interactif pour comprendre, explorer, écouter, analyser et pratiquer
 la musique.
@@ -14,6 +16,7 @@ la musique.
 - [Bibliothèques et licences](docs/LIBRARIES.md)
 - [API](docs/API.md)
 - [Plan et versions](docs/ROADMAP.md)
+- [Mise en ligne : Supabase, Render, Vercel](docs/DEPLOYMENT.md)
 - [Risques de la transcription polyphonique](docs/POLYPHONIC-RISKS.md)
 
 ## Moteur de théorie
@@ -40,6 +43,15 @@ for chord in progression.resolve(&key) {
 // Tout ce qui est relié à la note Do.
 let graph = Graph::around(Node::from_id("note:C").unwrap(), 1);
 println!("{} relations", graph.links.len());
+```
+
+## API et base de données
+
+`crates/harmonia-api` : API Axum sur PostgreSQL (Supabase en production,
+Docker en local). Voir [la mise en ligne](docs/DEPLOYMENT.md).
+
+```bash
+docker compose up --build      # PostgreSQL + API + worker
 ```
 
 ## Analyse audio

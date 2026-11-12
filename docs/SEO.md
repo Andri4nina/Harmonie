@@ -24,6 +24,17 @@ Avant la mise en ligne, définir `VITE_SITE_URL` au build : c'est elle qui produ
 les adresses canoniques absolues et `sitemap.xml`. L'hébergeur doit servir
 `dossier/index.html` pour `/dossier` et `200.html` pour les adresses inconnues.
 
+## Nom et auteur (v1.3.0)
+
+Le site se présente dans les résultats de recherche sous le nom
+**« Andrianina Rasoamanana - Harmonie »** : titre de l'accueil, suffixe des
+autres titres, `og:site_name`, manifeste, données structurées `WebSite`,
+`WebApplication` et `Person` (auteur), image de partage `og-image.png`
+(1200 × 630, source dans `apps/web/scripts/social`). Le nom de l'auteur figure
+aussi en clair dans la barre latérale et le pied de page. La validation Google
+Search Console passe par `VITE_GOOGLE_SITE_VERIFICATION` (voir
+[DEPLOYMENT.md](DEPLOYMENT.md)).
+
 ## Le levier principal : la référence de théorie
 
 Le moteur sait calculer chaque gamme, accord, intervalle et tonalité. Chaque

@@ -1,0 +1,10 @@
+target
+**/node_modules
+**/.venv
+**/__pycache__
+apps/web/dist
+apps/web/dist-ssr
+workers/audio-analyzer/evaluation/out
+.git
+.claude
+.env

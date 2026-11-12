@@ -144,13 +144,13 @@ harmonia/
 ├── crates/
 │   ├── harmonia-theory/            ✅ Phase 2 — moteur de théorie (pur)
 │   ├── harmonia-theory-wasm/       ✅ Phase 3 — bindings wasm-bindgen
-│   ├── harmonia-domain/               Phase 4 — entités : Track, AnalysisJob, AnalysisEvent…
-│   ├── harmonia-application/          Phase 4 — cas d'usage, planificateur, ports (traits)
-│   ├── harmonia-infrastructure/       Phase 4 — SQLx, ObjectStore S3/local, file de jobs
 │   ├── harmonia-audio/             ✅ Phase 4 — interprétation des features (accords, tonalité, mesure)
-│   └── harmonia-api/                  Phase 4 — Axum : REST, WebSocket, API interne workers
+│   └── harmonia-api/               ✅ Phase 4 — Axum : REST, file de jobs (SQLx), stockage S3/local, API interne workers
 ├── workers/
-│   └── audio-analyzer/             ✅ Phase 4 — Python : extraction des descripteurs (client de l'API interne : à venir)
+│   └── audio-analyzer/             ✅ Phase 4 — Python : extraction des descripteurs, client de l'API interne
+├── deploy/                         ✅ Images Docker de l'API et du worker
+├── docker-compose.yml              ✅ PostgreSQL + API + worker en local
+├── render.yaml                     ✅ Blueprint Render (API, worker)
 ├── apps/
 │   ├── web/                        ✅ Phase 3 — React + Vite + Tailwind
 │   ├── desktop/                       Phase 7 — Tauri 2 (enveloppe apps/web)
@@ -162,9 +162,16 @@ harmonia/
 ├── content/
 │   └── lessons/                       Phase 6 — cours versionnés (données, pas du code)
 ├── db/
-│   └── migrations/0001_init.sql    ✅ schéma PostgreSQL
+│   └── migrations/                 ✅ schéma PostgreSQL (0001), comptes Supabase et RLS (0002)
 └── docs/                           ✅
 ```
+
+**Écart assumé (v1.3.0)** : les couches domaine / application / infrastructure
+prévues ci-dessus sont, pour l'instant, des modules d'une seule crate
+`harmonia-api` (`routes`, `jobs`, `events`, `storage`, `auth`), la logique
+musicale restant dans `harmonia-theory` et `harmonia-audio`. Elles seront
+séparées en crates quand un second consommateur (desktop hors ligne) en aura
+besoin. Hébergement : voir [DEPLOYMENT.md](DEPLOYMENT.md).
 
 Règle de dépendance (de l'extérieur vers l'intérieur uniquement) :
 

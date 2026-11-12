@@ -7,7 +7,7 @@ import { pathOf } from "./routes";
 describe("balises de référencement", () => {
   it("décrit une page d'accord avec ses notes", () => {
     const head = headFor("/accords/la-mineur-7");
-    expect(head.title).toBe("Accord Am7 : notes, renversements et positions | Harmonia");
+    expect(head.title).toBe("Accord Am7 : notes, renversements et positions | Andrianina Rasoamanana - Harmonie");
     expect(head.description).toContain("A C E G");
     expect(head.indexable).toBe(true);
     expect(head.path).toBe("/accords/la-mineur-7");
@@ -20,6 +20,17 @@ describe("balises de référencement", () => {
     expect(headFor("/settings").indexable).toBe(false);
     expect(headFor("/nimporte/quoi").indexable).toBe(false);
     expect(headFor("/").indexable).toBe(true);
+  });
+
+  it("porte le nom de l'auteur sur l'accueil et la page de téléchargement", () => {
+    const home = headFor("/");
+    expect(home.title).toBe("Andrianina Rasoamanana - Harmonie");
+    expect(home.description).toContain("Andrianina Rasoamanana");
+    expect(JSON.stringify(home.jsonLd)).toContain('"name":"Andrianina Rasoamanana"');
+    const downloads = headFor("/telecharger");
+    expect(downloads.indexable).toBe(true);
+    expect(downloads.title).toContain("Andrianina Rasoamanana - Harmonie");
+    expect(downloads.description).toContain("APK");
   });
 
   it("donne à chaque page du catalogue un titre et une description uniques", () => {
