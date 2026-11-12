@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { choiceLabel, exercises, levelSummary, pick, progress, question, review } from "./ear";
+import { choiceLabel, exercises, levelSummary, pick, progress, question, review, rhythmLabel } from "./ear";
 
 describe("entraînement de l'oreille (moteur)", () => {
-  it("expose quatre exercices et leurs niveaux", () => {
+  it("expose six exercices et leurs niveaux", () => {
     const all = exercises();
-    expect(all.map((e) => e.id)).toEqual(["intervals", "chords", "degrees", "progressions"]);
+    expect(all.map((e) => e.id)).toEqual(["intervals", "chords", "degrees", "progressions", "rhythm", "melody"]);
     expect(all[0]?.levels[0]?.items).toEqual(["interval:M3:asc", "interval:P5:asc", "interval:P8:asc"]);
   });
 
@@ -22,6 +22,17 @@ describe("entraînement de l'oreille (moteur)", () => {
     expect(choiceLabel("intervals", { answer: "P8", symbol: "P8" }).name).toBe("octave");
     expect(choiceLabel("degrees", { answer: "7", symbol: "7" }, true).name).toBe("sous-tonique");
     expect(levelSummary("intervals", ["interval:m2:desc", "interval:M2:desc"])).toBe("2 réponses possibles, descendants");
+  });
+
+  it("place le rythme et la dictée dans le temps", () => {
+    const rhythm = question("rhythm", 2, "rhythm:ee", 4);
+    expect(rhythm.playing).toBe("timed");
+    expect(rhythm.timing?.events.filter((e) => e.click)).toHaveLength(4);
+    expect(rhythm.answer.split(" ")).toContain("ee");
+    expect(rhythmLabel("q ee qr h")).toBe("noire, deux croches, soupir, blanche");
+    const melody = question("melody", 1, null, 4);
+    expect(melody.answer_length).toBe(3);
+    expect(melody.answer.startsWith("1 ")).toBe(true);
   });
 
   it("espace les révisions et suit la maîtrise d'un niveau", () => {

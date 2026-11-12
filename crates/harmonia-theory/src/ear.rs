@@ -14,6 +14,8 @@
 //! | Accords | un accord plaqué | sa qualité |
 //! | Degrés | une cadence I-IV-V-I, puis une note | son degré dans la tonalité |
 //! | Progressions | une suite d'accords | la progression |
+//! | Rythme | une mesure à 4/4 après un décompte | sa notation, parmi quatre |
+//! | Mélodie | l'accord de tonique, puis une courte mélodie | ses degrés, note par note |
 //!
 //! # Répétition espacée
 //!
@@ -60,10 +62,19 @@ pub enum Exercise {
     Chords,
     Degrees,
     Progressions,
+    Rhythm,
+    Melody,
 }
 
 impl Exercise {
-    pub const ALL: [Exercise; 4] = [Exercise::Intervals, Exercise::Chords, Exercise::Degrees, Exercise::Progressions];
+    pub const ALL: [Exercise; 6] = [
+        Exercise::Intervals,
+        Exercise::Chords,
+        Exercise::Degrees,
+        Exercise::Progressions,
+        Exercise::Rhythm,
+        Exercise::Melody,
+    ];
 
     pub fn id(self) -> &'static str {
         match self {
@@ -71,6 +82,8 @@ impl Exercise {
             Exercise::Chords => "chords",
             Exercise::Degrees => "degrees",
             Exercise::Progressions => "progressions",
+            Exercise::Rhythm => "rhythm",
+            Exercise::Melody => "melody",
         }
     }
 
@@ -85,6 +98,8 @@ impl Exercise {
             Exercise::Chords => 5,
             Exercise::Degrees => 3,
             Exercise::Progressions => 3,
+            Exercise::Rhythm => 4,
+            Exercise::Melody => 4,
         }
     }
 }
@@ -99,6 +114,27 @@ pub enum Playing {
     Harmonic,
     /// Suite d'accords (ou de notes) à intervalle régulier.
     Sequence,
+    /// Événements placés dans le temps : voir [`Question::timing`].
+    Timed,
+}
+
+/// Un son placé dans le temps, en temps (noires) depuis le début.
+#[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct TimedEvent {
+    pub beat: f64,
+    pub length: f64,
+    /// Notes MIDI ; vide pour un silence (utile seulement à l'affichage).
+    pub notes: Vec<i32>,
+    /// Temps du décompte, à jouer d'un autre timbre.
+    pub click: bool,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Timing {
+    pub bpm: f64,
+    pub events: Vec<TimedEvent>,
 }
 
 /// Une réponse possible. `answer` est son identifiant, `symbol` son écriture
@@ -127,6 +163,10 @@ pub struct Question {
     pub key: Option<Key>,
     /// Ce qui a été joué, en clair (« C4 → G4 », « F#dim »…), révélé après la réponse.
     pub reveal: String,
+    /// Placement dans le temps, pour `Playing::Timed`.
+    pub timing: Option<Timing>,
+    /// Nombre de réponses à enchaîner (dictée : une par note) ; 1 sinon.
+    pub answer_length: usize,
 }
 
 // ------------------------------------------------------------------ niveaux
@@ -204,6 +244,90 @@ fn progression_set(level: usize) -> Vec<&'static str> {
     }
 }
 
+/// Cellules rythmiques : identifiant, durée en temps, et sons
+/// `(début, durée, silence)` à l'intérieur de la cellule.
+struct Cell {
+    id: &'static str,
+    beats: f64,
+    sounds: &'static [(f64, f64, bool)],
+}
+
+const THIRD: f64 = 1.0 / 3.0;
+const CELLS: &[Cell] = &[
+    Cell { id: "q", beats: 1.0, sounds: &[(0.0, 1.0, false)] },
+    Cell { id: "qr", beats: 1.0, sounds: &[(0.0, 1.0, true)] },
+    Cell { id: "h", beats: 2.0, sounds: &[(0.0, 2.0, false)] },
+    Cell { id: "ee", beats: 1.0, sounds: &[(0.0, 0.5, false), (0.5, 0.5, false)] },
+    Cell { id: "qde", beats: 2.0, sounds: &[(0.0, 1.5, false), (1.5, 0.5, false)] },
+    Cell { id: "ere", beats: 1.0, sounds: &[(0.0, 0.5, true), (0.5, 0.5, false)] },
+    Cell { id: "ssss", beats: 1.0, sounds: &[(0.0, 0.25, false), (0.25, 0.25, false), (0.5, 0.25, false), (0.75, 0.25, false)] },
+    Cell { id: "trip", beats: 1.0, sounds: &[(0.0, THIRD, false), (THIRD, THIRD, false), (2.0 * THIRD, THIRD, false)] },
+];
+
+fn cell(id: &str) -> &'static Cell {
+    CELLS.iter().find(|c| c.id == id).expect("cellule connue")
+}
+
+/// Cellules d'un niveau de rythme.
+fn rhythm_set(level: usize) -> Vec<&'static str> {
+    match level {
+        1 => vec!["q", "h", "qr"],
+        2 => vec!["q", "h", "qr", "ee"],
+        3 => vec!["q", "ee", "qr", "qde", "ere"],
+        _ => vec!["q", "ee", "ssss", "trip", "qde"],
+    }
+}
+
+fn rhythm_tempo(level: usize) -> f64 {
+    [72.0, 80.0, 88.0, 76.0][level.clamp(1, 4) - 1]
+}
+
+/// Dictée : longueur, degré le plus haut (8 = tonique aiguë), plus grand saut, mode.
+fn melody_spec(level: usize) -> (usize, usize, usize, Mode) {
+    match level {
+        1 => (3, 3, 1, Mode::Major),
+        2 => (4, 5, 2, Mode::Major),
+        3 => (5, 8, 2, Mode::Major),
+        _ => (5, 8, 2, Mode::Minor),
+    }
+}
+
+/// Une mesure à 4/4 faite de cellules du niveau et contenant `required`.
+fn rhythm_pattern(rng: &mut Rng, set: &[&'static str], required: &str) -> Vec<&'static str> {
+    for _ in 0..200 {
+        let mut pattern = Vec::new();
+        let mut left = 4.0;
+        while left > 0.0 {
+            let fitting: Vec<&&str> = set.iter().filter(|id| cell(id).beats <= left).collect();
+            let chosen = *fitting[rng.below(fitting.len())];
+            left -= cell(chosen).beats;
+            pattern.push(chosen);
+        }
+        // Une mesure qui commence par un silence s'entend mal après le décompte.
+        if pattern.contains(&required) && !cell(pattern[0]).sounds[0].2 {
+            return pattern;
+        }
+    }
+    vec![cell(required).id; (4.0 / cell(required).beats) as usize]
+}
+
+/// Variantes proches : une cellule remplacée par une autre de même durée.
+fn rhythm_neighbours(pattern: &[&'static str], set: &[&'static str]) -> Vec<Vec<&'static str>> {
+    let mut found = Vec::new();
+    for (index, id) in pattern.iter().enumerate() {
+        for other in set {
+            if other != id && cell(other).beats == cell(id).beats && !(index == 0 && cell(other).sounds[0].2) {
+                let mut variant = pattern.to_vec();
+                variant[index] = other;
+                if !found.contains(&variant) {
+                    found.push(variant);
+                }
+            }
+        }
+    }
+    found
+}
+
 fn quality_id(quality: ChordQuality) -> String {
     format!("{quality:?}")
 }
@@ -228,6 +352,8 @@ pub fn level_items(exercise: Exercise, level: usize) -> Vec<String> {
             degrees.iter().map(|d| format!("degree:{d}:{}", mode_id(mode))).collect()
         }
         Exercise::Progressions => progression_set(level).iter().map(|id| format!("progression:{id}")).collect(),
+        Exercise::Rhythm => rhythm_set(level).iter().map(|id| format!("rhythm:{id}")).collect(),
+        Exercise::Melody => vec![format!("melody:{level}")],
     }
 }
 
@@ -272,7 +398,13 @@ pub fn question(exercise: Exercise, level: usize, item: Option<&str>, seed: u64)
     };
     let parts: Vec<&str> = item.split(':').collect();
 
+    match exercise {
+        Exercise::Rhythm => return rhythm_question(level, item, &mut rng),
+        Exercise::Melody => return melody_question(level, item, &mut rng),
+        _ => {}
+    }
     Some(match exercise {
+        Exercise::Rhythm | Exercise::Melody => unreachable!("traités ci-dessus"),
         Exercise::Intervals => {
             let set = interval_set(level);
             let interval = set.iter().copied().find(|i| i.to_string() == parts[1])?;
@@ -295,6 +427,8 @@ pub fn question(exercise: Exercise, level: usize, item: Option<&str>, seed: u64)
                 answer: interval.to_string(),
                 key: None,
                 reveal: format!("{} {} {}", note_name(start), if direction == "harm" { "+" } else { "→" }, note_name(other)),
+                timing: None,
+                answer_length: 1,
             }
         }
         Exercise::Chords => {
@@ -312,6 +446,8 @@ pub fn question(exercise: Exercise, level: usize, item: Option<&str>, seed: u64)
                 answer: quality_id(quality),
                 key: None,
                 reveal: chord.to_string(),
+                timing: None,
+                answer_length: 1,
             }
         }
         Exercise::Degrees => {
@@ -338,6 +474,8 @@ pub fn question(exercise: Exercise, level: usize, item: Option<&str>, seed: u64)
                 answer: degree.to_string(),
                 key: Some(key),
                 reveal: format!("{target} en {key}"),
+                timing: None,
+                answer_length: 1,
             }
         }
         Exercise::Progressions => {
@@ -360,8 +498,115 @@ pub fn question(exercise: Exercise, level: usize, item: Option<&str>, seed: u64)
                 answer: id.to_string(),
                 key: Some(key),
                 reveal: chords.iter().map(|c| c.to_string()).collect::<Vec<_>>().join(" "),
+                timing: None,
+                answer_length: 1,
             }
         }
+    })
+}
+
+fn rhythm_question(level: usize, item: String, rng: &mut Rng) -> Option<Question> {
+    let set = rhythm_set(level);
+    let required = item.split(':').nth(1)?;
+    if !set.contains(&required) {
+        return None;
+    }
+    let pattern = rhythm_pattern(rng, &set, required);
+    let mut options: Vec<Vec<&'static str>> = vec![pattern.clone()];
+    let mut neighbours = rhythm_neighbours(&pattern, &set);
+    while options.len() < 4 && !neighbours.is_empty() {
+        let index = rng.below(neighbours.len());
+        options.push(neighbours.swap_remove(index));
+    }
+    for _ in 0..50 {
+        if options.len() >= 4 {
+            break;
+        }
+        let any = set[rng.below(set.len())];
+        let candidate = rhythm_pattern(rng, &set, any);
+        if !options.contains(&candidate) {
+            options.push(candidate);
+        }
+    }
+    // Ordre des choix mélangé (Fisher-Yates).
+    for i in (1..options.len()).rev() {
+        options.swap(i, rng.below(i + 1));
+    }
+    let write = |p: &[&str]| p.join(" ");
+    let answer = write(&pattern);
+
+    let mut events: Vec<TimedEvent> = (0..4)
+        .map(|beat| TimedEvent { beat: beat as f64, length: 0.1, notes: vec![if beat == 0 { 91 } else { 86 }], click: true })
+        .collect();
+    let mut beat = 4.0;
+    for id in &pattern {
+        let c = cell(id);
+        for (offset, length, rest) in c.sounds {
+            events.push(TimedEvent { beat: beat + offset, length: *length, notes: if *rest { Vec::new() } else { vec![72] }, click: false });
+        }
+        beat += c.beats;
+    }
+    let bpm = rhythm_tempo(level);
+    Some(Question {
+        exercise: Exercise::Rhythm,
+        level,
+        item,
+        playing: Playing::Timed,
+        steps: events.iter().filter(|e| !e.click && !e.notes.is_empty()).map(|e| e.notes.clone()).collect(),
+        choices: options.iter().map(|o| Choice { answer: write(o), symbol: write(o) }).collect(),
+        answer,
+        key: None,
+        reveal: format!("{bpm} à la noire"),
+        timing: Some(Timing { bpm, events }),
+        answer_length: 1,
+    })
+}
+
+fn melody_question(level: usize, item: String, rng: &mut Rng) -> Option<Question> {
+    let (length, top, leap, mode) = melody_spec(level);
+    let key = random_key(rng, mode);
+    // Marche aléatoire sur les degrés, à partir de la tonique, sans répétition.
+    let mut degrees = vec![1usize];
+    while degrees.len() < length {
+        let current = *degrees.last()? as i32;
+        let moves: Vec<i32> = (-(leap as i32)..=leap as i32)
+            .filter(|step| *step != 0)
+            .map(|step| current + step)
+            .filter(|next| (1..=top as i32).contains(next))
+            .collect();
+        // Les pas conjoints sont deux fois plus probables que les sauts.
+        let weighted: Vec<i32> = moves
+            .iter()
+            .flat_map(|next| if (next - current).abs() == 1 { vec![*next, *next] } else { vec![*next] })
+            .collect();
+        degrees.push(weighted[rng.below(weighted.len())] as usize);
+    }
+    let scale = key.scale().notes();
+    let tonic_pc = key.tonic.pitch_class().value() as i32;
+    let tonic_midi = if 60 + tonic_pc > 66 { 48 + tonic_pc } else { 60 + tonic_pc };
+    let midi_of = |degree: usize| {
+        let note = scale[(degree - 1) % 7];
+        tonic_midi + (note.pitch_class().value() as i32 - tonic_pc).rem_euclid(12) + if degree == 8 { 12 } else { 0 }
+    };
+    let tonic_chord = Chord::new(key.tonic, if mode == Mode::Major { ChordQuality::Major } else { ChordQuality::Minor });
+    let mut events = vec![TimedEvent { beat: 0.0, length: 2.0, notes: placed(&tonic_chord, 48), click: false }];
+    for (index, degree) in degrees.iter().enumerate() {
+        events.push(TimedEvent { beat: 3.0 + index as f64, length: 0.9, notes: vec![midi_of(*degree)], click: false });
+    }
+    let answer = degrees.iter().map(|d| d.to_string()).collect::<Vec<_>>().join(" ");
+    let names: Vec<String> = degrees.iter().map(|d| scale[(d - 1) % 7].to_string()).collect();
+    Some(Question {
+        exercise: Exercise::Melody,
+        level,
+        item,
+        playing: Playing::Timed,
+        steps: events.iter().map(|e| e.notes.clone()).collect(),
+        choices: (1..=top).map(|d| Choice { answer: d.to_string(), symbol: d.to_string() }).collect(),
+        answer,
+        key: Some(key),
+        reveal: names.join(" "),
+        timing: Some(Timing { bpm: 76.0, events }),
+        answer_length: length,
     })
 }
 
@@ -550,6 +795,51 @@ mod tests {
             assert!(question(exercise, exercise.levels() + 1, None, 1).is_none());
         }
         assert!(question(Exercise::Chords, 1, Some("chord:Diminished"), 1).is_none(), "élément hors niveau");
+    }
+
+    #[test]
+    fn rhythm_questions_fill_one_bar_and_offer_close_variants() {
+        for seed in 0..80 {
+            for level in 1..=4 {
+                let q = question(Exercise::Rhythm, level, None, seed).unwrap();
+                let total: f64 = q.answer.split(' ').map(|id| cell(id).beats).sum();
+                assert!((total - 4.0).abs() < 1e-9, "{}", q.answer);
+                assert!(q.answer.split(' ').any(|id| q.item.ends_with(&format!(":{id}"))), "{} doit contenir {}", q.answer, q.item);
+                assert_eq!(q.choices.len(), 4, "{q:?}");
+                let mut unique: Vec<&str> = q.choices.iter().map(|c| c.answer.as_str()).collect();
+                unique.dedup();
+                unique.sort();
+                unique.dedup();
+                assert_eq!(unique.len(), 4);
+                let timing = q.timing.as_ref().unwrap();
+                assert_eq!(timing.events.iter().filter(|e| e.click).count(), 4, "décompte");
+                let last = timing.events.last().unwrap();
+                assert!((last.beat + last.length - 8.0).abs() < 1e-9, "la mesure suit le décompte");
+            }
+        }
+    }
+
+    #[test]
+    fn melody_questions_start_on_the_tonic_and_play_the_answer() {
+        for seed in 0..60 {
+            for level in 1..=4 {
+                let q = question(Exercise::Melody, level, None, seed).unwrap();
+                let degrees: Vec<usize> = q.answer.split(' ').map(|d| d.parse().unwrap()).collect();
+                let (length, top, leap, mode) = melody_spec(level);
+                assert_eq!((degrees.len(), q.answer_length, degrees[0]), (length, length, 1));
+                assert!(degrees.iter().all(|d| (1..=top).contains(d)));
+                assert!(degrees.windows(2).all(|w| w[0] != w[1] && w[0].abs_diff(w[1]) <= leap));
+                let key = q.key.unwrap();
+                assert_eq!(key.mode, mode);
+                let scale = key.scale().notes();
+                let events = &q.timing.as_ref().unwrap().events;
+                for (degree, event) in degrees.iter().zip(&events[1..]) {
+                    assert_eq!(event.notes[0].rem_euclid(12) as u8, scale[(degree - 1) % 7].pitch_class().value());
+                }
+                let notes: Vec<i32> = events[1..].iter().map(|e| e.notes[0]).collect();
+                assert!(degrees.windows(2).zip(notes.windows(2)).all(|(d, n)| (d[1] > d[0]) == (n[1] > n[0])), "le contour suit les degrés");
+            }
+        }
     }
 
     #[test]

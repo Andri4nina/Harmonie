@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { play, stop } from "../audio/synth";
+import { play, playTimed, stop } from "../audio/synth";
+import { RhythmNotation } from "../components/RhythmNotation";
 import { Icon, Panel } from "../components/ui";
 import { useEar } from "../state/ear";
 import {
@@ -15,7 +16,7 @@ import {
   review,
 } from "../theory/ear";
 
-const ORDER: ExerciseId[] = ["intervals", "chords", "degrees", "progressions"];
+const ORDER: ExerciseId[] = ["intervals", "chords", "degrees", "progressions", "rhythm", "melody"];
 
 function keyName(key: string | null): string {
   if (!key) return "";
@@ -28,6 +29,8 @@ export function EarTraining() {
   const [ready, setReady] = useState(false);
   const [question, setQuestion] = useState<Question | null>(null);
   const [chosen, setChosen] = useState<string | null>(null);
+  /** Dictée en cours : degrés déjà saisis (le premier, la tonique, est donné). */
+  const [entry, setEntry] = useState<string[]>([]);
   const [score, setScore] = useState({ right: 0, total: 0 });
 
   // Progrès enregistrés relus après l'hydratation de la page pré-rendue.
@@ -42,13 +45,17 @@ export function EarTraining() {
   const items = catalog.find((e) => e.id === exercise)?.levels[level - 1]?.items ?? [];
   const cardList = useMemo(() => Object.values(cards), [cards]);
 
-  const listen = useCallback((current: Question) => play(current.steps, current.playing, "ear"), []);
+  const listen = useCallback((current: Question) => {
+    if (current.timing) playTimed(current.timing.events, current.timing.bpm, "ear");
+    else if (current.playing !== "timed") play(current.steps, current.playing, "ear");
+  }, []);
 
   const next = useCallback(() => {
     const item = pick(items, cardList, Date.now(), question?.item ?? null);
     const fresh = makeQuestion(exercise, level, item);
     setQuestion(fresh);
     setChosen(null);
+    setEntry(fresh.exercise === "melody" ? ["1"] : []);
     listen(fresh);
   }, [items, cardList, question, exercise, level, listen]);
 
@@ -72,6 +79,17 @@ export function EarTraining() {
     setScore({ right: 0, total: 0 });
   };
 
+  /** Dictée : ajoute un degré ; la réponse part dès que la mélodie est complète. */
+  const type = useCallback(
+    (degree: string) => {
+      if (!question || chosen || entry.length >= question.answer_length) return;
+      const next = [...entry, degree];
+      setEntry(next);
+      if (next.length === question.answer_length) answer(next.join(" "));
+    },
+    [question, chosen, entry, answer],
+  );
+
   // Clavier : chiffres pour répondre, espace pour réécouter, Entrée pour continuer.
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -82,14 +100,18 @@ export function EarTraining() {
       } else if (event.key === "Enter" && (chosen || !question)) {
         event.preventDefault();
         next();
+      } else if (question && !chosen && question.exercise === "melody" && event.key === "Backspace") {
+        setEntry((current) => (current.length > 1 ? current.slice(0, -1) : current));
       } else if (question && !chosen && /^[1-9]$/.test(event.key)) {
         const choice = question.choices[Number(event.key) - 1];
-        if (choice) answer(choice.answer);
+        if (!choice) return;
+        if (question.exercise === "melody") type(choice.answer);
+        else answer(choice.answer);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [question, chosen, listen, next, answer]);
+  }, [question, chosen, listen, next, answer, type]);
 
   const label = EXERCISE_LABEL[exercise];
   const minor = question?.key?.endsWith("minor") ?? false;
@@ -107,7 +129,7 @@ export function EarTraining() {
         </p>
       </section>
 
-      <div role="tablist" aria-label="Exercice" className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+      <div role="tablist" aria-label="Exercice" className="grid grid-cols-2 gap-2 sm:grid-cols-3 2xl:grid-cols-6">
         {ORDER.map((id) => (
           <button
             key={id}
@@ -173,14 +195,69 @@ export function EarTraining() {
               </button>
               <div className="min-w-0 flex-1">
                 <p className="font-display text-2xl font-semibold">{label.prompt}</p>
-                {question.key && <p className="caption">Tonalité de la cadence{" "}: {keyName(question.key)}</p>}
+                {question.key && (
+                  <p className="caption">
+                    {exercise === "degrees" ? "Tonalité de la cadence" : "Tonalité"}
+                    {" "}: {keyName(question.key)}
+                    {exercise === "melody" ? ". La mélodie commence sur la tonique." : ""}
+                  </p>
+                )}
               </div>
               <p className="caption" aria-live="polite">
                 {score.right} sur {score.total}
               </p>
             </div>
 
-            <div className={`grid gap-2 ${exercise === "progressions" ? "sm:grid-cols-2" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"}`}>
+            {exercise === "melody" ? (
+              <div className="flex flex-col gap-4">
+                <ol className="flex flex-wrap gap-2" aria-label="Votre dictée">
+                  {Array.from({ length: question.answer_length }, (_, index) => {
+                    const typed = entry[index];
+                    const expected = question.answer.split(" ")[index];
+                    const verdict = chosen ? (typed === expected ? "right" : "wrong") : "idle";
+                    return (
+                      <li
+                        key={index}
+                        className={`flex size-14 flex-col items-center justify-center rounded-[14px] border ${
+                          verdict === "right" ? "border-brass bg-[var(--accent-soft)]" : verdict === "wrong" ? "border-danger" : typed ? "border-[var(--accent-line)]" : "border-dashed border-line"
+                        }`}
+                      >
+                        <span className="font-display text-xl font-semibold">{typed ?? ""}</span>
+                        {verdict === "wrong" && <span className="caption">{expected}</span>}
+                      </li>
+                    );
+                  })}
+                </ol>
+                {!chosen && (
+                  <div className="flex flex-wrap gap-2">
+                    {question.choices.map((choice) => {
+                      const { symbol, name } = choiceLabel(exercise, choice, minor);
+                      return (
+                        <button
+                          key={choice.answer}
+                          type="button"
+                          onClick={() => type(choice.answer)}
+                          title={name}
+                          className="flex min-h-14 min-w-14 flex-col items-center justify-center rounded-[14px] border border-line px-3 hover:border-[var(--accent-line)] hover:bg-[var(--accent-soft)]"
+                        >
+                          <span className="font-display text-lg font-semibold">{symbol}</span>
+                          <span className="caption hidden sm:block">{name}</span>
+                        </button>
+                      );
+                    })}
+                    <button
+                      type="button"
+                      onClick={() => setEntry((current) => (current.length > 1 ? current.slice(0, -1) : current))}
+                      disabled={entry.length <= 1}
+                      className="btn text-ivory-2 hover:bg-white/5"
+                    >
+                      Effacer
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+            <div className={`grid gap-2 ${exercise === "progressions" || exercise === "rhythm" ? "sm:grid-cols-2" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"}`}>
               {question.choices.map((choice, index) => {
                 const { symbol, name } = choiceLabel(exercise, choice, minor);
                 const isAnswer = choice.answer === question.answer;
@@ -203,19 +280,29 @@ export function EarTraining() {
                     }`}
                   >
                     <span className="flex w-full items-baseline justify-between gap-2">
-                      <span className="font-display text-lg font-semibold">{symbol}</span>
+                      {exercise === "rhythm" ? (
+                        <RhythmNotation pattern={choice.answer} label={name} />
+                      ) : (
+                        <span className="font-display text-lg font-semibold">{symbol}</span>
+                      )}
                       <span className="caption hidden sm:inline">{index < 9 ? index + 1 : ""}</span>
                     </span>
-                    <span className="caption">{name}</span>
+                    {exercise !== "rhythm" && <span className="caption">{name}</span>}
                   </button>
                 );
               })}
             </div>
 
-            {chosen && correctChoice && (
+            )}
+
+            {chosen && (correctChoice || exercise === "melody") && (
               <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-5" aria-live="polite">
                 <p className={chosen === question.answer ? "text-brass" : "text-danger"}>
-                  {chosen === question.answer ? "Juste" : `Réponse attendue : ${choiceLabel(exercise, correctChoice, minor).name}`}
+                  {chosen === question.answer
+                    ? "Juste"
+                    : exercise === "melody"
+                      ? `Réponse attendue : ${question.answer}`
+                      : `Réponse attendue : ${correctChoice ? choiceLabel(exercise, correctChoice, minor).name : ""}`}
                   <span className="text-ivory-2">{" — "}{question.reveal}</span>
                 </p>
                 <div className="flex gap-2">
@@ -231,7 +318,7 @@ export function EarTraining() {
           </div>
         )}
       </Panel>
-      <p className="caption hidden sm:block">Raccourcis{" "}: chiffres pour répondre, espace pour réécouter, Entrée pour continuer.</p>
+      <p className="caption hidden sm:block">Raccourcis{" "}: chiffres pour répondre (dictée : un chiffre par note, retour arrière pour effacer), espace pour réécouter, Entrée pour continuer.</p>
     </div>
   );
 }

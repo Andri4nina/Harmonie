@@ -22,7 +22,7 @@ export const useEar = create<EarState>()(
     (set) => ({
       cards: {},
       exercise: "intervals",
-      levels: { intervals: 1, chords: 1, degrees: 1, progressions: 1 },
+      levels: { intervals: 1, chords: 1, degrees: 1, progressions: 1, rhythm: 1, melody: 1 },
       setExercise: (exercise) => set({ exercise }),
       setLevel: (exercise, level) => set((state) => ({ levels: { ...state.levels, [exercise]: level } })),
       save: (card) => set((state) => ({ cards: { ...state.cards, [card.item]: card } })),

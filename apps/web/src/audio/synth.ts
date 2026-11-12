@@ -135,3 +135,71 @@ export function play(steps: number[][], mode: PlayMode, id: string): void {
 export function playNote(midi: number): void {
   play([[midi]], "melodic", `midi:${midi}`);
 }
+
+/** Un son placé dans le temps (en noires), tel que le calcule le moteur. */
+export interface TimedEvent {
+  beat: number;
+  length: number;
+  notes: number[];
+  click: boolean;
+}
+
+/** Clic de décompte : bruit bref filtré, distinct des notes. */
+function click(ctx: AudioContext, out: AudioNode, start: number, accent: boolean): void {
+  const length = Math.floor(ctx.sampleRate * 0.03);
+  const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / length) ** 3;
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  const filter = ctx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = accent ? 2600 : 1800;
+  filter.Q.value = 3;
+  const gain = ctx.createGain();
+  gain.gain.value = accent ? 0.9 : 0.6;
+  source.connect(filter).connect(gain).connect(out);
+  source.start(start);
+}
+
+/**
+ * Joue des événements placés dans le temps (rythme, dictée). Les temps du
+ * décompte sont des clics ; les notes gardent la durée écrite.
+ */
+export function playTimed(events: TimedEvent[], bpm: number, id: string): void {
+  stop();
+  if (events.length === 0) return;
+  const { ctx, out } = audio();
+  const a4 = useSettings.getState().a4;
+  const beat = 60 / bpm;
+  const bus = ctx.createGain();
+  bus.connect(out);
+  const origin = ctx.currentTime + 0.08;
+
+  for (const event of events) {
+    const start = origin + event.beat * beat;
+    if (event.click) {
+      click(ctx, bus, start, event.beat === 0);
+      continue;
+    }
+    const level = 0.32 / Math.sqrt(Math.max(1, event.notes.length));
+    // Une note s'arrête juste avant la suivante, pour que le rythme s'entende.
+    const hold = Math.max(0.06, event.length * beat * 0.85);
+    for (const midi of event.notes) voice(ctx, bus, midiToFrequency(midi, a4), start, hold, level);
+  }
+
+  const end = Math.max(...events.map((e) => e.beat + e.length)) * beat + 0.4;
+  const follow = () => {
+    const elapsed = (ctx.currentTime - origin) / beat;
+    if (elapsed * beat >= end) {
+      stop();
+      return;
+    }
+    const sounding = events.find((e) => !e.click && e.notes.length > 0 && elapsed >= e.beat && elapsed < e.beat + e.length);
+    const active = sounding?.notes ?? [];
+    const state = usePlayer.getState();
+    if (state.playingId !== id || state.active.join() !== active.join()) usePlayer.setState({ active, step: null, playingId: id });
+    if (current) current.frame = requestAnimationFrame(follow);
+  };
+  current = { bus, frame: requestAnimationFrame(follow) };
+}
