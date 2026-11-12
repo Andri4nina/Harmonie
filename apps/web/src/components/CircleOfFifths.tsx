@@ -62,7 +62,7 @@ export function CircleOfFifths({ current, related }: { current?: string; related
           x={x}
           y={y + 4}
           textAnchor="middle"
-          fontSize={ring === RINGS.outer ? 14 : 11}
+          fontSize={ring === RINGS.outer ? 12.5 : 9.5}
           fontWeight={600}
           fontFamily="var(--font-display)"
           fill={isCurrent ? "#161a2e" : "#e8eef5"}
@@ -95,10 +95,10 @@ export function CircleOfFifths({ current, related }: { current?: string; related
           </g>
         );
       })}
-      <text x={CENTER} y={CENTER - 2} textAnchor="middle" fontSize={13} fontStyle="italic" fontFamily="var(--font-display)" fill="rgb(236 230 216 / 0.55)">
+      <text x={CENTER} y={CENTER - 2} textAnchor="middle" fontSize={13} fontWeight={500} fontFamily="var(--font-sans)" fill="rgb(236 230 216 / 0.55)">
         Cercle
       </text>
-      <text x={CENTER} y={CENTER + 13} textAnchor="middle" fontSize={13} fontStyle="italic" fontFamily="var(--font-display)" fill="rgb(236 230 216 / 0.55)">
+      <text x={CENTER} y={CENTER + 13} textAnchor="middle" fontSize={13} fontWeight={500} fontFamily="var(--font-sans)" fill="rgb(236 230 216 / 0.55)">
         des quintes
       </text>
     </svg>

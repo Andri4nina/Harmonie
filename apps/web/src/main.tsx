@@ -1,5 +1,5 @@
-import "@fontsource-variable/bodoni-moda/opsz.css";
-import "@fontsource-variable/instrument-sans";
+import "@fontsource-variable/unbounded";
+import "@fontsource-variable/syne";
 import "./index.css";
 
 import { StrictMode } from "react";

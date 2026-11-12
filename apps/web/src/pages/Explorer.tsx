@@ -48,7 +48,7 @@ function Hero({ view }: { view: NodeView }) {
   return (
     <section className="pt-4 sm:pt-8" key={view.id}>
       <p className="caption text-[0.9375rem]">{KIND_LABEL[view.kind]}</p>
-      <h1 className="font-display engrave mt-1 text-[clamp(3.25rem,13vw,8.5rem)] leading-[0.92] font-medium tracking-[-0.025em] break-words">
+      <h1 className="font-display engrave mt-1 text-[clamp(2.6rem,11vw,6.75rem)] leading-[0.98] font-semibold tracking-[-0.02em] break-words">
         {labelOf(view.id)}
       </h1>
 
@@ -83,7 +83,7 @@ function Hero({ view }: { view: NodeView }) {
                 sounding ? "border-[var(--note)] bg-[var(--note)] text-night" : "border-[var(--note-line)] bg-[var(--note-soft)]"
               }`}
             >
-              <span className="font-display text-2xl leading-none font-semibold">{tone.note}</span>
+              <span className="font-display text-xl leading-none font-semibold">{tone.note}</span>
               <span className={`mt-1 text-xs ${sounding ? "text-night/70" : "text-ivory-2"}`}>{tone.role}</span>
             </div>
           );
@@ -183,7 +183,7 @@ export function Explorer() {
       <div className="flex flex-col gap-4">
         <SearchBox autoFocus />
         <Panel framed={false}>
-          <h1 className="font-display text-5xl font-medium">Page introuvable</h1>
+          <h1 className="font-display text-4xl font-semibold">Page introuvable</h1>
           <p className="mt-3 max-w-[62ch] text-ivory-2">
             Cette adresse ne correspond à aucun élément musical connu du moteur.{" "}
             <Link to={pathOf("note:C")} className="text-brass underline underline-offset-4">

@@ -21,7 +21,7 @@ setup(readFileSync(resolve(web, "src/theory/pkg/harmonia_theory_wasm_bg.wasm")))
 // Les deux polices du texte courant sont préchargées : le titre principal
 // s'affiche d'emblée dans sa police définitive.
 const preloads = readdirSync(resolve(dist, "assets"))
-  .filter((file) => /^(bodoni-moda-latin-opsz|instrument-sans-latin-wght)-normal-.*\.woff2$/.test(file))
+  .filter((file) => /^(unbounded|syne)-latin-wght-normal-.*\.woff2$/.test(file))
   .map((file) => `<link rel="preload" href="/assets/${file}" as="font" type="font/woff2" crossorigin />`)
   .join("\n    ");
 const template = readFileSync(resolve(dist, "index.html"), "utf8").replace(

@@ -100,8 +100,7 @@ export function MusicGraph({ view }: { view: NodeView }) {
             transform={`rotate(${degrees} ${x} ${y})`}
             textAnchor="middle"
             fontSize={13}
-            fontStyle="italic"
-            fontFamily="var(--font-display)"
+            fontFamily="var(--font-sans)"
             fill="rgb(236 230 216 / 0.42)"
           >
             {GROUP_LABEL[sector.key] ?? sector.key}
@@ -112,7 +111,7 @@ export function MusicGraph({ view }: { view: NodeView }) {
         const hue = hueOf(node.pitchClass);
         const detail = detailLabel(node.group, node.detail);
         const label = shortLabelOf(node.id);
-        const width = Math.max(34, label.length * 8 + 16);
+        const width = Math.max(36, label.length * 9 + 18);
         return (
           <g
             key={node.key}
@@ -144,8 +143,8 @@ export function MusicGraph({ view }: { view: NodeView }) {
             <text
               y={4.5}
               textAnchor="middle"
-              fontSize={13}
-              fontWeight={600}
+              fontSize={11.5}
+              fontWeight={500}
               fontFamily="var(--font-display)"
               fill={`oklch(0.93 0.09 ${hue})`}
               pointerEvents="none"
@@ -161,7 +160,7 @@ export function MusicGraph({ view }: { view: NodeView }) {
         x={CENTER}
         y={CENTER + 5}
         textAnchor="middle"
-        fontSize={shortLabelOf(view.id).length > 7 ? 10 : 15}
+        fontSize={shortLabelOf(view.id).length > 7 ? 9 : 13}
         fontWeight={700}
         fontFamily="var(--font-display)"
         fill={`oklch(0.95 0.09 ${centerHue})`}

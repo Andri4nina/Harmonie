@@ -40,7 +40,7 @@ export function Dashboard() {
   return (
     <div className="flex flex-col gap-10 sm:gap-14">
       <section className="pt-6 sm:pt-12 lg:pt-16">
-        <h1 className="font-display engrave max-w-[14ch] text-[clamp(2.75rem,8vw,5.75rem)] leading-[0.98] font-medium tracking-[-0.02em]">
+        <h1 className="font-display engrave max-w-[15ch] text-[clamp(2.1rem,6.2vw,4.4rem)] leading-[1.06] font-semibold tracking-[-0.015em] text-balance">
           Voyez ce qui relie les notes.
         </h1>
         <p className="mt-6 max-w-[58ch] text-[1.0625rem] text-ivory-2 sm:text-lg">

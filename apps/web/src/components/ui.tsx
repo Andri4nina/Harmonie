@@ -62,7 +62,7 @@ export function NodeChip({
       }`}
     >
       <span className="size-1.5 shrink-0 self-center rounded-full bg-[var(--note)]" />
-      <span className="font-display text-[1.05rem] leading-none font-semibold">{shortLabelOf(id)}</span>
+      <span className="font-display text-[0.9rem] leading-none font-medium">{shortLabelOf(id)}</span>
       {detail && <span className="text-[0.8125rem] text-ivory-3 group-hover:text-ivory-2">{detail}</span>}
     </Link>
   );

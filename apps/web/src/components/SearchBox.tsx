@@ -73,7 +73,7 @@ export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
                 className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2 text-left hover:bg-[var(--note-soft)]"
               >
                 <span className="size-2 shrink-0 rounded-full bg-[var(--note)]" />
-                <span className="font-display text-[1.05rem] font-semibold">{labelOf(view.id)}</span>
+                <span className="font-display text-[0.95rem] font-medium">{labelOf(view.id)}</span>
                 <span className="caption ml-auto">{KIND_LABEL[view.kind]}</span>
               </button>
             ))

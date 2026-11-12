@@ -26,7 +26,7 @@ function Brand() {
   return (
     <NavLink to="/" className="flex items-center gap-3 rounded-xl" aria-label="Harmonie, accueil">
       <img src="/favicon.svg" alt="" className="size-9 rounded-[10px]" />
-      <span className="font-display text-[1.45rem] leading-none font-semibold tracking-tight">Harmonie</span>
+      <span className="font-display text-[1.2rem] leading-none font-semibold">Harmonie</span>
     </NavLink>
   );
 }

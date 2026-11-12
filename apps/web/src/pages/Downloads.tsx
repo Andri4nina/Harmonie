@@ -40,7 +40,7 @@ export function Downloads() {
   return (
     <div className="flex flex-col gap-8 sm:gap-10">
       <section className="pt-4 sm:pt-8">
-        <h1 className="font-display engrave max-w-[16ch] text-[clamp(2.75rem,8vw,5rem)] leading-[0.98] font-medium tracking-[-0.02em]">
+        <h1 className="font-display engrave max-w-[18ch] text-[clamp(2rem,5.6vw,3.9rem)] leading-[1.06] font-semibold tracking-[-0.015em] text-balance">
           Harmonie sur votre ordinateur et votre téléphone.
         </h1>
         <p className="mt-5 max-w-[60ch] text-ivory-2">
@@ -85,7 +85,7 @@ export function Downloads() {
               <section key={platform.id} className="glass flex flex-col p-5 sm:p-6">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="font-display text-3xl font-medium">{platform.name}</h2>
+                    <h2 className="font-display text-2xl font-semibold">{platform.name}</h2>
                     <p className="caption mt-1">{platform.detail}</p>
                   </div>
                   {platform.id === mine && (

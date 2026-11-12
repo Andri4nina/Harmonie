@@ -8,8 +8,8 @@
  * docs/DESIGN.md.
  */
 @theme {
-  --font-display: "Bodoni Moda Variable", "Bodoni 72", Didot, serif;
-  --font-sans: "Instrument Sans Variable", system-ui, sans-serif;
+  --font-display: "Unbounded Variable", "Arial Black", sans-serif;
+  --font-sans: "Syne Variable", system-ui, sans-serif;
 
   --color-night: #161a2e;
   --color-velvet: #232846;
@@ -67,13 +67,13 @@ body {
   font-size: 1rem;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 .font-display {
   font-family: var(--font-display);
-  font-optical-sizing: auto;
   font-variant-numeric: lining-nums;
+  letter-spacing: -0.02em;
 }
 
 /*

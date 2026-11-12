@@ -7,7 +7,7 @@ export function Settings() {
   return (
     <div className="flex max-w-2xl flex-col gap-8">
       <section className="pt-4 sm:pt-8">
-        <h1 className="font-display engrave text-[clamp(2.75rem,8vw,4.5rem)] leading-none font-medium tracking-[-0.02em]">Réglages</h1>
+        <h1 className="font-display engrave text-[clamp(2.1rem,6vw,3.5rem)] leading-none font-semibold tracking-[-0.015em]">Réglages</h1>
         <p className="mt-3 text-ivory-2">Enregistrés sur cet appareil.</p>
       </section>
 

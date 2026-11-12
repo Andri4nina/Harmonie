@@ -13,8 +13,9 @@
 > | Laiton | `#D9B46A` | **seul accent** : action, état actif, focus |
 > | Laiton sombre | `#8A6E3A` | traits fins |
 >
-> - Typographie : **Bodoni Moda** (gravure des partitions) pour les titres et
->   les noms de notes et d'accords ; **Instrument Sans** pour le reste. Aucune
+> - Typographie (choix de l'utilisateur) : **Unbounded** pour les titres et
+>   les noms de notes et d'accords, **Syne** pour le reste, chiffres alignés.
+>   Unbounded n'a pas d'italique : les légendes restent en Syne droit. Aucune
 >   monospace, aucune étiquette en capitales, aucun séparateur « · ».
 > - Les couleurs des notes (une teinte par classe de hauteur, chroma 0,085)
 >   ne servent qu'aux notes, jamais à l'interface.
