@@ -160,7 +160,7 @@ harmonia/
 │   ├── theory/                        Phase 3 — chargeur WASM + API TS typée
 │   └── audio/                         Phase 3 — synthèse Web Audio, lecteur, time-stretch
 ├── content/
-│   └── lessons/                       Phase 6 — cours versionnés (données, pas du code)
+│   └── lessons/                    ✅ Phase 6 — cours versionnés (données, pas du code)
 ├── db/
 │   └── migrations/                 ✅ schéma PostgreSQL (0001), comptes Supabase et RLS (0002)
 └── docs/                           ✅

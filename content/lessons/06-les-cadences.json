@@ -1,0 +1,61 @@
+{
+  "slug": "les-cadences",
+  "order": 6,
+  "level": "intermédiaire",
+  "title": "Les cadences",
+  "summary": "Parfaite, plagale, demi-cadence, rompue : reconnaître la fin d'une phrase musicale.",
+  "steps": [
+    {
+      "type": "text",
+      "body": "Une **cadence** est la façon dont une phrase musicale se termine. Elle se reconnaît aux deux derniers accords. Écoutez-les en do majeur."
+    },
+    {
+      "type": "sequence",
+      "nodes": [
+        "chord:G7",
+        "chord:C"
+      ],
+      "label": "Cadence parfaite : V – I (sol 7, do). La conclusion la plus nette."
+    },
+    {
+      "type": "sequence",
+      "nodes": [
+        "chord:F",
+        "chord:C"
+      ],
+      "label": "Cadence plagale : IV – I (fa, do). Plus douce : celle de l'« amen »."
+    },
+    {
+      "type": "sequence",
+      "nodes": [
+        "chord:C",
+        "chord:G"
+      ],
+      "label": "Demi-cadence : la phrase s'arrête sur V. Elle reste en suspens."
+    },
+    {
+      "type": "sequence",
+      "nodes": [
+        "chord:G7",
+        "chord:Am"
+      ],
+      "label": "Cadence rompue : V – vi. On attendait do, on entend la mineur."
+    },
+    {
+      "type": "question",
+      "prompt": "En do majeur, une phrase s'arrête sur l'accord de sol. Quelle cadence ?",
+      "choices": [
+        "Parfaite",
+        "Demi-cadence",
+        "Plagale"
+      ],
+      "answer": "Demi-cadence",
+      "explanation": "Sol est le degré V : s'arrêter dessus, sans revenir à do, c'est une demi-cadence."
+    },
+    {
+      "type": "explore",
+      "node": "progression:two-five-one:C:major",
+      "label": "Écouter le ii – V – I, la formule cadentielle du jazz"
+    }
+  ]
+}

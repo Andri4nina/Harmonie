@@ -1,0 +1,45 @@
+{
+  "slug": "degres-et-fonctions",
+  "order": 5,
+  "level": "intermédiaire",
+  "title": "Degrés et fonctions",
+  "summary": "Les sept accords d'une tonalité, leurs chiffres romains, et les trois fonctions : tonique, sous-dominante, dominante.",
+  "steps": [
+    {
+      "type": "text",
+      "body": "Dans une tonalité, on bâtit une triade sur chaque note de la gamme. On les nomme par leur **degré**, en chiffres romains : majuscules pour les accords majeurs, minuscules pour les mineurs. En do majeur : I (do), ii (ré mineur), iii (mi mineur), IV (fa), V (sol), vi (la mineur), vii° (si diminué)."
+    },
+    {
+      "type": "explore",
+      "node": "key:C:major",
+      "label": "Voir les sept accords de do majeur"
+    },
+    {
+      "type": "text",
+      "body": "Ces accords se répartissent en trois **fonctions**. La **tonique** (I, vi) est le repos. La **sous-dominante** (IV, ii) s'en éloigne. La **dominante** (V, vii°) crée une tension qui appelle le retour à la tonique."
+    },
+    {
+      "type": "listen",
+      "node": "progression:three-chord:C:major",
+      "label": "I – IV – V : tonique, sous-dominante, dominante"
+    },
+    {
+      "type": "question",
+      "prompt": "En sol majeur, quel accord porte le degré V ?",
+      "choices": [
+        "Ré majeur",
+        "Do majeur",
+        "Mi mineur"
+      ],
+      "answer": "Ré majeur",
+      "explanation": "La cinquième note de sol majeur est ré ; sur ré, la gamme donne ré, fa♯, la : un accord majeur."
+    },
+    {
+      "type": "quiz",
+      "exercise": "degrees",
+      "level": 1,
+      "count": 5,
+      "label": "À l'oreille : après la cadence, la note est-elle le degré 1, 3 ou 5 ?"
+    }
+  ]
+}

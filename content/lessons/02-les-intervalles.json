@@ -1,0 +1,63 @@
+{
+  "slug": "les-intervalles",
+  "order": 2,
+  "level": "débutant",
+  "title": "Les intervalles",
+  "summary": "Nommer la distance entre deux notes : nombre, qualité, tierces majeures et mineures, intervalles justes.",
+  "steps": [
+    {
+      "type": "text",
+      "body": "Un **intervalle** est la distance entre deux notes. Son nom a deux parties : un **nombre**, qui compte les notes de la gamme parcourues (do, ré, mi : une tierce), et une **qualité** (majeure, mineure, juste…), qui précise le nombre de demi-tons."
+    },
+    {
+      "type": "text",
+      "body": "Do–mi compte quatre demi-tons : c'est une **tierce majeure**. Do–mi♭ n'en compte que trois : c'est une **tierce mineure**. Un seul demi-ton de différence change toute la couleur."
+    },
+    {
+      "type": "sequence",
+      "nodes": [
+        "note:C",
+        "note:E"
+      ],
+      "label": "Tierce majeure : do puis mi."
+    },
+    {
+      "type": "sequence",
+      "nodes": [
+        "note:C",
+        "note:Eb"
+      ],
+      "label": "Tierce mineure : do puis mi bémol."
+    },
+    {
+      "type": "text",
+      "body": "Quartes, quintes et octaves sont dites **justes** : do–fa compte 5 demi-tons, do–sol 7, do–do 12. Après l'octave, la quinte juste est l'intervalle le plus stable."
+    },
+    {
+      "type": "sequence",
+      "nodes": [
+        "note:C",
+        "note:G"
+      ],
+      "label": "Quinte juste : do puis sol."
+    },
+    {
+      "type": "question",
+      "prompt": "Combien de demi-tons compte une quinte juste ?",
+      "choices": [
+        "5",
+        "7",
+        "8"
+      ],
+      "answer": "7",
+      "explanation": "Do, do♯, ré, ré♯, mi, fa, fa♯, sol : sept demi-tons de do à sol."
+    },
+    {
+      "type": "quiz",
+      "exercise": "intervals",
+      "level": 1,
+      "count": 5,
+      "label": "À l'oreille : tierce majeure, quinte juste ou octave ?"
+    }
+  ]
+}

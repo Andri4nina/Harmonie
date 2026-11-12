@@ -35,7 +35,7 @@ struct Event {
     bytes: Vec<u8>,
 }
 
-fn track(events: &mut Vec<Event>) -> Vec<u8> {
+fn track(events: &mut [Event]) -> Vec<u8> {
     events.sort_by_key(|e| (e.tick, e.order));
     let mut data = Vec::new();
     let mut last = 0;

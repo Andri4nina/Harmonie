@@ -17,11 +17,11 @@ const ENTRIES: Entry[] = [
   { label: "Explorer la théorie", icon: "explorer", to: "/explorer" },
   { label: "Analyser un morceau", icon: "analyzer", to: "/analyser" },
   { label: "Ma bibliothèque", icon: "library", to: "/bibliotheque" },
+  { label: "Apprendre", icon: "learning", to: "/cours" },
   { label: "Entraîner l'oreille", icon: "ear", to: "/oreille" },
   { label: "Composer", icon: "generator", to: "/composer" },
   { label: "Télécharger", icon: "download", to: "/telecharger" },
   { label: "Réglages", icon: "settings", to: "/settings" },
-  { label: "Apprendre", icon: "learning", arrives: "v1.5" },
 ];
 
 function Brand() {
@@ -57,6 +57,7 @@ function Navigation({ onNavigate }: { onNavigate?: () => void }) {
           </li>
         ))}
       </ul>
+      {planned.length > 0 && (
       <div>
         <p className="caption px-3 pb-1">À venir</p>
         <ul className="flex flex-col">
@@ -69,6 +70,7 @@ function Navigation({ onNavigate }: { onNavigate?: () => void }) {
           ))}
         </ul>
       </div>
+      )}
     </nav>
   );
 }

@@ -6,6 +6,7 @@ import { TopoBackground } from "./components/TopoBackground";
 import { Composer } from "./pages/Composer";
 import { Dashboard } from "./pages/Dashboard";
 import { Downloads } from "./pages/Downloads";
+import { LessonPage, LessonsIndex } from "./pages/Lessons";
 import { EarTraining } from "./pages/EarTraining";
 import { Explorer } from "./pages/Explorer";
 import { Settings } from "./pages/Settings";
@@ -66,6 +67,8 @@ export function App() {
             <Route path="/telecharger" element={<Downloads />} />
             <Route path="/oreille" element={<EarTraining />} />
             <Route path="/composer" element={<Composer />} />
+            <Route path="/cours" element={<LessonsIndex />} />
+            <Route path="/cours/:slug" element={<LessonPage />} />
             <Route path="/analyser" element={<OnDemand><Analyzer /></OnDemand>} />
             <Route path="/analyser/:id" element={<OnDemand><TrackPage /></OnDemand>} />
             <Route path="/bibliotheque" element={<OnDemand><Library /></OnDemand>} />

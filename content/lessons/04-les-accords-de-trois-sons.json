@@ -1,0 +1,55 @@
+{
+  "slug": "les-accords-de-trois-sons",
+  "order": 4,
+  "level": "débutant",
+  "title": "Les accords de trois sons",
+  "summary": "Fondamentale, tierce et quinte : les quatre triades, majeure, mineure, diminuée et augmentée.",
+  "steps": [
+    {
+      "type": "text",
+      "body": "Un accord de trois sons, ou **triade**, superpose deux tierces sur une note appelée **fondamentale**. Ses trois notes sont la fondamentale, la tierce et la quinte."
+    },
+    {
+      "type": "piano",
+      "node": "chord:C",
+      "caption": "Do majeur : do, mi, sol."
+    },
+    {
+      "type": "text",
+      "body": "Selon les tierces empilées, on obtient quatre couleurs : **majeur** (tierce majeure puis mineure), **mineur** (mineure puis majeure), **diminué** (deux tierces mineures) et **augmenté** (deux tierces majeures)."
+    },
+    {
+      "type": "sequence",
+      "nodes": [
+        "chord:C",
+        "chord:Cm",
+        "chord:Cdim",
+        "chord:Caug"
+      ],
+      "label": "Do majeur, do mineur, do diminué, do augmenté."
+    },
+    {
+      "type": "question",
+      "prompt": "Quelle triade forment la, do et mi ?",
+      "choices": [
+        "La majeur",
+        "La mineur",
+        "Do majeur"
+      ],
+      "answer": "La mineur",
+      "explanation": "La–do est une tierce mineure (3 demi-tons), do–mi une tierce majeure (4) : accord mineur sur la."
+    },
+    {
+      "type": "quiz",
+      "exercise": "chords",
+      "level": 2,
+      "count": 5,
+      "label": "À l'oreille : majeur, mineur, diminué ou augmenté ?"
+    },
+    {
+      "type": "explore",
+      "node": "chord:Am",
+      "label": "Explorer l'accord de la mineur au piano et à la guitare"
+    }
+  ]
+}

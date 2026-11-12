@@ -1,0 +1,48 @@
+{
+  "slug": "construire-une-gamme-majeure",
+  "order": 3,
+  "level": "débutant",
+  "title": "Construire une gamme majeure",
+  "summary": "Le motif ton – ton – demi-ton qui fait toutes les gammes majeures, et l'armure qui en découle.",
+  "steps": [
+    {
+      "type": "text",
+      "body": "Une gamme majeure enchaîne sept notes selon un ordre fixe de tons (T) et de demi-tons (½) : **T T ½ T T T ½**. Partez de do et suivez ce motif : vous ne jouez que des touches blanches."
+    },
+    {
+      "type": "piano",
+      "node": "scale:C:major",
+      "caption": "Do majeur : do, ré, mi, fa, sol, la, si."
+    },
+    {
+      "type": "listen",
+      "node": "scale:C:major",
+      "label": "Écouter la gamme de do majeur"
+    },
+    {
+      "type": "text",
+      "body": "Le même motif, parti de sol, oblige à hausser le fa : sol, la, si, do, ré, mi, **fa♯**, sol. Ce fa dièse forme l'**armure** de sol majeur, écrite une fois pour toutes au début de la portée."
+    },
+    {
+      "type": "piano",
+      "node": "scale:G:major",
+      "caption": "Sol majeur : un dièse, fa♯."
+    },
+    {
+      "type": "question",
+      "prompt": "Quelles altérations porte la gamme de ré majeur ?",
+      "choices": [
+        "Fa♯ et do♯",
+        "Si♭",
+        "Fa♯ seulement"
+      ],
+      "answer": "Fa♯ et do♯",
+      "explanation": "Ré, mi, fa♯, sol, la, si, do♯ : le motif T T ½ T T T ½ impose deux dièses."
+    },
+    {
+      "type": "explore",
+      "node": "key:D:major",
+      "label": "Voir la tonalité de ré majeur, son armure et ses accords"
+    }
+  ]
+}

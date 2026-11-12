@@ -4,6 +4,7 @@
 
 import { type NodeView, catalog, nodeView } from "./engine";
 import { factValue, labelOf } from "./labels";
+import { lessonBySlug } from "./lessons";
 import { idOf, normalizePath, pathOf } from "./routes";
 
 export interface Head {
@@ -116,6 +117,33 @@ export function headFor(pathname: string): Head {
     const description =
       "Harmonie, par Andrianina Rasoamanana : la théorie musicale sur une même carte. Notes, gammes, accords et tonalités à écouter, à voir au piano et à la guitare, avec leurs relations.";
     return { title: SITE_NAME, description, indexable: true, path, jsonLd: website(description) };
+  }
+  if (path === "/cours") {
+    const description =
+      "Cours de théorie musicale gratuits et interactifs : notes, intervalles, gammes, accords, degrés et cadences, à écouter et à vérifier par l'oreille. Par Andrianina Rasoamanana.";
+    return { title: `Cours de théorie musicale interactifs | ${SITE_NAME}`, description, indexable: true, path, jsonLd: website(description) };
+  }
+  const lesson = path.startsWith("/cours/") ? lessonBySlug(path.slice("/cours/".length)) : undefined;
+  if (lesson) {
+    return {
+      title: `${lesson.title} : cours de théorie musicale | ${SITE_NAME}`,
+      description: lesson.summary,
+      indexable: true,
+      path,
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        name: lesson.title,
+        description: lesson.summary,
+        learningResourceType: "Cours interactif",
+        educationalLevel: lesson.level,
+        inLanguage: "fr",
+        isAccessibleForFree: true,
+        author,
+        isPartOf: { "@type": "Course", name: "Théorie musicale avec Harmonie", provider: author },
+        ...(SITE_URL ? { url: `${SITE_URL}${path}` } : {}),
+      },
+    };
   }
   if (path === "/composer") {
     const description =

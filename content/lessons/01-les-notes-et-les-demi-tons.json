@@ -1,0 +1,61 @@
+{
+  "slug": "les-notes-et-les-demi-tons",
+  "order": 1,
+  "level": "débutant",
+  "title": "Les notes et les demi-tons",
+  "summary": "Les sept noms de notes, le ton et le demi-ton, les dièses, les bémols et l'enharmonie.",
+  "steps": [
+    {
+      "type": "text",
+      "body": "La musique occidentale utilise douze sons par octave. Sept portent un nom de base : do, ré, mi, fa, sol, la, si. Harmonie écrit aussi leur nom anglais, C, D, E, F, G, A, B, celui des symboles d'accords."
+    },
+    {
+      "type": "piano",
+      "node": "scale:C:major",
+      "caption": "Les touches blanches du piano, de do à si."
+    },
+    {
+      "type": "text",
+      "body": "Entre deux touches voisines, blanches ou noires, il y a un **demi-ton**. Deux demi-tons font un **ton**. Mi et fa, si et do ne sont séparés que d'un demi-ton : aucune touche noire ne les sépare."
+    },
+    {
+      "type": "sequence",
+      "nodes": [
+        "note:C",
+        "note:C#",
+        "note:D"
+      ],
+      "label": "Do, do dièse, ré : deux demi-tons, soit un ton."
+    },
+    {
+      "type": "text",
+      "body": "Le **dièse** (♯) hausse une note d'un demi-ton ; le **bémol** (♭) la baisse d'un demi-ton. Do♯ et ré♭ désignent la même touche : on les dit **enharmoniques**. Le nom retenu dépend de la tonalité."
+    },
+    {
+      "type": "question",
+      "prompt": "Combien de demi-tons y a-t-il entre mi et fa ?",
+      "choices": [
+        "Un",
+        "Deux"
+      ],
+      "answer": "Un",
+      "explanation": "Mi et fa sont voisins, sans touche noire entre eux : un demi-ton."
+    },
+    {
+      "type": "question",
+      "prompt": "Quelle note est enharmonique de fa♯ ?",
+      "choices": [
+        "Sol♭",
+        "Sol♯",
+        "Fa♭"
+      ],
+      "answer": "Sol♭",
+      "explanation": "Fa♯ est un demi-ton au-dessus de fa, sol♭ un demi-ton sous sol : c'est la même touche."
+    },
+    {
+      "type": "explore",
+      "node": "note:C",
+      "label": "Explorer la note do : gammes, accords et tonalités qui la contiennent"
+    }
+  ]
+}

@@ -21,7 +21,7 @@ const MODULES: { name: string; state: string; done: boolean }[] = [
   { name: "Analyser un morceau", state: "version 1.3", done: true },
   { name: "Entraîner l'oreille (six exercices)", state: "version 1.4", done: true },
   { name: "Composer : grilles, mélodies, MIDI, MusicXML", state: "version 1.5", done: true },
-  { name: "Apprendre : cours interactifs", state: "version 1.5", done: false },
+  { name: "Apprendre : cours interactifs", state: "version 1.5", done: true },
   { name: "Applications ordinateur et Android", state: "versions 1.6 et 1.7", done: false },
 ];
 

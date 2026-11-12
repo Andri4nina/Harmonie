@@ -4,6 +4,37 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Numérotation : [SemVer](https://semver.org/lang/fr/). Chaque version correspond à
 une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
+## [1.5.0] — 2026-11-12
+
+Phase 6 : apprendre et composer.
+
+### Ajouté
+
+- Générateur (`compose`) : grilles d'accords par chaîne de Markov sur les
+  fonctions tonales, formule cadentielle S – D – T, trois styles (pop,
+  classique, jazz) en majeur et en mineur ; mélodie qui pose les notes de
+  l'accord sur les temps forts et avance par degrés conjoints.
+- Export (`export`) : MIDI standard type 1 (conduite, mélodie, accords, basse)
+  et partition MusicXML 4.0 (armure, mesure, symboles d'accords). Relus par
+  `mido` et un parseur XML (`scripts/check_exports.py`), aussi en intégration
+  continue.
+- Page « Composer » (pré-rendue, indexée) : tonalité, style, nombre de mesures,
+  tempo, écoute avec tête de lecture, téléchargements MIDI et MusicXML.
+- Cours interactifs (`content/lessons`, données) : six cours, des notes aux
+  cadences ; étapes de texte, piano, écoute, comparaison, question expliquée,
+  quiz d'oreille généré par le moteur, lien vers l'explorateur. Pages
+  pré-rendues et indexées (`LearningResource`), progression sur l'appareil.
+
+### Corrigé
+
+- La septième diminuée du mineur harmonique est bâtie sur la sensible
+  (`#vii°7` : sol♯ en la mineur), trouvé par les tests du générateur.
+
+### Limites
+
+- La progression des cours reste sur l'appareil (pas encore liée au compte).
+- Le générateur écrit un accord par mesure, à 4/4.
+
 ## [1.4.0] — 2026-11-12
 
 Phase 5 : entraînement de l'oreille complet, mélodie dans l'analyse,
