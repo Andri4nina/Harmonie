@@ -98,7 +98,15 @@ HARMONIE_API_URL=https://harmonie-api.onrender.com WORKER_TOKEN=… python -m ha
 4. Chaque poussée sur `main` qui touche le site le publie
    (`.github/workflows/deploy-web.yml`).
 
-## 4. Référencement
+## 4. Application de bureau
+
+Pousser une étiquette `vX.Y.Z` suffit : GitHub construit les installateurs
+(Windows, macOS, Linux) et les joint à la publication ; la page
+« Télécharger » les propose. Pour que l'analyse marche depuis l'application,
+ajouter `http://tauri.localhost` et `tauri://localhost` à `CORS_ORIGINS` de
+l'API. Signature des installateurs : `apps/desktop/README.md`.
+
+## 5. Référencement
 
 1. *Google Search Console* → ajouter la propriété avec l'adresse du site →
    méthode « balise HTML » : copier la valeur `content` dans la variable

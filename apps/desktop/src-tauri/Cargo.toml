@@ -1,0 +1,25 @@
+[package]
+name = "harmonie-desktop"
+description = "Harmonie pour ordinateur : le site et son moteur, hors connexion."
+version = "1.6.0"
+edition = "2024"
+authors = ["Andrianina Rasoamanana"]
+
+[lib]
+name = "harmonie_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7.4", features = [] }
+
+[dependencies]
+tauri = { version = "2.12.5", features = [] }
+tauri-plugin-dialog = "2.8.4"
+tauri-plugin-fs = "2.7.1"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

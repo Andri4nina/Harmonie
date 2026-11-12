@@ -22,6 +22,14 @@ describe("pickAssets", () => {
     expect(assets.macos).toBeUndefined();
   });
 
+  it("conseille l'installateur .exe avant le .msi, et l'AppImage avant le .deb", () => {
+    const assets = pickAssets([
+      release("v1.6.0", "2027-01-01T00:00:00Z", ["Harmonie_1.6.0_x64_en-US.msi", "Harmonie_1.6.0_x64-setup.exe", "Harmonie_1.6.0_amd64.deb", "Harmonie_1.6.0_amd64.AppImage"]),
+    ]);
+    expect(assets.windows?.name).toBe("Harmonie_1.6.0_x64-setup.exe");
+    expect(assets.linux?.name).toBe("Harmonie_1.6.0_amd64.AppImage");
+  });
+
   it("ignore les brouillons et les préversions", () => {
     const assets = pickAssets([
       release("v2.0.0-rc1", "2027-05-01T00:00:00Z", ["a.apk"], { prerelease: true }),

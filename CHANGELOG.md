@@ -4,6 +4,31 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Numérotation : [SemVer](https://semver.org/lang/fr/). Chaque version correspond à
 une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
+## [1.6.0] — 2026-11-13
+
+Phase 7a : application de bureau.
+
+### Ajouté
+
+- `apps/desktop` : application Tauri 2 qui embarque le site construit et son
+  moteur WebAssembly ; explorateur, cours, entraînement de l'oreille et
+  Composer fonctionnent hors connexion. Fenêtre native, icônes tirées du logo.
+- Exports MIDI et MusicXML par la boîte « Enregistrer sous » du système dans
+  l'application ; téléchargement ordinaire dans le navigateur.
+- Hors connexion, les sections qui passent par le serveur (analyse,
+  bibliothèque) le disent ; l'entrée « Télécharger » disparaît de
+  l'application.
+- Publication automatique des installateurs (Windows `.exe` et `.msi`, macOS
+  Apple Silicon et Intel, Linux `.AppImage` et `.deb`) à chaque étiquette de
+  version ; la page « Télécharger » conseille le `.exe` et l'AppImage.
+
+### Limites
+
+- Installateurs **non signés** tant qu'aucun certificat n'est fourni
+  (Windows : avertissement SmartScreen ; macOS : ouverture à autoriser).
+  Procédure dans `apps/desktop/README.md`.
+- Pas encore de mise à jour automatique de l'application.
+
 ## [1.5.0] — 2026-11-12
 
 Phase 6 : apprendre et composer.

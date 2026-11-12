@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
+import { saveFile } from "../app/files";
 import { playTimed, stop } from "../audio/synth";
 import { Icon, hueStyle } from "../components/ui";
 import { usePlayer } from "../state/store";
@@ -13,13 +14,6 @@ const PLAYER_ID = "compose";
 function keyName(key: string): string {
   const [tonic, mode] = key.split(" ");
   return `${tonic} ${mode === "minor" ? "mineur" : "majeur"}`;
-}
-
-function download(name: string, data: BlobPart, type: string): void {
-  const url = URL.createObjectURL(new Blob([data], { type }));
-  const link = Object.assign(document.createElement("a"), { href: url, download: name });
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 /** Une mesure : l'accord, son degré, et la mélodie dessinée dans la case. */
@@ -221,13 +215,13 @@ export function Composer() {
             Composer un autre morceau
           </button>
           <span className="mx-1 hidden h-6 w-px bg-[var(--color-line)] sm:block" aria-hidden="true" />
-          <button type="button" onClick={() => download(`${fileName}.mid`, new Uint8Array(toMidi(piece)), "audio/midi")} className="btn text-ivory-2 hover:bg-white/5">
+          <button type="button" onClick={() => void saveFile(`${fileName}.mid`, toMidi(piece), { name: "Fichier MIDI", extension: "mid", mime: "audio/midi" })} className="btn text-ivory-2 hover:bg-white/5">
             <Icon name="download" className="size-4" />
             MIDI
           </button>
           <button
             type="button"
-            onClick={() => download(`${fileName}.musicxml`, toMusicXml(piece, title), "application/vnd.recordare.musicxml+xml")}
+            onClick={() => void saveFile(`${fileName}.musicxml`, toMusicXml(piece, title), { name: "Partition MusicXML", extension: "musicxml", mime: "application/vnd.recordare.musicxml+xml" })}
             className="btn text-ivory-2 hover:bg-white/5"
           >
             <Icon name="download" className="size-4" />

@@ -1,6 +1,7 @@
 import { type FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { ACCEPTED, MAX_UPLOAD_MB, type Track, formatDuration, listTracks, uploadTrack } from "../app/api";
+import { useOnline } from "../app/platform";
 import { missingConfiguration, signIn, signOut, signUp, startSession, useSession } from "../app/session";
 import { Loader } from "../components/Loader";
 import { Icon, Panel } from "../components/ui";
@@ -236,8 +237,19 @@ export function TrackList({ version = 0 }: { version?: number }) {
 export function SignedIn({ children }: { children: React.ReactNode }) {
   useEffect(startSession, []);
   const { ready, token, email } = useSession();
+  const online = useOnline();
   const missing = missingConfiguration();
   if (missing.length > 0) return <NotConfigured missing={missing} />;
+  if (!online) {
+    return (
+      <Panel framed={false}>
+        <p className="max-w-[62ch] text-ivory-2">
+          Vous êtes hors connexion. L'analyse se fait sur le serveur : elle reviendra avec le réseau. L'explorateur, les
+          cours, l'entraînement de l'oreille et le générateur fonctionnent sans connexion.
+        </p>
+      </Panel>
+    );
+  }
   if (!ready) return <Loader label="Lecture de la session" />;
   if (!token) return <SignIn />;
   return (

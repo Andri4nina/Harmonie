@@ -15,6 +15,8 @@ export interface Platform {
   planned: string;
   /** Reconnaît le nom d'un fichier d'installation de cette plateforme. */
   matches: (file: string) => boolean;
+  /** Formats préférés, du plus au moins conseillé (ex. `.exe` avant `.msi`). */
+  preference?: RegExp[];
 }
 
 export const PLATFORMS: Platform[] = [
@@ -24,6 +26,7 @@ export const PLATFORMS: Platform[] = [
     detail: "Windows 10 et 11, 64 bits",
     planned: "v1.6",
     matches: (file) => /\.(msi|exe)$/i.test(file),
+    preference: [/-setup\.exe$/i, /\.exe$/i, /\.msi$/i],
   },
   {
     id: "macos",
@@ -38,6 +41,7 @@ export const PLATFORMS: Platform[] = [
     detail: "AppImage ou paquet Debian",
     planned: "v1.6",
     matches: (file) => /\.(appimage|deb)$/i.test(file),
+    preference: [/\.appimage$/i, /\.deb$/i],
   },
   {
     id: "android",
@@ -85,7 +89,11 @@ export function pickAssets(releases: GitHubRelease[]): Partial<Record<PlatformId
     .sort((a, b) => b.published_at.localeCompare(a.published_at));
   for (const platform of PLATFORMS) {
     for (const release of published) {
-      const asset = release.assets.find((candidate) => platform.matches(candidate.name));
+      const rank = (name: string) => {
+        const index = platform.preference?.findIndex((pattern) => pattern.test(name)) ?? -1;
+        return index < 0 ? Number.MAX_SAFE_INTEGER : index;
+      };
+      const asset = release.assets.filter((candidate) => platform.matches(candidate.name)).sort((a, b) => rank(a.name) - rank(b.name))[0];
       if (asset) {
         found[platform.id] = {
           name: asset.name,

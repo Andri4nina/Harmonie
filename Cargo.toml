@@ -1,7 +1,10 @@
 [workspace]
 resolver = "3"
+# L'application de bureau (Tauri) a son propre espace : ses dépendances
+# système (WebView) ne doivent pas peser sur les tests du moteur.
+exclude = ["apps/desktop/src-tauri"]
 members = ["crates/harmonia-theory", "crates/harmonia-theory-wasm", "crates/harmonia-audio", "crates/harmonia-api"]
 
 [workspace.package]
-version = "1.5.0"
+version = "1.6.0"
 edition = "2024"

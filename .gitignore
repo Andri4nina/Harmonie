@@ -19,3 +19,7 @@ workers/audio-analyzer/evaluation/out/
 
 # Valeurs de déploiement remplies (contiennent des secrets)
 deploy/env/*.env
+
+# Application de bureau : compilation et fichiers régénérés par Tauri
+apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/gen/

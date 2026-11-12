@@ -153,7 +153,7 @@ harmonia/
 ├── render.yaml                     ✅ Blueprint Render (API, worker)
 ├── apps/
 │   ├── web/                        ✅ Phase 3 — React + Vite + Tailwind
-│   ├── desktop/                       Phase 7 — Tauri 2 (enveloppe apps/web)
+│   ├── desktop/                    ✅ Phase 7 — Tauri 2 (enveloppe apps/web, hors connexion)
 │   └── mobile/                        Phase 7 — Expo / React Native
 ├── packages/
 │   ├── api-contracts/                 Phase 4 — types TS générés depuis OpenAPI

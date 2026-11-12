@@ -18,6 +18,7 @@ if (!browser) throw new Error("Définir CHROME_PATH (chemin de Chrome ou d'Edge)
 const shots = [
   { source: "scripts/social/og-image.html", output: "public/og-image.png", size: "1200,630" },
   { source: "scripts/social/icon.html", output: "public/icon-512.png", size: "512,512" },
+  { source: "scripts/social/icon-1024.html", output: "../desktop/src-tauri/app-icon.png", size: "1024,1024", transparent: true },
 ];
 
 for (const shot of shots) {
@@ -26,6 +27,7 @@ for (const shot of shots) {
     "--disable-gpu",
     "--hide-scrollbars",
     "--force-device-scale-factor=1",
+    ...(shot.transparent ? ["--default-background-color=00000000"] : []),
     `--window-size=${shot.size}`,
     `--screenshot=${resolve(web, shot.output)}`,
     pathToFileURL(resolve(web, shot.source)).href,

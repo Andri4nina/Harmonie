@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router";
+import { useIsDesktop } from "./app/platform";
 import { Loader, TopProgress } from "./components/Loader";
 import { Sidebar } from "./components/Sidebar";
 import { TopoBackground } from "./components/TopoBackground";
@@ -38,6 +39,7 @@ export function App() {
   const hue = hueForPath(pathname);
   const lite = useSettings((state) => state.lite);
   const theme = useTheme();
+  const desktop = useIsDesktop();
 
   // Les réglages enregistrés ne sont relus qu'après l'hydratation.
   useEffect(() => {
@@ -78,9 +80,11 @@ export function App() {
             <span>
               Harmonie, conçu et développé par <span className="text-ivory-2">Andrianina Rasoamanana</span>
             </span>
-            <Link to="/telecharger" className="underline-offset-4 hover:text-ivory-2 hover:underline">
-              Télécharger l'application
-            </Link>
+            {!desktop && (
+              <Link to="/telecharger" className="underline-offset-4 hover:text-ivory-2 hover:underline">
+                Télécharger l'application
+              </Link>
+            )}
           </footer>
         </main>
       </div>
