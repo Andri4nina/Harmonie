@@ -1,0 +1,6 @@
+librosa>=1.0
+numpy>=2.4
+soundfile>=0.14
+
+[dev]
+pytest>=9

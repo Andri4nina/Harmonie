@@ -45,8 +45,17 @@ jobs:
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
       - run: cp vercel.json dist/
-      - run: npx --yes vercel@latest deploy dist --prod --yes --token "$VERCEL_TOKEN"
+      # Sans jeton Vercel (projet pas encore créé), le site est construit et
+      # vérifié, mais pas publié.
+      - name: Publier sur Vercel
+        if: env.VERCEL_TOKEN != ''
+        run: npx --yes vercel@latest deploy dist --prod --yes --token "$VERCEL_TOKEN"
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Publication sautée
+        if: env.VERCEL_TOKEN == ''
+        run: echo "Secrets Vercel absents (voir docs/DEPLOYMENT.md) : site construit, non publié."
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}

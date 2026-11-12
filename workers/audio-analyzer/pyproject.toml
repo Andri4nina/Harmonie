@@ -1,6 +1,10 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "harmonia-worker"
-version = "1.4.0"
+version = "1.6.0"
 description = "Worker audio d'Harmonia : extraction des descripteurs du signal."
 requires-python = ">=3.12"
 dependencies = ["librosa>=1.0", "numpy>=2.4", "soundfile>=0.14"]
@@ -10,3 +14,8 @@ dev = ["pytest>=9"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+# Seul le worker est installé ; « evaluation » et « tests » restent des
+# dossiers de travail du dépôt.
+[tool.setuptools]
+packages = ["harmonia_worker"]
