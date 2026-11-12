@@ -9,7 +9,7 @@ Une version n'est publiée que si ses tests passent.
 |---|---|---|---|---|
 | **v1.0.0** | 1 + 2 | Architecture, modèle de données, API, licences, risques. Moteur de théorie : notes, intervalles, gammes, accords, tonalités, progressions, cadences, instruments. | Documents dans `docs/` ; `cargo test` vert. | ✅ Publiée |
 | **v1.1.0** | 2b | Graphe de relations, dominantes secondaires, basse chiffrée, progressions usuelles, harmonisation de mélodie, sérialisation. Direction artistique, SEO. | `cargo test --all-features` vert. | ✅ Publiée |
-| v1.2.0 | 3 | Bindings WASM, design system (verre + relief), navigation, Theory Explorer, piano, manche, cercle des quintes, graphe musical, synthèse Web Audio. Site public pré-rendu. | Explorer utilisable hors ligne ; aucun bouton inerte ; Lighthouse aux seuils de [SEO.md](SEO.md). | ⬜ |
+| v1.2.0 | 3 | Bindings WASM, design system (verre + relief), navigation, Theory Explorer, piano, manche, cercle des quintes, graphe musical, synthèse Web Audio. Site public pré-rendu. | Explorer utilisable hors ligne ; aucun bouton inerte ; Lighthouse aux seuils de [SEO.md](SEO.md). | 🟡 En cours — explorateur fait ; site public pré-rendu, Lighthouse et tests d'interface à faire |
 | v1.3.0 | 4 | API Rust, file de jobs, stockage, worker Python, BPM, tonalité, accords, mélodie, timeline synchronisée, corrections manuelles. | Précision mesurée sur un jeu d'essai synthétique ; tests d'intégration API + stockage. | ⬜ |
 | v1.4.0 | 5 | Ear training : notes, intervalles, accords, progressions, rythme ; niveaux ; répétition espacée. | Questions générées par le moteur ; statistiques persistées. | ⬜ |
 | v1.5.0 | 6 | Cours interactifs, générateur de progressions et de mélodies, export MIDI et MusicXML. | Chaque cours manipulable et audible ; MIDI relu sans erreur. | ⬜ |
@@ -53,6 +53,6 @@ au moment où la phase démarre.
 |---|---|---|
 | Rust | 1.99.1, à jour | Tout le cœur. |
 | Python | 3.12 | Workers (v1.3.0). À mettre à jour vers la dernière version stable supportée par les bibliothèques audio. |
-| Node.js | **v12 — bloquant** : à remplacer par la dernière version LTS. | v1.2.0. |
+| Node.js | v26 installé dans `C:\Program Files\nodejs`, mais `nvm` pointe encore sur la v12 : lancer `nvm use` sur une version récente, ou placer ce dossier en tête du `PATH`. | v1.2.0. |
 | PostgreSQL | Absent | v1.3.0, validation du schéma. |
 | Docker | Absent | RustFS et PostgreSQL locaux, tests d'intégration. |

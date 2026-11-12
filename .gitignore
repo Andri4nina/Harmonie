@@ -5,3 +5,7 @@ __pycache__/
 .venv/
 .env
 *.pyc
+
+# Web
+apps/web/src/theory/pkg/
+.claude/

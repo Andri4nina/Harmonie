@@ -41,3 +41,15 @@ for chord in progression.resolve(&key) {
 let graph = Graph::around(Node::from_id("note:C").unwrap(), 1);
 println!("{} relations", graph.links.len());
 ```
+
+## Application web
+
+Nécessite Node.js 22 ou plus, la cible Rust `wasm32-unknown-unknown` et
+`wasm-bindgen-cli` (même version que la dépendance `wasm-bindgen`).
+
+```bash
+cd apps/web
+npm install
+npm run wasm   # compile le moteur en WebAssembly
+npm run dev    # http://localhost:5173
+```

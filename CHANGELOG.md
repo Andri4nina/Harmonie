@@ -4,6 +4,29 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Numérotation : [SemVer](https://semver.org/lang/fr/). Chaque version correspond à
 une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
+## [Non publié] — vers 1.2.0
+
+Phase 3 en cours : le Theory Explorer fonctionne dans le navigateur.
+
+### Ajouté
+
+- `harmonia-theory-wasm` : le moteur compilé en WebAssembly, avec des vues
+  prêtes à afficher (nœud, instruments, manche, cercle des quintes, recherche).
+- Application web (`apps/web`) : React 19, Vite 8, Tailwind 4, TypeScript 7.
+- Design system verre + relief topographique animé, mode léger.
+- Theory Explorer : recherche libre, fiche d'un élément, graphe musical,
+  cercle des quintes, piano, manche (guitare, basse, violon, violoncelle),
+  relations cliquables.
+- Synthèse sonore Web Audio : écoute des notes, gammes, accords et
+  progressions, affichage synchronisé sur l'horloge audio.
+- Dashboard et réglages (mode léger, diapason).
+
+### Reste à faire avant la 1.2.0
+
+- Site public pré-rendu (référence de théorie, SEO) et audit Lighthouse.
+- Analyseur de spectre, représentations des vents et des percussions.
+- Tests automatisés de l'interface.
+
 ## [1.1.0] — 2026-11-12
 
 Phase 2b : le moteur sait relier les éléments entre eux.
