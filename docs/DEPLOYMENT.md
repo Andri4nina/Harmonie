@@ -31,6 +31,12 @@ politique, ce qui ferme l'accès des clés publiques du projet aux tables.
    démarrage (migrations de `db/migrations`).
 3. **Comptes** : *Authentication* → *Sign In / Providers* → laisser *Email*
    actif. L'adresse du projet (`https://<ref>.supabase.co`) est `SUPABASE_URL`.
+   *Project Settings* → *API Keys* : la clé **publishable** (`sb_publishable_…`)
+   est faite pour le navigateur ; c'est `SUPABASE_PUBLISHABLE_KEY`. La clé
+   secrète ne doit jamais aller dans le site. *Authentication* → *URL
+   Configuration* : mettre l'adresse du site Vercel en *Site URL* et ajouter
+   `https://<site>/analyser` aux *Redirect URLs* (lien de confirmation des
+   inscriptions).
 4. **Stockage** : *Storage* → *New bucket* `audio`, **privé**. Puis
    *Storage* → *S3 Connection* → *New access key*. Reporter l'*Endpoint*
    (`S3_ENDPOINT`), la *Region* (`S3_REGION`) et la paire de clés
@@ -76,8 +82,11 @@ HARMONIE_API_URL=https://harmonie-api.onrender.com WORKER_TOKEN=… python -m ha
    relever l'identifiant d'équipe et celui du projet.
 3. Sur GitHub, *Settings* → *Secrets and variables* → *Actions* :
    - secrets : `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` ;
-   - variables : `SITE_URL` (ex. `https://harmonie.vercel.app`) et,
-     facultatif, `GOOGLE_SITE_VERIFICATION`.
+   - variables : `SITE_URL` (ex. `https://harmonie.vercel.app`), `API_URL`
+     (adresse de l'API Render), `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` et,
+     facultatif, `GOOGLE_SITE_VERIFICATION`. Sans `API_URL` ni Supabase, la
+     page « Analyser un morceau » explique ce qui manque au lieu de proposer
+     une connexion qui échouerait.
 4. Chaque poussée sur `main` qui touche le site le publie
    (`.github/workflows/deploy-web.yml`).
 
@@ -106,6 +115,17 @@ Sans Docker, avec un PostgreSQL quelconque (ou la base Supabase) :
 ```bash
 DATABASE_URL=… WORKER_TOKEN=… SUPABASE_URL=… cargo run -p harmonia-api
 ```
+
+Essayer l'écran d'analyse contre une API locale sans projet Supabase : lancer
+l'API avec `SUPABASE_JWT_SECRET`, fabriquer un jeton HS256 signé avec ce secret
+(`aud: authenticated`), puis dans `apps/web/.env.local` (jamais versionné) :
+
+```bash
+VITE_API_URL=http://127.0.0.1:8080
+VITE_DEV_ACCESS_TOKEN=<jeton>
+```
+
+Ce jeton n'est lu qu'en développement (`npm run dev`), jamais dans un build.
 
 Test d'intégration de l'API (crée puis supprime un schéma temporaire) :
 

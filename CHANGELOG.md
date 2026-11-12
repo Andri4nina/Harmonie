@@ -4,9 +4,10 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Numérotation : [SemVer](https://semver.org/lang/fr/). Chaque version correspond à
 une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
-## [Non publié] — vers 1.3.0
+## [1.3.0] — 2026-11-12
 
-Phase 4 : analyse audio, API, base de données et hébergement.
+Phase 4 : analyse audio, API, base de données, hébergement et écran
+d'analyse.
 
 ### Ajouté
 
@@ -36,15 +37,24 @@ Phase 4 : analyse audio, API, base de données et hébergement.
 - Site : page « Télécharger » (Windows, macOS, Linux, APK Android) alimentée
   par les publications GitHub ; écran de démarrage et barre de chargement ;
   titres en dégradé, halos, boutons et navigation retravaillés ; pied de page.
+- Écran « Analyser un morceau » : connexion Supabase, dépôt par glisser-déposer,
+  bibliothèque rafraîchie pendant l'analyse, page d'un morceau avec résumé
+  (tonalité, tempo, mesure, diapason et leur certitude), lecture synchronisée
+  avec l'accord courant en grand, frise des accords, tonalités, temps et
+  cadences, correction d'un accord (lectures alternatives ou saisie vérifiée
+  par le moteur). Pages chargées à la demande : le client Supabase n'alourdit
+  pas les pages publiques.
+- Nouvelle identité : bleu nuit, ivoire et laiton ; Unbounded et Syne ;
+  interface responsive vérifiée à 375, 768 et 1440 px.
 - Référencement au nom « Andrianina Rasoamanana - Harmonie » : titres,
   auteur, données structurées `WebSite` / `WebApplication` / `Person`, image
   de partage 1200 × 630, manifeste d'application, validation Search Console.
 
 ### Limites
 
+- Mélodie (suivi de f0) non faite : reportée à la v1.4.0.
 - Analyse mesurée uniquement sur des sons synthétiques.
 - Erreurs d'octave du tempo aux extrêmes (60–80 et 168–180 BPM).
-- Pas encore d'écran d'analyse ni de connexion dans le site.
 - Aucun installateur publié : la page « Télécharger » l'indique ; le dépôt
   GitHub étant privé, ses publications ne sont pas visibles des visiteurs.
 

@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router";
-import { TopProgress } from "./components/Loader";
+import { Loader, TopProgress } from "./components/Loader";
 import { Sidebar } from "./components/Sidebar";
 import { TopoBackground } from "./components/TopoBackground";
 import { Dashboard } from "./pages/Dashboard";
@@ -12,6 +12,16 @@ import { nodeView } from "./theory/engine";
 import { applyHead, headFor } from "./theory/head";
 import { hueOf } from "./theory/labels";
 import { idOf, pathOf } from "./theory/routes";
+
+// Pages d'application, chargées à la demande : le client Supabase et la frise
+// n'alourdissent pas les pages publiques.
+const Analyzer = lazy(() => import("./pages/Analyzer").then((module) => ({ default: module.Analyzer })));
+const Library = lazy(() => import("./pages/Analyzer").then((module) => ({ default: module.Library })));
+const TrackPage = lazy(() => import("./pages/TrackPage").then((module) => ({ default: module.TrackPage })));
+
+function OnDemand({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={<Loader label="Chargement de la page" />}>{children}</Suspense>;
+}
 
 /** Teinte d'une page : celle de l'élément exploré, sinon le vert de la marque. */
 export function hueForPath(pathname: string): number {
@@ -50,6 +60,9 @@ export function App() {
             <Route path="/explorer" element={<Navigate to={pathOf("note:C")} replace />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/telecharger" element={<Downloads />} />
+            <Route path="/analyser" element={<OnDemand><Analyzer /></OnDemand>} />
+            <Route path="/analyser/:id" element={<OnDemand><TrackPage /></OnDemand>} />
+            <Route path="/bibliotheque" element={<OnDemand><Library /></OnDemand>} />
             <Route path="*" element={<Explorer />} />
           </Routes>
           <footer className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-[0.8125rem] text-ivory-3">

@@ -78,7 +78,7 @@ for (const path of pages()) {
   if (head.indexable) indexed.push(head.path);
 }
 
-const robots = ["User-agent: *", "Disallow: /settings", "Disallow: /explorer"];
+const robots = ["User-agent: *", "Disallow: /settings", "Disallow: /explorer", "Disallow: /analyser", "Disallow: /bibliotheque"];
 if (siteUrl) {
   const urls = indexed.map((path) => `  <url><loc>${siteUrl}${path === "/" ? "/" : path}</loc></url>`).join("\n");
   writeFileSync(

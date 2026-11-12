@@ -132,8 +132,14 @@ export function headFor(pathname: string): Head {
   const id = idOf(path);
   const view = id ? nodeView(id) : null;
   if (!view) {
+    const APP_PAGES: Record<string, string> = {
+      "/settings": "Réglages",
+      "/analyser": "Analyser un morceau",
+      "/bibliotheque": "Ma bibliothèque",
+    };
+    const appTitle = APP_PAGES[path] ?? (path.startsWith("/analyser/") ? "Analyse d'un morceau" : "Page introuvable");
     return {
-      title: `${path === "/settings" ? "Réglages" : "Page introuvable"} | ${SITE_NAME}`,
+      title: `${appTitle} | ${SITE_NAME}`,
       description: "",
       indexable: false,
       path,

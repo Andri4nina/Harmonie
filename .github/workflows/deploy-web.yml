@@ -2,6 +2,8 @@
 #
 # Secrets du dépôt : VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID.
 # Variables du dépôt : SITE_URL (ex. https://harmonie.vercel.app),
+# API_URL (ex. https://harmonie-api.onrender.com), SUPABASE_URL,
+# SUPABASE_PUBLISHABLE_KEY (clé publique du projet, faite pour le navigateur),
 # GOOGLE_SITE_VERIFICATION (facultatif).
 
 name: Site web
@@ -40,6 +42,9 @@ jobs:
         env:
           VITE_SITE_URL: ${{ vars.SITE_URL }}
           VITE_GOOGLE_SITE_VERIFICATION: ${{ vars.GOOGLE_SITE_VERIFICATION }}
+          VITE_API_URL: ${{ vars.API_URL }}
+          VITE_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
       - run: cp vercel.json dist/
       - run: npx --yes vercel@latest deploy dist --prod --yes --token "$VERCEL_TOKEN"
         env:

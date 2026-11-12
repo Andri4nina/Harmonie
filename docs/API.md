@@ -1,4 +1,31 @@
-# API Harmonia — v1
+# API Harmonie — v1
+
+## Implémenté (v1.3.0)
+
+Code : `crates/harmonia-api`. Base : `/v1` (pas de préfixe `/api`). Erreurs :
+`{ "error": "code", "message": "…" }`. Authentification : jeton d'accès
+Supabase Auth (`Authorization: Bearer`).
+
+| Méthode | Route | Description |
+|---|---|---|
+| GET | `/health` | État du service et de la base (503 si la base est injoignable). |
+| GET | `/v1/me` | Utilisateur courant (créé à la première requête). |
+| GET | `/v1/tracks` | Morceaux de l'utilisateur, avec l'état de leur dernière analyse. |
+| POST | `/v1/tracks` | Dépôt multipart (`file`, `title`) : stockage, création, mise en file. |
+| GET | `/v1/tracks/{id}` | Un morceau et l'état de son analyse. |
+| GET | `/v1/tracks/{id}/audio` | Fichier audio d'origine. |
+| GET | `/v1/tracks/{id}/analysis` | Dernière analyse réussie : résumé et événements, corrections appliquées. |
+| POST | `/v1/tracks/{id}/corrections` | `delete` / `replace` / `insert` ; un accord saisi doit être lisible par le moteur. |
+
+Routes des workers (`WORKER_TOKEN`) : `POST /internal/jobs/claim`,
+`GET /internal/jobs/{id}/audio`, `POST /internal/jobs/{id}/heartbeat`,
+`POST /internal/jobs/{id}/complete`, `POST /internal/jobs/{id}/fail`. Détail en
+tête de `crates/harmonia-api/src/jobs.rs`.
+
+## Spécification cible
+
+La suite du document décrit l'API visée par les versions suivantes ; elle
+n'est pas encore implémentée.
 
 Base : `/api/v1`. JSON. Erreurs au format RFC 9457 (`application/problem+json`).
 Authentification : jeton de session (`Authorization: Bearer`). Les routes `/theory`
