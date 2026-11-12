@@ -1,4 +1,5 @@
-import { NavLink } from "react-router";
+import { useEffect, useState } from "react";
+import { NavLink, useLocation } from "react-router";
 import { Icon } from "./ui";
 
 interface Entry {
@@ -10,72 +11,146 @@ interface Entry {
 }
 
 const ENTRIES: Entry[] = [
-  { label: "Dashboard", icon: "dashboard", to: "/" },
-  { label: "Theory Explorer", icon: "explorer", to: "/explorer" },
-  { label: "Song Analyzer", icon: "analyzer", arrives: "v1.3" },
-  { label: "Ear Training", icon: "ear", arrives: "v1.4" },
-  { label: "Learning", icon: "learning", arrives: "v1.5" },
-  { label: "Music Generator", icon: "generator", arrives: "v1.5" },
-  { label: "My Library", icon: "library", arrives: "v1.3" },
+  { label: "Accueil", icon: "dashboard", to: "/" },
+  { label: "Explorer la théorie", icon: "explorer", to: "/explorer" },
   { label: "Télécharger", icon: "download", to: "/telecharger" },
-  { label: "Settings", icon: "settings", to: "/settings" },
+  { label: "Réglages", icon: "settings", to: "/settings" },
+  { label: "Analyser un morceau", icon: "analyzer", arrives: "v1.3" },
+  { label: "Ma bibliothèque", icon: "library", arrives: "v1.3" },
+  { label: "Entraîner l'oreille", icon: "ear", arrives: "v1.4" },
+  { label: "Apprendre", icon: "learning", arrives: "v1.5" },
+  { label: "Composer", icon: "generator", arrives: "v1.5" },
 ];
 
-export function Sidebar() {
+function Brand() {
   return (
-    <aside className="glass sticky top-4 flex h-[calc(100vh-2rem)] w-60 shrink-0 flex-col p-4 max-lg:w-16 max-lg:p-2">
-      <NavLink
-        to="/"
-        className="mb-6 flex items-center gap-3 rounded-xl px-2 pt-1 max-lg:justify-center max-lg:px-0"
-        aria-label="Harmonie, accueil"
-      >
-        <img src="/favicon.svg" alt="" className="size-9 rounded-xl shadow-[0_0_24px_-6px_var(--accent)]" />
-        <div className="max-lg:hidden">
-          <div className="text-gradient text-lg leading-none font-semibold tracking-tight">Harmonie</div>
-          <div className="eyebrow mt-1 !text-[9px]">la topographie du son</div>
-        </div>
-      </NavLink>
+    <NavLink to="/" className="flex items-center gap-3 rounded-xl" aria-label="Harmonie, accueil">
+      <img src="/favicon.svg" alt="" className="size-9 rounded-[10px]" />
+      <span className="font-display text-[1.45rem] leading-none font-semibold tracking-tight">Harmonie</span>
+    </NavLink>
+  );
+}
 
-      <nav aria-label="Navigation principale" className="flex flex-1 flex-col gap-1">
-        {ENTRIES.map((entry) =>
-          entry.to ? (
+function Navigation({ onNavigate }: { onNavigate?: () => void }) {
+  const available = ENTRIES.filter((entry) => entry.to);
+  const planned = ENTRIES.filter((entry) => !entry.to);
+  return (
+    <nav aria-label="Navigation principale" className="flex flex-col gap-6">
+      <ul className="flex flex-col gap-0.5">
+        {available.map((entry) => (
+          <li key={entry.label}>
             <NavLink
-              key={entry.label}
-              to={entry.to}
+              to={entry.to ?? "/"}
               end={entry.to === "/"}
-              title={entry.label}
+              onClick={onNavigate}
               className={({ isActive }) =>
-                `relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200 max-lg:justify-center max-lg:px-0 ${
-                  isActive
-                    ? "bg-[var(--accent-soft)] text-[var(--accent-strong)] shadow-[inset_0_0_0_1px_var(--accent-line)] before:absolute before:top-2 before:bottom-2 before:-left-4 before:w-1 before:rounded-full before:bg-[var(--accent)] before:shadow-[0_0_12px_var(--accent)] max-lg:before:-left-2"
-                    : "text-fg-2 hover:translate-x-0.5 hover:bg-white/5 hover:text-fg"
+                `flex min-h-11 items-center gap-3 rounded-xl px-3 text-[0.9375rem] transition-colors duration-150 ${
+                  isActive ? "bg-[var(--accent-soft)] text-brass" : "text-ivory-2 hover:bg-white/5 hover:text-ivory"
                 }`
               }
             >
               <Icon name={entry.icon} />
-              <span className="max-lg:hidden">{entry.label}</span>
+              {entry.label}
             </NavLink>
-          ) : (
-            <div
-              key={entry.label}
-              aria-disabled="true"
-              title={`${entry.label} — prévu pour la ${entry.arrives}`}
-              className="flex cursor-default items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-fg-3 max-lg:justify-center max-lg:px-0"
-            >
-              <Icon name={entry.icon} />
-              <span className="max-lg:hidden">{entry.label}</span>
-              <span className="ml-auto rounded-md border border-dashed border-line px-1.5 py-0.5 font-mono text-[10px] max-lg:hidden">
-                {entry.arrives}
-              </span>
-            </div>
-          ),
-        )}
-      </nav>
-
-      <div className="border-t border-line px-2 pt-3 max-lg:hidden">
-        <div className="text-xs text-fg-2">Andrianina Rasoamanana</div>
-        <div className="eyebrow mt-1 !text-[10px]">Harmonie · v1.2</div>
+          </li>
+        ))}
+      </ul>
+      <div>
+        <p className="caption px-3 pb-1">À venir</p>
+        <ul className="flex flex-col">
+          {planned.map((entry) => (
+            <li key={entry.label} className="flex min-h-9 items-center gap-3 px-3 text-[0.875rem] text-ivory-3">
+              <Icon name={entry.icon} className="size-4" />
+              <span className="min-w-0 flex-1">{entry.label}</span>
+              <span className="text-xs">{entry.arrives}</span>
+            </li>
+          ))}
+        </ul>
       </div>
-    </aside>
+    </nav>
+  );
+}
+
+function Credit() {
+  return (
+    <p className="text-[0.8125rem] leading-snug text-ivory-3">
+      Conçu et développé par <span className="text-ivory-2">Andrianina Rasoamanana</span>
+    </p>
+  );
+}
+
+/** Barre latérale (écrans larges) et barre supérieure avec menu (en dessous de 1024 px). */
+export function Sidebar() {
+  const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+
+  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => event.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  return (
+    <>
+      <aside className="glass glass-frame sticky top-4 hidden h-[calc(100dvh-2rem)] w-60 shrink-0 flex-col gap-8 p-4 lg:flex">
+        <div className="px-1 pt-1">
+          <Brand />
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          <Navigation />
+        </div>
+        <div className="px-2">
+          <Credit />
+        </div>
+      </aside>
+
+      <header className="glass glass-frame sticky top-3 z-30 flex items-center justify-between px-3 py-2 lg:hidden">
+        <Brand />
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-expanded={open}
+          aria-controls="menu-principal"
+          className="flex size-11 items-center justify-center rounded-full text-ivory hover:bg-white/5"
+        >
+          <Icon name="menu" />
+          <span className="sr-only">Ouvrir le menu</span>
+        </button>
+      </header>
+
+      {open && (
+        <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true" aria-label="Menu" id="menu-principal">
+          <button
+            type="button"
+            className="absolute inset-0 bg-[rgb(10_12_24/0.6)]"
+            onClick={() => setOpen(false)}
+            aria-label="Fermer le menu"
+          />
+          <div className="glass glass-raised drawer absolute inset-y-3 right-3 flex w-[min(20rem,calc(100vw-1.5rem))] flex-col gap-6 overflow-y-auto p-4">
+            <div className="flex items-center justify-between">
+              <Brand />
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="flex size-11 items-center justify-center rounded-full hover:bg-white/5"
+              >
+                <Icon name="close" />
+                <span className="sr-only">Fermer le menu</span>
+              </button>
+            </div>
+            <Navigation onNavigate={() => setOpen(false)} />
+            <div className="mt-auto px-2">
+              <Credit />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

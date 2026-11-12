@@ -72,7 +72,7 @@ export function Spectrum() {
       ref={ref}
       role="img"
       aria-label="Spectre du son en cours de lecture"
-      className="h-12 w-56 text-[var(--accent)]"
+      className="h-10 w-full max-w-56 text-brass"
     />
   );
 }

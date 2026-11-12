@@ -38,13 +38,12 @@ export function Downloads() {
   const ordered = [...PLATFORMS].sort((a, b) => Number(b.id === mine) - Number(a.id === mine));
 
   return (
-    <div className="flex flex-col gap-4">
-      <section className="glass glow enter p-8">
-        <div className="eyebrow !text-[var(--accent)]">Télécharger</div>
-        <h1 className="text-gradient mt-2 max-w-3xl text-5xl leading-[1.05] font-semibold tracking-tight">
+    <div className="flex flex-col gap-8 sm:gap-10">
+      <section className="pt-4 sm:pt-8">
+        <h1 className="font-display engrave max-w-[16ch] text-[clamp(2.75rem,8vw,5rem)] leading-[0.98] font-medium tracking-[-0.02em]">
           Harmonie sur votre ordinateur et votre téléphone.
         </h1>
-        <p className="mt-4 max-w-2xl text-fg-2">
+        <p className="mt-5 max-w-[60ch] text-ivory-2">
           Les applications reprennent le même moteur de théorie que le site et fonctionnent sans connexion. Les fichiers
           viennent directement des publications du dépôt GitHub.
         </p>
@@ -58,10 +57,10 @@ export function Downloads() {
 
       {state.status === "error" && state.private && (
         <Panel title="Pas encore de téléchargement public">
-          <p className="max-w-2xl text-sm text-fg-2">
+          <p className="max-w-[62ch] text-ivory-2">
             Les installateurs sont publiés sur le dépôt GitHub du projet, qui n'est pas encore public. Les applications
-            de bureau (Windows, macOS, Linux) sont prévues pour la <span className="font-mono">v1.6</span> et
-            l'application Android pour la <span className="font-mono">v1.7</span> ; les fichiers apparaîtront ici dès
+            de bureau (Windows, macOS, Linux) sont prévues pour la version 1.6 et
+            l'application Android pour la version 1.7 ; les fichiers apparaîtront ici dès
             leur publication.
           </p>
         </Panel>
@@ -69,7 +68,7 @@ export function Downloads() {
 
       {state.status === "error" && !state.private && (
         <Panel title="Publications indisponibles">
-          <p className="text-sm text-fg-2">
+          <p className="text-ivory-2">
             La liste des installateurs n'a pas pu être lue ({state.message}). Elle reste consultable sur GitHub.
           </p>
           <a href={RELEASES_PAGE} className="btn btn-ghost mt-4" rel="noopener">
@@ -79,18 +78,18 @@ export function Downloads() {
       )}
 
       {state.status === "ready" && (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {ordered.map((platform) => {
             const asset = state.assets[platform.id];
             return (
-              <section key={platform.id} className="glass lift enter flex flex-col p-6">
+              <section key={platform.id} className="glass flex flex-col p-5 sm:p-6">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="text-2xl font-semibold tracking-tight">{platform.name}</h2>
-                    <p className="mt-1 text-sm text-fg-2">{platform.detail}</p>
+                    <h2 className="font-display text-3xl font-medium">{platform.name}</h2>
+                    <p className="caption mt-1">{platform.detail}</p>
                   </div>
                   {platform.id === mine && (
-                    <span className="rounded-full bg-[var(--accent-soft)] px-2.5 py-1 font-mono text-[10px] text-[var(--accent-strong)] uppercase">
+                    <span className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-[0.8125rem] text-brass">
                       Votre appareil
                     </span>
                   )}
@@ -102,13 +101,13 @@ export function Downloads() {
                         <Icon name="download" className="size-4" />
                         Télécharger {asset.version}
                       </a>
-                      <span className="font-mono text-xs text-fg-3">
-                        {asset.name} · {formatBytes(asset.bytes)}
+                      <span className="caption">
+                        {asset.name}, {formatBytes(asset.bytes)}
                       </span>
                     </div>
                   ) : (
-                    <p className="text-sm text-fg-3">
-                      Pas encore publié : prévu pour la <span className="font-mono">{platform.planned}</span>. Cette
+                    <p className="text-ivory-2">
+                      Pas encore publié : prévu pour la version {platform.planned.replace("v", "")}. Cette
                       page proposera le fichier dès sa publication.
                     </p>
                   )}
@@ -119,8 +118,8 @@ export function Downloads() {
         </div>
       )}
 
-      <Panel title="Installer un APK sur Android">
-        <ol className="flex list-decimal flex-col gap-2 pl-5 text-sm text-fg-2">
+      <Panel title="Installer un APK sur Android" framed={false}>
+        <ol className="flex max-w-[62ch] list-decimal flex-col gap-2 pl-5 text-ivory-2">
           <li>Téléchargez le fichier APK depuis votre téléphone.</li>
           <li>Ouvrez-le ; Android demande d'autoriser l'installation depuis votre navigateur : acceptez pour ce seul fichier.</li>
           <li>Une fois l'application installée, vous pouvez retirer cette autorisation dans les réglages.</li>

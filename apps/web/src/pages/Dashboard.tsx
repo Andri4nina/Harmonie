@@ -16,13 +16,12 @@ const STARTING_POINTS = [
 ];
 
 const MODULES: { name: string; state: string; done: boolean }[] = [
-  { name: "Moteur de théorie", state: "v1.1", done: true },
-  { name: "Theory Explorer", state: "v1.2", done: true },
-  { name: "Song Analyzer", state: "v1.3", done: false },
-  { name: "Ear Training", state: "v1.4", done: false },
-  { name: "Learning · Music Generator", state: "v1.5", done: false },
-  { name: "Analyse audio : extraction et interprétation", state: "v1.3 (en cours)", done: true },
-  { name: "Desktop · Mobile", state: "v1.6 – v1.7", done: false },
+  { name: "Moteur de théorie", state: "version 1.1", done: true },
+  { name: "Explorer la théorie", state: "version 1.2", done: true },
+  { name: "Analyser un morceau", state: "en cours, version 1.3", done: false },
+  { name: "Entraîner l'oreille", state: "version 1.4", done: false },
+  { name: "Apprendre et composer", state: "version 1.5", done: false },
+  { name: "Applications ordinateur et Android", state: "versions 1.6 et 1.7", done: false },
 ];
 
 function Chips({ ids }: { ids: string[] }) {
@@ -39,43 +38,45 @@ function Chips({ ids }: { ids: string[] }) {
 export function Dashboard() {
   const history = useSettings((state) => state.history);
   return (
-    <div className="flex flex-col gap-4">
-      <section className="glass glow enter p-8">
-        <div className="eyebrow !text-[var(--accent)]">Harmonie · Andrianina Rasoamanana</div>
-        <h1 className="text-gradient mt-2 max-w-2xl text-5xl leading-[1.05] font-semibold tracking-tight">
+    <div className="flex flex-col gap-10 sm:gap-14">
+      <section className="pt-6 sm:pt-12 lg:pt-16">
+        <h1 className="font-display engrave max-w-[14ch] text-[clamp(2.75rem,8vw,5.75rem)] leading-[0.98] font-medium tracking-[-0.02em]">
           Voyez ce qui relie les notes.
         </h1>
-        <p className="mt-4 max-w-xl text-fg-2">
+        <p className="mt-6 max-w-[58ch] text-[1.0625rem] text-ivory-2 sm:text-lg">
           Chaque note, gamme, accord et tonalité est un point d'une même carte. Cherchez-en un, écoutez-le, puis suivez
           ses relations.
         </p>
-        <div className="mt-6">
+        <div className="mt-8">
           <SearchBox autoFocus />
         </div>
       </section>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] xl:gap-8">
         <Panel title="Entrer par une tonalité">
-          <CircleOfFifths />
+          <div className="mx-auto max-w-[440px]">
+            <CircleOfFifths />
+          </div>
         </Panel>
-        <div className="flex flex-col gap-4">
-          <Panel title="Points de départ">
+        <div className="flex flex-col gap-10">
+          <Panel title="Points de départ" framed={false}>
             <Chips ids={STARTING_POINTS} />
           </Panel>
           {history.length > 0 && (
-            <Panel title="Vus récemment">
+            <Panel title="Vus récemment" framed={false}>
               <Chips ids={history} />
             </Panel>
           )}
-          <Panel title="État du projet">
-            <ul className="flex flex-col gap-2 text-sm">
+          <Panel title="Où en est le projet" framed={false}>
+            <ul className="flex flex-col">
               {MODULES.map((module) => (
-                <li key={module.name} className="flex items-center gap-3">
+                <li key={module.name} className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 border-t border-line py-2.5">
                   <span
-                    className={`size-2 rounded-full ${module.done ? "bg-[var(--accent)]" : "border border-dashed border-fg-3"}`}
+                    aria-hidden="true"
+                    className={`size-2 shrink-0 translate-y-[-1px] rounded-full ${module.done ? "bg-brass" : "border border-ivory-3"}`}
                   />
-                  <span className={module.done ? "" : "text-fg-3"}>{module.name}</span>
-                  <span className="ml-auto font-mono text-xs text-fg-3">{module.state}</span>
+                  <span className={module.done ? "" : "text-ivory-2"}>{module.name}</span>
+                  <span className="caption ml-auto">{module.done ? `disponible, ${module.state}` : module.state}</span>
                 </li>
               ))}
             </ul>

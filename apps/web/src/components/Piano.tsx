@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { playNote } from "../audio/synth";
 import { usePlayer } from "../state/store";
 import type { Tone } from "../theory/engine";
@@ -37,6 +38,14 @@ const WIDTH = KEYS.filter((key) => !key.black).length * WHITE_WIDTH;
  */
 export function Piano({ tones, played }: { tones: Tone[]; played: number[] }) {
   const active = usePlayer((state) => state.active);
+  const scroller = useRef<HTMLDivElement>(null);
+  // Sur un écran étroit, le clavier défile : il s'ouvre centré sur le do central.
+  useEffect(() => {
+    const element = scroller.current;
+    if (!element || element.scrollWidth <= element.clientWidth) return;
+    const middleC = KEYS.find((key) => key.midi === 60)?.x ?? 0;
+    element.scrollLeft = (middleC / WIDTH) * element.scrollWidth - element.clientWidth / 2;
+  }, []);
   const byClass = new Map(tones.map((tone) => [tone.pitchClass, tone]));
   const exact = new Set([...tones.map((tone) => tone.midi), ...played]);
 
@@ -45,14 +54,13 @@ export function Piano({ tones, played }: { tones: Tone[]; played: number[] }) {
     const sounding = active.includes(key.midi);
     const isExact = tone !== undefined && exact.has(key.midi);
     const hue = hueOf(key.midi % 12);
-    let fill = key.black ? "#0b111b" : "rgb(232 238 245 / 0.9)";
-    if (tone) fill = `oklch(${key.black ? 0.5 : 0.86} 0.11 ${hue} / ${isExact ? 1 : 0.5})`;
-    if (isExact) fill = `oklch(${key.black ? 0.66 : 0.84} 0.15 ${hue})`;
-    if (sounding) fill = `oklch(0.93 0.17 ${hue})`;
+    let fill = key.black ? "#11142a" : "rgb(236 230 216 / 0.9)";
+    if (isExact) fill = `oklch(${key.black ? 0.66 : 0.84} 0.09 ${hue})`;
+    if (sounding) fill = `oklch(0.93 0.09 ${hue})`;
     const width = key.black ? BLACK_WIDTH : WHITE_WIDTH;
     const keyHeight = key.black ? BLACK_HEIGHT : WHITE_HEIGHT;
     return (
-      <g key={key.midi} onPointerDown={() => playNote(key.midi)} className="cursor-pointer">
+      <g key={key.midi} onClick={() => playNote(key.midi)} className="cursor-pointer">
         {tone && <title>{`${tone.note} — ${tone.role}`}</title>}
         <rect
           x={key.x + 0.75}
@@ -61,22 +69,34 @@ export function Piano({ tones, played }: { tones: Tone[]; played: number[] }) {
           height={keyHeight}
           rx={key.black ? 2.5 : 4}
           fill={fill}
-          stroke="rgb(7 11 18 / 0.9)"
+          stroke="rgb(22 26 46 / 0.9)"
           strokeWidth={key.black ? 1 : 0.5}
           style={{
             transition: "fill 120ms ease-out",
-            filter: sounding ? `drop-shadow(0 0 8px oklch(0.9 0.17 ${hue}))` : undefined,
+            filter: sounding ? `drop-shadow(0 0 5px oklch(0.9 0.09 ${hue}))` : undefined,
           }}
         />
+        {tone && !isExact && !sounding && (
+          // Même note à une autre octave : un simple repère au pied de la touche.
+          <rect
+            x={key.x + (key.black ? 3 : 5)}
+            y={keyHeight - 7}
+            width={width - (key.black ? 6 : 10)}
+            height={3}
+            rx={1.5}
+            fill={`oklch(0.8 0.09 ${hue} / 0.75)`}
+            pointerEvents="none"
+          />
+        )}
         {isExact && tone && (
           <text
             x={key.x + width / 2}
             y={keyHeight - 9}
             textAnchor="middle"
             fontSize={key.black ? 7.5 : 9}
-            fontFamily="var(--font-mono)"
+            fontFamily="var(--font-sans)"
             fontWeight={600}
-            fill={key.black ? "#fff" : "#070b12"}
+            fill={key.black ? "#fff" : "#161a2e"}
             pointerEvents="none"
           >
             {tone.note}
@@ -87,10 +107,10 @@ export function Piano({ tones, played }: { tones: Tone[]; played: number[] }) {
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div ref={scroller} className="scroll-x -mx-1 px-1 pb-2">
       <svg
         viewBox={`0 0 ${WIDTH} ${WHITE_HEIGHT + 4}`}
-        className="w-full min-w-[640px] touch-none select-none"
+        className="w-full min-w-[620px] touch-manipulation select-none"
         role="img"
         aria-label={`Clavier : ${tones.map((tone) => tone.note).join(", ")}`}
       >

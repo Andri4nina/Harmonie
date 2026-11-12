@@ -1,5 +1,5 @@
-import "@fontsource-variable/space-grotesk";
-import "@fontsource-variable/jetbrains-mono";
+import "@fontsource-variable/bodoni-moda/opsz.css";
+import "@fontsource-variable/instrument-sans";
 import "./index.css";
 
 import { StrictMode } from "react";
@@ -49,4 +49,5 @@ if (root.dataset.prerendered === normalizePath(window.location.pathname)) {
   root.replaceChildren();
   createRoot(root).render(app);
 }
-requestAnimationFrame(dismissBoot);
+// Sans attendre une image : un onglet en arrière-plan ne dessine pas.
+dismissBoot();

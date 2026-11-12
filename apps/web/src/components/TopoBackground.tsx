@@ -48,7 +48,7 @@ const SEGMENTS: number[][] = [
   [],
 ];
 
-function draw(canvas: HTMLCanvasElement, time: number, hue: number): void {
+function draw(canvas: HTMLCanvasElement, time: number): void {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -115,13 +115,14 @@ function draw(canvas: HTMLCanvasElement, time: number, hue: number): void {
 
   ctx.lineWidth = 1;
   ctx.lineCap = "round";
-  ctx.strokeStyle = `hsl(${hue} 55% 72% / 0.17)`;
+  // Courbes tiretées à l'ivoire, courbes maîtresses au laiton.
+  ctx.strokeStyle = "rgb(236 230 216 / 0.12)";
   ctx.stroke(dashed);
-  ctx.strokeStyle = `hsl(${hue} 60% 74% / 0.3)`;
+  ctx.strokeStyle = "rgb(217 180 106 / 0.28)";
   ctx.stroke(master);
 }
 
-export function TopoBackground({ hue }: { hue: number }) {
+export function TopoBackground() {
   const ref = useRef<HTMLCanvasElement>(null);
   const lite = useSettings((state) => state.lite);
 
@@ -134,7 +135,7 @@ export function TopoBackground({ hue }: { hue: number }) {
     const render = (now: number) => {
       if (now - last >= FRAME_INTERVAL) {
         last = now;
-        draw(canvas, still ? 0 : now * 0.00005, hue);
+        draw(canvas, still ? 0 : now * 0.00005);
       }
       if (!still && !document.hidden) frame = requestAnimationFrame(render);
     };
@@ -166,7 +167,7 @@ export function TopoBackground({ hue }: { hue: number }) {
       window.removeEventListener("resize", onChange);
       document.removeEventListener("visibilitychange", onChange);
     };
-  }, [hue, lite]);
+  }, [lite]);
 
   return <canvas ref={ref} aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 h-full w-full" />;
 }

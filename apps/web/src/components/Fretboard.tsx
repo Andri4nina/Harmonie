@@ -35,10 +35,10 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
   const bottom = yOf(0);
 
   return (
-    <div className="overflow-x-auto">
+    <div className="scroll-x -mx-1 px-1 pb-2">
       <svg
         viewBox={`0 0 ${WIDTH} ${height}`}
-        className="w-full min-w-[640px] select-none"
+        className="w-full min-w-[600px] select-none"
         role="img"
         aria-label={`${instrument.name} : positions de ${tones.map((tone) => tone.note).join(", ")}`}
       >
@@ -60,7 +60,7 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
           />
         ))}
         {/* Sillet, puis frettes (ou repères en pointillés sur une touche lisse). */}
-        <line x1={NUT} y1={TOP - 10} x2={NUT} y2={bottom + 10} stroke="rgb(232 238 245 / 0.7)" strokeWidth={3} />
+        <line x1={NUT} y1={TOP - 10} x2={NUT} y2={bottom + 10} stroke="rgb(236 230 216 / 0.7)" strokeWidth={3} />
         {Array.from({ length: stops }, (_, index) => index + 1).map((stop) => (
           <g key={stop}>
             <line
@@ -77,8 +77,8 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
               y={height - 3}
               textAnchor="middle"
               fontSize={9}
-              fontFamily="var(--font-mono)"
-              fill="rgb(232 238 245 / 0.35)"
+              fontFamily="var(--font-sans)"
+              fill="rgb(236 230 216 / 0.35)"
             >
               {stop}
             </text>
@@ -91,15 +91,15 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
               y1={yOf(index)}
               x2={WIDTH - 12}
               y2={yOf(index)}
-              stroke="rgb(232 238 245 / 0.34)"
+              stroke="rgb(236 230 216 / 0.34)"
               strokeWidth={1 + (stringCount - 1 - index) * 0.28}
             />
             <text
               x={2}
               y={yOf(index) + 3}
               fontSize={9}
-              fontFamily="var(--font-mono)"
-              fill="rgb(232 238 245 / 0.4)"
+              fontFamily="var(--font-sans)"
+              fill="rgb(236 230 216 / 0.4)"
             >
               {string.open}
             </text>
@@ -112,17 +112,17 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
           return (
             <g
               key={`${mark.string}-${mark.stop}`}
-              onPointerDown={() => playNote(mark.midi)}
+              onClick={() => playNote(mark.midi)}
               className="cursor-pointer"
-              style={{ filter: sounding ? `drop-shadow(0 0 7px oklch(0.9 0.17 ${hue}))` : undefined }}
+              style={{ filter: sounding ? `drop-shadow(0 0 5px oklch(0.9 0.09 ${hue}))` : undefined }}
             >
               <title>{`${mark.note} — corde ${mark.string + 1}, case ${mark.stop}`}</title>
               <circle
                 cx={xOf(mark.stop)}
                 cy={yOf(mark.string)}
                 r={sounding ? 11 : 9.5}
-                fill={`oklch(${sounding ? 0.93 : 0.82} 0.15 ${hue} / ${isRoot || sounding ? 1 : 0.22})`}
-                stroke={`oklch(0.84 0.14 ${hue})`}
+                fill={`oklch(${sounding ? 0.93 : 0.82} 0.09 ${hue} / ${isRoot || sounding ? 1 : 0.22})`}
+                stroke={`oklch(0.84 0.09 ${hue})`}
                 strokeWidth={1.4}
                 style={{ transition: "r 120ms ease-out, fill 120ms ease-out" }}
               />
@@ -132,8 +132,8 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
                 textAnchor="middle"
                 fontSize={8.5}
                 fontWeight={600}
-                fontFamily="var(--font-mono)"
-                fill={isRoot || sounding ? "#070b12" : "#e8eef5"}
+                fontFamily="var(--font-sans)"
+                fill={isRoot || sounding ? "#161a2e" : "#e8eef5"}
                 pointerEvents="none"
               >
                 {mark.note}

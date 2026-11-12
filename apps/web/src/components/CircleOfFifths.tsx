@@ -52,8 +52,8 @@ export function CircleOfFifths({ current, related }: { current?: string; related
       >
         <path
           d={arc(ring[0], ring[1], index)}
-          fill={`oklch(0.84 0.14 ${hue} / ${isCurrent ? 0.9 : isRelated ? 0.3 : 0.06})`}
-          stroke={`oklch(0.84 0.14 ${hue} / ${isCurrent || isRelated ? 0.9 : 0.25})`}
+          fill={`oklch(0.84 0.09 ${hue} / ${isCurrent ? 0.9 : isRelated ? 0.3 : 0.06})`}
+          stroke={`oklch(0.84 0.09 ${hue} / ${isCurrent || isRelated ? 0.9 : 0.25})`}
           strokeWidth={1}
           strokeDasharray={isCurrent || isRelated ? undefined : "3 4"}
           className="transition-[fill] duration-200 group-hover:fill-white/20 group-focus-visible:fill-white/20"
@@ -64,8 +64,8 @@ export function CircleOfFifths({ current, related }: { current?: string; related
           textAnchor="middle"
           fontSize={ring === RINGS.outer ? 14 : 11}
           fontWeight={600}
-          fontFamily="var(--font-mono)"
-          fill={isCurrent ? "#070b12" : "#e8eef5"}
+          fontFamily="var(--font-display)"
+          fill={isCurrent ? "#161a2e" : "#e8eef5"}
           pointerEvents="none"
         >
           {label}
@@ -86,20 +86,20 @@ export function CircleOfFifths({ current, related }: { current?: string; related
               x={x}
               y={y + 3}
               textAnchor="middle"
-              fontSize={9}
-              fontFamily="var(--font-mono)"
-              fill="rgb(232 238 245 / 0.4)"
+              fontSize={9.5}
+              fontFamily="var(--font-sans)"
+              fill="rgb(236 230 216 / 0.45)"
             >
               {signatureLabel(item.signature)}
             </text>
           </g>
         );
       })}
-      <text x={CENTER} y={CENTER - 2} textAnchor="middle" fontSize={9} letterSpacing={1.4} fill="rgb(232 238 245 / 0.4)">
-        CERCLE
+      <text x={CENTER} y={CENTER - 2} textAnchor="middle" fontSize={13} fontStyle="italic" fontFamily="var(--font-display)" fill="rgb(236 230 216 / 0.55)">
+        Cercle
       </text>
-      <text x={CENTER} y={CENTER + 11} textAnchor="middle" fontSize={9} letterSpacing={1.4} fill="rgb(232 238 245 / 0.4)">
-        DES QUINTES
+      <text x={CENTER} y={CENTER + 13} textAnchor="middle" fontSize={13} fontStyle="italic" fontFamily="var(--font-display)" fill="rgb(236 230 216 / 0.55)">
+        des quintes
       </text>
     </svg>
   );

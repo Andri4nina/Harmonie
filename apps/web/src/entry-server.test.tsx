@@ -18,7 +18,7 @@ describe("pré-rendu", () => {
     expect(html).toContain('aria-label="Graphe des relations"');
     expect(html).toContain('aria-label="Cercle des quintes"');
     expect(html).toContain("Clavier : A, C, E, G");
-    expect(html).toContain("Alto Saxophone");
+    expect(html).toContain("Saxophone alto");
     // Les relations sont de vrais liens vers d'autres pages de référence.
     expect(html).toContain('href="/notes/la"');
     expect(html).toContain('href="/tonalites/do-majeur"');

@@ -21,7 +21,7 @@ export function Loader({ label, size = 72 }: { label?: string; size?: number }) 
         ))}
         <circle cx="50" cy="50" r="3.2" className="topo-loader-core" />
       </svg>
-      {label && <span className="eyebrow">{label}</span>}
+      {label && <span className="caption">{label}</span>}
       {!label && <span className="sr-only">Chargement</span>}
     </div>
   );

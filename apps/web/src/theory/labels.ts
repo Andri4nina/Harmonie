@@ -211,5 +211,23 @@ export function factValue(key: string, value: string): string {
  * deux notes proches harmoniquement ont des couleurs proches.
  */
 export function hueOf(pitchClass: number): number {
-  return (((pitchClass * 7) % 12) * 30 + 170) % 360;
+  return (((pitchClass * 7) % 12) * 30 + 40) % 360;
+}
+
+const INSTRUMENT_LABEL: Record<string, string> = {
+  piano: "Piano",
+  guitar: "Guitare",
+  bass: "Basse",
+  violin: "Violon",
+  cello: "Violoncelle",
+  flute: "Flûte",
+  "alto-saxophone": "Saxophone alto",
+  "tenor-saxophone": "Saxophone ténor",
+  "drum-kit": "Batterie",
+  synthesizer: "Synthétiseur",
+};
+
+/** Nom français d'un instrument du moteur (le moteur les nomme en anglais). */
+export function instrumentLabel(id: string, fallback: string): string {
+  return INSTRUMENT_LABEL[id] ?? fallback;
 }

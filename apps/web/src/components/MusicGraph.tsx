@@ -81,7 +81,7 @@ export function MusicGraph({ view }: { view: NodeView }) {
           y1={CENTER}
           x2={node.x}
           y2={node.y}
-          stroke={`oklch(0.84 0.13 ${hueOf(node.pitchClass)} / 0.16)`}
+          stroke={`oklch(0.84 0.09 ${hueOf(node.pitchClass)} / 0.16)`}
           strokeWidth={1}
         />
       ))}
@@ -99,11 +99,12 @@ export function MusicGraph({ view }: { view: NodeView }) {
             y={y}
             transform={`rotate(${degrees} ${x} ${y})`}
             textAnchor="middle"
-            fontSize={8.5}
-            letterSpacing={1.1}
-            fill="rgb(232 238 245 / 0.42)"
+            fontSize={13}
+            fontStyle="italic"
+            fontFamily="var(--font-display)"
+            fill="rgb(236 230 216 / 0.42)"
           >
-            {(GROUP_LABEL[sector.key] ?? sector.key).toUpperCase()}
+            {GROUP_LABEL[sector.key] ?? sector.key}
           </text>
         );
       })}
@@ -111,7 +112,7 @@ export function MusicGraph({ view }: { view: NodeView }) {
         const hue = hueOf(node.pitchClass);
         const detail = detailLabel(node.group, node.detail);
         const label = shortLabelOf(node.id);
-        const width = Math.max(30, label.length * 6.6 + 14);
+        const width = Math.max(34, label.length * 8 + 16);
         return (
           <g
             key={node.key}
@@ -131,21 +132,21 @@ export function MusicGraph({ view }: { view: NodeView }) {
             <title>{`${labelOf(node.id)}${detail ? ` — ${detail}` : ""}`}</title>
             <rect
               x={-width / 2}
-              y={-10}
+              y={-12}
               width={width}
-              height={20}
-              rx={10}
+              height={24}
+              rx={12}
               fill={`oklch(0.3 0.06 ${hue} / 0.85)`}
-              stroke={`oklch(0.84 0.13 ${hue} / 0.6)`}
+              stroke={`oklch(0.84 0.09 ${hue} / 0.6)`}
               strokeWidth={1}
               className="transition-[fill] duration-150 group-hover:fill-white/25 group-focus-visible:fill-white/25"
             />
             <text
-              y={3.5}
+              y={4.5}
               textAnchor="middle"
-              fontSize={10}
+              fontSize={13}
               fontWeight={600}
-              fontFamily="var(--font-mono)"
+              fontFamily="var(--font-display)"
               fill={`oklch(0.93 0.09 ${hue})`}
               pointerEvents="none"
             >
@@ -154,16 +155,16 @@ export function MusicGraph({ view }: { view: NodeView }) {
           </g>
         );
       })}
-      <circle cx={CENTER} cy={CENTER} r={46} fill={`oklch(0.84 0.14 ${centerHue} / 0.16)`} />
-      <circle cx={CENTER} cy={CENTER} r={46} fill="none" stroke={`oklch(0.84 0.14 ${centerHue})`} strokeWidth={1.5} />
+      <circle cx={CENTER} cy={CENTER} r={46} fill={`oklch(0.84 0.09 ${centerHue} / 0.16)`} />
+      <circle cx={CENTER} cy={CENTER} r={46} fill="none" stroke={`oklch(0.84 0.09 ${centerHue})`} strokeWidth={1.5} />
       <text
         x={CENTER}
         y={CENTER + 5}
         textAnchor="middle"
         fontSize={shortLabelOf(view.id).length > 7 ? 10 : 15}
         fontWeight={700}
-        fontFamily="var(--font-mono)"
-        fill={`oklch(0.95 0.1 ${centerHue})`}
+        fontFamily="var(--font-display)"
+        fill={`oklch(0.95 0.09 ${centerHue})`}
       >
         {shortLabelOf(view.id)}
       </text>

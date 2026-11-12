@@ -1,4 +1,32 @@
-# Direction artistique, motion et identité
+# Direction artistique
+
+> **Révision du 2026-11-12 (prime sur la suite du document).** L'identité verte
+> et néon a été abandonnée : elle accumulait les défauts que le skill
+> `frontend-design` demande d'éviter. Nouvelle direction, « la partition, la
+> nuit » :
+>
+> | Nom | Hex | Rôle |
+> |---|---|---|
+> | Nuit | `#161A2E` | fond, encre bleu nuit |
+> | Velours | `#232846` | verre |
+> | Ivoire | `#ECE6D8` | texte (ivoire de piano), 66 % et 42 % pour les niveaux secondaires |
+> | Laiton | `#D9B46A` | **seul accent** : action, état actif, focus |
+> | Laiton sombre | `#8A6E3A` | traits fins |
+>
+> - Typographie : **Bodoni Moda** (gravure des partitions) pour les titres et
+>   les noms de notes et d'accords ; **Instrument Sans** pour le reste. Aucune
+>   monospace, aucune étiquette en capitales, aucun séparateur « · ».
+> - Les couleurs des notes (une teinte par classe de hauteur, chroma 0,085)
+>   ne servent qu'aux notes, jamais à l'interface.
+> - Le verre est réservé au cadre (barre latérale, menu) et aux instruments ;
+>   les sections de texte sont posées sur le relief. Rayons : cadre 26 px,
+>   panneau 18 px, pastille 10 px.
+> - Un seul mouvement orchestré : le nom de l'élément se « grave » au
+>   chargement. Le reste ne bouge qu'en réponse à un geste.
+> - Responsive vérifié à 375, 768 et 1440 px : sous 1024 px, barre supérieure
+>   et menu en tiroir ; piano et manche défilent, le piano s'ouvre sur le do
+>   central.
+
 
 Ce document fixe l'identité visuelle d'Harmonia. Il sera traduit en design system
 (tokens, composants) au début de la Phase 3.

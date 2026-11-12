@@ -8,22 +8,28 @@ export function hueStyle(pitchClass: number): CSSProperties {
   return { "--h": hueOf(pitchClass) } as CSSProperties;
 }
 
+/**
+ * Section de page. Le verre n'est employé que pour les instruments
+ * (`framed`) ; une section de texte reste posée sur le fond.
+ */
 export function Panel({
   title,
   aside,
   children,
   className = "",
+  framed = true,
 }: {
   title?: string;
   aside?: ReactNode;
   children: ReactNode;
   className?: string;
+  framed?: boolean;
 }) {
   return (
-    <section className={`glass enter p-5 ${className}`}>
+    <section className={`${framed ? "glass p-4 sm:p-5" : ""} min-w-0 ${className}`}>
       {(title || aside) && (
-        <header className="mb-4 flex min-h-7 items-center justify-between gap-3">
-          {title && <h2 className="eyebrow">{title}</h2>}
+        <header className="mb-3 flex min-h-8 flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          {title && <h2 className="section-title">{title}</h2>}
           {aside}
         </header>
       )}
@@ -32,7 +38,7 @@ export function Panel({
   );
 }
 
-/** Pastille menant à un nœud de l'explorateur. */
+/** Pastille menant à un nœud de l'explorateur, à la couleur de sa note. */
 export function NodeChip({
   id,
   pitchClass,
@@ -49,15 +55,15 @@ export function NodeChip({
       to={pathOf(id)}
       data-hue
       style={hueStyle(pitchClass)}
-      className={`group inline-flex items-baseline gap-2 rounded-xl border px-3 py-1.5 text-sm transition-colors duration-150 ${
+      className={`group inline-flex min-h-9 items-baseline gap-2 rounded-[10px] border px-3 py-1.5 transition-colors duration-150 ${
         active
-          ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-strong)]"
-          : "border-line bg-white/[0.03] hover:border-[var(--accent-line)] hover:bg-[var(--accent-soft)]"
+          ? "border-[var(--note)] bg-[var(--note-soft)]"
+          : "border-line hover:border-[var(--note-line)] hover:bg-[var(--note-soft)]"
       }`}
     >
-      <span className="size-1.5 shrink-0 self-center rounded-full bg-[var(--accent)]" />
-      <span className="font-mono font-medium">{shortLabelOf(id)}</span>
-      {detail && <span className="text-xs text-fg-3 group-hover:text-fg-2">{detail}</span>}
+      <span className="size-1.5 shrink-0 self-center rounded-full bg-[var(--note)]" />
+      <span className="font-display text-[1.05rem] leading-none font-semibold">{shortLabelOf(id)}</span>
+      {detail && <span className="text-[0.8125rem] text-ivory-3 group-hover:text-ivory-2">{detail}</span>}
     </Link>
   );
 }
@@ -75,6 +81,8 @@ const ICONS: Record<string, string> = {
   stop: "M7 7h10v10H7z",
   search: "M11 4a7 7 0 1 0 0 14a7 7 0 0 0 0-14zm5 12l4 4",
   download: "M12 4v11m-4.5-4.5L12 15l4.5-4.5M5 19h14",
+  menu: "M4 7h16M4 12h16M4 17h16",
+  close: "M6 6l12 12M18 6L6 18",
 };
 
 export function Icon({ name, className = "size-5" }: { name: string; className?: string }) {

@@ -41,10 +41,10 @@ export function App() {
   return (
     <>
       <TopProgress />
-      <TopoBackground hue={hue} />
-      <div className="mx-auto flex min-h-full max-w-[1500px] gap-4 p-4">
+      <TopoBackground />
+      <div className="mx-auto flex min-h-full max-w-[1440px] flex-col gap-4 p-3 sm:p-4 lg:flex-row lg:gap-6">
         <Sidebar />
-        <main className="min-w-0 flex-1 pb-10">
+        <main id="contenu" className="min-w-0 flex-1 pb-10">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/explorer" element={<Navigate to={pathOf("note:C")} replace />} />
@@ -52,12 +52,11 @@ export function App() {
             <Route path="/telecharger" element={<Downloads />} />
             <Route path="*" element={<Explorer />} />
           </Routes>
-          <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 px-2 text-xs text-fg-3">
+          <footer className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-[0.8125rem] text-ivory-3">
             <span>
-              <span className="text-fg-2">Harmonie</span> — conçu et développé par{" "}
-              <span className="text-fg-2">Andrianina Rasoamanana</span>
+              Harmonie, conçu et développé par <span className="text-ivory-2">Andrianina Rasoamanana</span>
             </span>
-            <Link to="/telecharger" className="hover:text-fg-2">
+            <Link to="/telecharger" className="underline-offset-4 hover:text-ivory-2 hover:underline">
               Télécharger l'application
             </Link>
           </footer>

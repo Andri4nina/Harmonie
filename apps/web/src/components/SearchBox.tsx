@@ -35,7 +35,7 @@ export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
         if (first) go(first.id);
       }}
     >
-      <label className="glass flex items-center gap-3 !rounded-2xl px-4 py-3 text-fg-2 focus-within:text-fg">
+      <label className="glass flex min-h-12 items-center gap-3 !rounded-full px-5 text-ivory-2 focus-within:border-[var(--accent-line)] focus-within:text-ivory">
         <Icon name="search" className="size-4 shrink-0" />
         <span className="sr-only">Chercher une note, un accord, une gamme ou une tonalité</span>
         <input
@@ -47,17 +47,17 @@ export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
           }}
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 120)}
-          placeholder="C#, Am7, F# minor, D dorian…"
+          placeholder="Une note, un accord, une gamme : C#, Am7, D dorian"
           autoComplete="off"
           spellCheck={false}
-          className="w-full bg-transparent font-mono text-sm outline-none placeholder:text-fg-3"
+          className="w-full bg-transparent text-base outline-none placeholder:text-ivory-3"
         />
       </label>
 
       {open && text.trim() !== "" && (
-        <div className="glass glass-raised enter absolute top-full right-0 left-0 z-20 mt-2 !rounded-2xl p-2">
+        <div className="glass glass-raised absolute top-full right-0 left-0 z-20 mt-2 p-2">
           {results.length === 0 ? (
-            <p className="px-3 py-2 text-sm text-fg-3">
+            <p className="px-3 py-2 text-sm text-ivory-2">
               Le moteur ne reconnaît pas « {text.trim()} ». Essayez une note (Bb), un accord (Dm7), une tonalité (E
               minor) ou une gamme (G mixolydian).
             </p>
@@ -70,11 +70,11 @@ export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
                 style={hueStyle(view.pitchClass)}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => go(view.id)}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm hover:bg-[var(--accent-soft)]"
+                className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2 text-left hover:bg-[var(--note-soft)]"
               >
-                <span className="size-2 rounded-full bg-[var(--accent)]" />
-                <span className="font-mono">{labelOf(view.id)}</span>
-                <span className="eyebrow ml-auto">{KIND_LABEL[view.kind]}</span>
+                <span className="size-2 shrink-0 rounded-full bg-[var(--note)]" />
+                <span className="font-display text-[1.05rem] font-semibold">{labelOf(view.id)}</span>
+                <span className="caption ml-auto">{KIND_LABEL[view.kind]}</span>
               </button>
             ))
           )}

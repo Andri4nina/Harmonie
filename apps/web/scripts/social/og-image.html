@@ -4,51 +4,44 @@
   <head>
     <meta charset="UTF-8" />
     <style>
+      @font-face {
+        font-family: "Bodoni Moda";
+        src: url(../../node_modules/@fontsource-variable/bodoni-moda/files/bodoni-moda-latin-opsz-normal.woff2) format("woff2-variations");
+        font-weight: 400 900;
+      }
+      @font-face {
+        font-family: "Instrument Sans";
+        src: url(../../node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2) format("woff2-variations");
+        font-weight: 400 700;
+      }
       html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
       body {
-        background:
-          radial-gradient(70% 90% at 12% 0%, rgb(79 227 200 / 0.28), transparent 60%),
-          radial-gradient(60% 70% at 100% 100%, rgb(70 100 190 / 0.3), transparent 60%),
-          #070b12;
-        color: #e8eef5;
-        font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+        background: radial-gradient(90% 70% at 85% -10%, rgb(60 66 120 / 0.55), transparent 70%), #161a2e;
+        color: #ece6d8;
+        font-family: "Instrument Sans", sans-serif;
         position: relative;
       }
-      svg.topo { position: absolute; inset: 0; }
-      .card {
-        position: absolute; left: 80px; top: 120px; width: 620px; padding: 48px 52px;
-        border-radius: 32px; background: rgb(255 255 255 / 0.06);
-        box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 40px 90px -40px #000;
-        border: 1px solid rgb(255 255 255 / 0.12);
+      svg { position: absolute; inset: 0; }
+      .name {
+        position: absolute; left: 88px; top: 150px;
+        font: 500 196px/0.9 "Bodoni Moda", serif; letter-spacing: -0.03em; font-optical-sizing: auto;
       }
-      .eyebrow { font: 600 20px/1 Consolas, monospace; letter-spacing: 0.16em; text-transform: uppercase; color: #7de0c4; }
-      h1 { margin: 22px 0 0; font-size: 92px; line-height: 1; font-weight: 700; letter-spacing: -0.03em;
-        background: linear-gradient(110deg, #ffffff 25%, #9ff0d8 60%, #8fb4ff); -webkit-background-clip: text; color: transparent; }
-      p { margin: 26px 0 0; font-size: 30px; line-height: 1.35; color: rgb(232 238 245 / 0.72); }
-      .notes { position: absolute; right: 90px; top: 170px; display: grid; grid-template-columns: repeat(2, 120px); gap: 18px; }
-      .note { height: 120px; border-radius: 24px; display: grid; place-items: center; font: 700 44px/1 Consolas, monospace;
-        background: rgb(255 255 255 / 0.05); border: 1px solid rgb(255 255 255 / 0.12); }
+      .author { position: absolute; left: 96px; top: 392px; font-size: 34px; font-weight: 500; color: #d9b46a; }
+      .line { position: absolute; left: 96px; top: 446px; font-size: 26px; color: rgb(236 230 216 / 0.66); }
     </style>
   </head>
   <body>
-    <svg class="topo" viewBox="0 0 1200 630" fill="none">
-      <g stroke="#4fe3c8" stroke-linecap="round">
-        <path d="M-20 520 C200 380 360 600 620 470 S1000 300 1240 420" stroke-opacity=".35" stroke-width="2" />
-        <path d="M-20 560 C220 430 380 640 640 520 S1010 350 1240 470" stroke-opacity=".2" stroke-width="2" stroke-dasharray="6 9" />
-        <path d="M-20 470 C180 330 340 560 600 420 S990 250 1240 370" stroke-opacity=".2" stroke-width="2" stroke-dasharray="6 9" />
-        <path d="M-20 90 C240 180 420 20 700 110 S1050 200 1240 60" stroke-opacity=".18" stroke-width="2" stroke-dasharray="6 9" />
+    <svg viewBox="0 0 1200 630" fill="none">
+      <g stroke-linecap="round" stroke-width="2">
+        <path d="M-20 560 C220 470 420 640 680 540 S1040 420 1240 500" stroke="#d9b46a" stroke-opacity=".5" />
+        <path d="M-20 600 C230 510 430 680 700 580 S1050 460 1240 540" stroke="#ece6d8" stroke-opacity=".18" stroke-dasharray="6 9" />
+        <path d="M-20 520 C210 430 410 600 660 500 S1030 380 1240 460" stroke="#ece6d8" stroke-opacity=".18" stroke-dasharray="6 9" />
+        <path d="M720 -20 C820 120 1000 60 1240 140" stroke="#ece6d8" stroke-opacity=".14" stroke-dasharray="6 9" />
+        <path d="M680 -20 C800 160 990 110 1240 190" stroke="#ece6d8" stroke-opacity=".14" stroke-dasharray="6 9" />
       </g>
     </svg>
-    <div class="card">
-      <div class="eyebrow">Andrianina Rasoamanana</div>
-      <h1>Harmonie</h1>
-      <p>La théorie musicale sur une même carte : notes, gammes, accords et tonalités à écouter et à explorer.</p>
-    </div>
-    <div class="notes">
-      <div class="note" style="color:#9ff0d8">C</div>
-      <div class="note" style="color:#a9c8ff">E</div>
-      <div class="note" style="color:#f5c27a">G</div>
-      <div class="note" style="color:#e9a8ff">B</div>
-    </div>
+    <div class="name">Harmonie</div>
+    <div class="author">Andrianina Rasoamanana</div>
+    <div class="line">Notes, gammes, accords et tonalités, sur une même carte.</div>
   </body>
 </html>
