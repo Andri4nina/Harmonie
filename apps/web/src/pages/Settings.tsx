@@ -81,7 +81,7 @@ export function Settings() {
             type="button"
             onClick={() => setA4(440)}
             disabled={a4 === 440}
-            className="btn text-ivory-2 hover:bg-white/5"
+            className="btn text-ivory-2 hover:bg-[var(--hover)]"
           >
             Revenir à 440
           </button>

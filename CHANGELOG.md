@@ -10,6 +10,16 @@ Phase 7b : Android, mises à jour, publication simultanée.
 
 ### Ajouté
 
+- Page de présentation (`/`) : plongée dans le nœud de la quinte au
+  défilement, recul d'une note jusqu'au cercle des quintes, portée qui
+  défile à l'horizontale avec les parties de l'application, défilé
+  d'accords, portes qui se ferment sur un clavier en arpège. Tout est piloté
+  par le défilement et s'arrête si l'on demande moins d'animation. Le
+  tableau de bord passe à `/tableau-de-bord` ; les applications y arrivent
+  directement.
+- Navigation : entrées rangées par usage (Comprendre, Pratiquer, Mes
+  morceaux), repère de la page courante qui glisse d'une entrée à l'autre,
+  transition entre les pages.
 - Composer devient un séquenceur : pistes avec instrument, volume, coupure
   et solo ; rouleau de piano (crayon, gomme, sélection, grille, zoom,
   vélocités, notes des autres pistes en filigrane) ; pas à pas pour la
@@ -44,6 +54,12 @@ Phase 7b : Android, mises à jour, publication simultanée.
 - Harmonie devient un logiciel libre : licence AGPL-3.0-or-later (`LICENSE`),
   déclarée dans chaque paquet et dans les installateurs ; lien vers le code
   source au bas du site et des applications ; `CONTRIBUTING.md`.
+
+### Corrigé
+
+- Thème clair : survols invisibles (blanc sur blanc) dans toute
+  l'interface, logo dans un carré sombre, sélecteur de thème qui débordait
+  du menu mobile.
 
 ### Modifié
 

@@ -38,7 +38,7 @@ export function UpdateNotice() {
           Télécharger la nouvelle version
         </a>
       )}
-      <button type="button" onClick={() => setDismissed(true)} className="btn text-ivory-2 hover:bg-white/5">
+      <button type="button" onClick={() => setDismissed(true)} className="btn text-ivory-2 hover:bg-[var(--hover)]">
         Plus tard
       </button>
     </div>

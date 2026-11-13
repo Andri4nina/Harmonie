@@ -248,7 +248,7 @@ export function Explorer() {
                   className={`min-h-9 rounded-full px-3.5 text-sm transition-colors duration-150 ${
                     candidate.id === instrument.id
                       ? "bg-[var(--accent-soft)] text-brass"
-                      : "text-ivory-2 hover:bg-white/5 hover:text-ivory"
+                      : "text-ivory-2 hover:bg-[var(--hover)] hover:text-ivory"
                   }`}
                 >
                   {instrumentLabel(candidate.id, candidate.name)}

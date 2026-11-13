@@ -117,8 +117,12 @@ export function headFor(pathname: string): Head {
   const path = normalizePath(pathname);
   if (path === "/") {
     const description =
-      "Harmonie, par Andrianina Rasoamanana : la théorie musicale sur une même carte. Notes, gammes, accords et tonalités à écouter, à voir au piano et à la guitare, avec leurs relations.";
+      "Harmonie, par Andrianina Rasoamanana : la théorie musicale qu'on entend. Notes, gammes, accords et tonalités à écouter et à voir au piano et à la guitare, entraînement de l'oreille, analyse de morceaux et séquenceur. Libre et gratuit.";
     return { title: SITE_NAME, description, indexable: true, path, jsonLd: website(description) };
+  }
+  if (path === "/tableau-de-bord") {
+    const description = "Votre tableau de bord Harmonie : points de départ dans la théorie, pages visitées et progression.";
+    return { title: `Tableau de bord | ${SITE_NAME}`, description, indexable: false, path, jsonLd: website(description) };
   }
   if (path === "/cours") {
     const description =

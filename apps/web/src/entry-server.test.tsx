@@ -26,15 +26,19 @@ describe("pré-rendu", () => {
     expect(hue).toBeGreaterThanOrEqual(0);
   });
 
-  it("rend l'accueil et signale une adresse inconnue", () => {
-    expect(render("/").html).toContain("Voyez ce qui relie les notes.");
+  it("rend la présentation, le tableau de bord et signale une adresse inconnue", () => {
+    const landing = render("/");
+    expect(landing.html).toContain("Une note ne vit jamais seule.");
+    expect(landing.head.indexable).toBe(true);
+    expect(render("/tableau-de-bord").html).toContain("Voyez ce qui relie les notes.");
+    expect(render("/tableau-de-bord").head.indexable).toBe(false);
     const missing = render("/accords/do-inexistant");
     expect(missing.html).toContain("Page introuvable");
     expect(missing.head.indexable).toBe(false);
   });
 
   it("produit un seul titre principal par page", () => {
-    for (const path of ["/", "/notes/do", "/gammes/re-dorien", "/tonalites/la-mineur", "/progressions/pop-en-do-majeur"]) {
+    for (const path of ["/", "/tableau-de-bord", "/notes/do", "/gammes/re-dorien", "/tonalites/la-mineur", "/progressions/pop-en-do-majeur"]) {
       expect(render(path).html.match(/<h1/g)?.length, path).toBe(1);
     }
   });

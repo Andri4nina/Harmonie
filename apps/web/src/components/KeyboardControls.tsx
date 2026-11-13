@@ -34,7 +34,7 @@ function Step({ label, onClick, disabled, children }: { label: string; onClick: 
       title={label}
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-full px-2 text-sm text-ivory-2 hover:bg-white/5 hover:text-ivory disabled:opacity-40"
+      className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-full px-2 text-sm text-ivory-2 hover:bg-[var(--hover)] hover:text-ivory disabled:opacity-40"
     >
       {children}
     </button>

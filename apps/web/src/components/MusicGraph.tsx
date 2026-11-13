@@ -139,7 +139,7 @@ export function MusicGraph({ view }: { view: NodeView }) {
               fill={`oklch(0.3 0.06 ${hue} / 0.85)`}
               stroke={`oklch(0.84 0.09 ${hue} / 0.6)`}
               strokeWidth={1}
-              className="transition-[fill] duration-150 group-hover:fill-white/25 group-focus-visible:fill-white/25"
+              className="transition-[fill] duration-150 group-hover:fill-[var(--hover-strong)] group-focus-visible:fill-[var(--hover-strong)]"
             />
             <text
               y={4.5}

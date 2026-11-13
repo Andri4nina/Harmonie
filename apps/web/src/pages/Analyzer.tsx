@@ -69,7 +69,7 @@ function SignIn() {
             autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="min-h-11 rounded-xl border border-line bg-white/[0.03] px-3 outline-none focus:border-[var(--accent-line)]"
+            className="min-h-11 rounded-xl border border-line bg-[var(--glass-bg)] px-3 outline-none focus:border-[var(--accent-line)]"
           />
         </label>
         <label className="flex flex-col gap-1">
@@ -81,7 +81,7 @@ function SignIn() {
             autoComplete="current-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="min-h-11 rounded-xl border border-line bg-white/[0.03] px-3 outline-none focus:border-[var(--accent-line)]"
+            className="min-h-11 rounded-xl border border-line bg-[var(--glass-bg)] px-3 outline-none focus:border-[var(--accent-line)]"
           />
         </label>
         {message && (
@@ -170,7 +170,7 @@ function Upload({ onUploaded }: { onUploaded: () => void }) {
               value={title}
               maxLength={200}
               onChange={(event) => setTitle(event.target.value)}
-              className="min-h-11 rounded-xl border border-line bg-white/[0.03] px-3 outline-none focus:border-[var(--accent-line)]"
+              className="min-h-11 rounded-xl border border-line bg-[var(--glass-bg)] px-3 outline-none focus:border-[var(--accent-line)]"
             />
           </label>
           <button type="submit" disabled={busy} className="btn btn-primary">

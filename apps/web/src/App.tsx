@@ -11,6 +11,7 @@ import { Downloads } from "./pages/Downloads";
 import { LessonPage, LessonsIndex } from "./pages/Lessons";
 import { EarTraining } from "./pages/EarTraining";
 import { Explorer } from "./pages/Explorer";
+import { Landing } from "./pages/Landing";
 import { Settings } from "./pages/Settings";
 import { useSettings } from "./state/store";
 import { useTheme } from "./state/theme";
@@ -56,6 +57,17 @@ export function App() {
     applyHead(headFor(pathname));
   }, [pathname]);
 
+  // Sur le web, la racine est la page de présentation, sans barre latérale.
+  // Dans une application, on arrive directement au tableau de bord.
+  if (pathname === "/" && !inApp) {
+    return (
+      <>
+        <TopProgress />
+        <Landing />
+      </>
+    );
+  }
+
   return (
     <>
       <TopProgress />
@@ -65,7 +77,8 @@ export function App() {
         <main id="contenu" className="min-w-0 flex-1 pb-10">
           {inApp && <UpdateNotice />}
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<Navigate to="/tableau-de-bord" replace />} />
+            <Route path="/tableau-de-bord" element={<Dashboard />} />
             <Route path="/explorer" element={<Navigate to={pathOf("note:C")} replace />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/telecharger" element={<Downloads />} />

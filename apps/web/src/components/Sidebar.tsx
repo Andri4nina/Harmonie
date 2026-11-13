@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useIsApp } from "../app/platform";
 import { Logo } from "./Logo";
 import { ThemeSwitch } from "./ThemeSwitch";
@@ -8,72 +8,101 @@ import { Icon } from "./ui";
 interface Entry {
   label: string;
   icon: string;
-  /** Route si la section existe ; sinon version où elle arrive. */
-  to?: string;
-  arrives?: string;
+  to: string;
 }
 
-const ENTRIES: Entry[] = [
-  { label: "Accueil", icon: "dashboard", to: "/" },
-  { label: "Explorer la théorie", icon: "explorer", to: "/explorer" },
-  { label: "Analyser un morceau", icon: "analyzer", to: "/analyser" },
-  { label: "Ma bibliothèque", icon: "library", to: "/bibliotheque" },
-  { label: "Apprendre", icon: "learning", to: "/cours" },
-  { label: "Entraîner l'oreille", icon: "ear", to: "/oreille" },
-  { label: "Composer", icon: "generator", to: "/composer" },
-  { label: "Télécharger", icon: "download", to: "/telecharger" },
-  { label: "Réglages", icon: "settings", to: "/settings" },
+/** Entrées rangées par usage : le titre de groupe dit à quoi elles servent. */
+const GROUPS: { title?: string; entries: Entry[] }[] = [
+  { entries: [{ label: "Accueil", icon: "dashboard", to: "/tableau-de-bord" }] },
+  {
+    title: "Comprendre",
+    entries: [
+      { label: "Explorer la théorie", icon: "explorer", to: "/explorer" },
+      { label: "Apprendre", icon: "learning", to: "/cours" },
+    ],
+  },
+  {
+    title: "Pratiquer",
+    entries: [
+      { label: "Entraîner l'oreille", icon: "ear", to: "/oreille" },
+      { label: "Composer", icon: "generator", to: "/composer" },
+    ],
+  },
+  {
+    title: "Mes morceaux",
+    entries: [
+      { label: "Analyser un morceau", icon: "analyzer", to: "/analyser" },
+      { label: "Ma bibliothèque", icon: "library", to: "/bibliotheque" },
+    ],
+  },
+  {
+    title: "Harmonie",
+    entries: [
+      { label: "Télécharger", icon: "download", to: "/telecharger" },
+      { label: "Réglages", icon: "settings", to: "/settings" },
+    ],
+  },
 ];
+
+/** Vrai si l'entrée correspond à la page : l'explorateur couvre toutes les pages de référence. */
+function matches(to: string, pathname: string): boolean {
+  if (to === "/explorer") return /^\/(notes|gammes|accords|tonalites|progressions)(\/|$)/.test(pathname);
+  return pathname === to || pathname.startsWith(`${to}/`);
+}
 
 function Brand() {
   return (
-    <NavLink to="/" className="flex items-center gap-3 rounded-xl" aria-label="Harmonie, accueil">
+    <Link to="/" viewTransition className="flex items-center gap-3 rounded-xl" aria-label="Harmonie, présentation">
       <Logo className="size-10 shrink-0" />
       <span className="font-display text-[1.2rem] leading-none font-semibold">Harmonie</span>
-    </NavLink>
+    </Link>
   );
 }
 
-function Navigation({ onNavigate }: { onNavigate?: () => void }) {
+function Navigation({ onNavigate, mark = true }: { onNavigate?: () => void; mark?: boolean }) {
   // Dans une application (ordinateur, Android), inutile de proposer de la télécharger.
   const inApp = useIsApp();
-  const available = ENTRIES.filter((entry) => entry.to && !(inApp && entry.to === "/telecharger"));
-  const planned = ENTRIES.filter((entry) => !entry.to);
+  const { pathname } = useLocation();
   return (
-    <nav aria-label="Navigation principale" className="flex flex-col gap-6">
-      <ul className="flex flex-col gap-0.5">
-        {available.map((entry) => (
-          <li key={entry.label}>
-            <NavLink
-              to={entry.to ?? "/"}
-              end={entry.to === "/"}
-              onClick={onNavigate}
-              className={({ isActive }) =>
-                `flex min-h-11 items-center gap-3 rounded-xl px-3 text-[0.9375rem] transition-colors duration-150 ${
-                  isActive ? "bg-[var(--accent-soft)] text-brass" : "text-ivory-2 hover:bg-white/5 hover:text-ivory"
-                }`
-              }
-            >
-              <Icon name={entry.icon} />
-              {entry.label}
-            </NavLink>
-          </li>
-        ))}
-      </ul>
-      {planned.length > 0 && (
-      <div>
-        <p className="caption px-3 pb-1">À venir</p>
-        <ul className="flex flex-col">
-          {planned.map((entry) => (
-            <li key={entry.label} className="flex min-h-9 items-center gap-3 px-3 text-[0.875rem] text-ivory-3">
-              <Icon name={entry.icon} className="size-4" />
-              <span className="min-w-0 flex-1">{entry.label}</span>
-              <span className="text-xs">{entry.arrives}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-      )}
+    <nav aria-label="Navigation principale" className="flex flex-col gap-5">
+      {GROUPS.map((group) => {
+        const entries = group.entries.filter((entry) => !(inApp && entry.to === "/telecharger"));
+        if (entries.length === 0) return null;
+        return (
+          <div key={group.title ?? "accueil"} className="flex flex-col gap-0.5">
+            {group.title && <p className="px-3 pb-1 text-[0.75rem] font-medium text-ivory-3">{group.title}</p>}
+            <ul className="flex flex-col gap-0.5">
+              {entries.map((entry) => {
+                const active = matches(entry.to, pathname);
+                return (
+                  <li key={entry.to}>
+                    <Link
+                      to={entry.to}
+                      viewTransition
+                      onClick={onNavigate}
+                      aria-current={active ? "page" : undefined}
+                      className={`relative flex min-h-10 items-center gap-3 rounded-xl px-3 text-[0.9375rem] transition-colors duration-150 ${
+                        active ? "text-brass" : "text-ivory-2 hover:bg-[var(--hover)] hover:text-ivory"
+                      }`}
+                    >
+                      {active && (
+                        // Repère de la page courante : il glisse d'une entrée à l'autre.
+                        <span
+                          aria-hidden="true"
+                          className="absolute inset-0 rounded-xl border border-[var(--accent-line)] bg-[var(--accent-soft)]"
+                          style={mark ? { viewTransitionName: "nav-mark" } : undefined}
+                        />
+                      )}
+                      <Icon name={entry.icon} className="relative size-[1.15rem]" />
+                      <span className="relative">{entry.label}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })}
     </nav>
   );
 }
@@ -112,7 +141,7 @@ export function Sidebar() {
         <div className="flex-1 overflow-y-auto">
           <Navigation />
         </div>
-        <div className="flex flex-col gap-4 px-2">
+        <div className="flex flex-col gap-4 border-t border-line px-2 pt-4">
           <ThemeSwitch compact />
           <Credit />
         </div>
@@ -125,7 +154,7 @@ export function Sidebar() {
           onClick={() => setOpen(true)}
           aria-expanded={open}
           aria-controls="menu-principal"
-          className="flex size-11 items-center justify-center rounded-full text-ivory hover:bg-white/5"
+          className="flex size-11 items-center justify-center rounded-full text-ivory hover:bg-[var(--hover)]"
         >
           <Icon name="menu" />
           <span className="sr-only">Ouvrir le menu</span>
@@ -146,13 +175,13 @@ export function Sidebar() {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="flex size-11 items-center justify-center rounded-full hover:bg-white/5"
+                className="flex size-11 items-center justify-center rounded-full hover:bg-[var(--hover)]"
               >
                 <Icon name="close" />
                 <span className="sr-only">Fermer le menu</span>
               </button>
             </div>
-            <Navigation onNavigate={() => setOpen(false)} />
+            <Navigation onNavigate={() => setOpen(false)} mark={false} />
             <div className="mt-auto flex flex-col gap-4 px-2">
               <ThemeSwitch />
               <Credit />

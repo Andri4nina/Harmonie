@@ -63,6 +63,9 @@
   --topo-master: rgb(217 180 106 / 0.28);
   --scroll-thumb: rgb(236 230 216 / 0.22);
   --scroll-thumb-hover: rgb(217 180 106 / 0.7);
+  /* Survol : un voile de la couleur du texte, visible dans les deux thèmes. */
+  --hover: rgb(236 230 216 / 0.06);
+  --hover-strong: rgb(236 230 216 / 0.2);
 }
 
 /*
@@ -95,6 +98,8 @@
   --topo-master: rgb(138 101 38 / 0.38);
   --scroll-thumb: rgb(22 26 46 / 0.22);
   --scroll-thumb-hover: rgb(138 101 38 / 0.75);
+  --hover: rgb(22 26 46 / 0.06);
+  --hover-strong: rgb(22 26 46 / 0.14);
 }
 
 html,
@@ -355,6 +360,44 @@ a {
   }
   to {
     transform: translateX(260%);
+  }
+}
+
+/*
+ * Changement de page : l'ancienne s'efface vers le haut, la nouvelle monte
+ * en place. Le repère laiton de la navigation glisse d'une entrée à l'autre
+ * (même nom de transition). Rien ne bouge si l'on demande moins d'animation.
+ */
+#contenu {
+  view-transition-name: page;
+}
+::view-transition-old(page) {
+  animation: page-out 160ms ease-in both;
+}
+::view-transition-new(page) {
+  animation: page-in 320ms var(--ease-out-soft) both;
+}
+::view-transition-group(nav-mark) {
+  animation-duration: 340ms;
+  animation-timing-function: cubic-bezier(0.3, 1.25, 0.4, 1);
+}
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }
 

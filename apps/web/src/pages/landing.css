@@ -1,0 +1,907 @@
+/*
+ * Page de présentation. Chaque scène lit `--p` (0 → 1, posé par
+ * useScenes) : le CSS en fait un zoom, un recul, un défilement horizontal ou
+ * la fermeture des portes. Les couleurs viennent des jetons du thème.
+ */
+
+.landing {
+  position: relative;
+  overflow-x: clip;
+}
+
+.landing-bar {
+  position: fixed;
+  inset: 12px 12px auto;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 8px 8px 14px;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
+.landing-nav {
+  display: none;
+  gap: 4px;
+  font-size: 0.9375rem;
+}
+
+.landing-nav a {
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: var(--color-ivory-2);
+  transition:
+    background 150ms,
+    color 150ms;
+}
+
+.landing-nav a:hover {
+  background: var(--hover);
+  color: var(--color-ivory);
+}
+
+@media (min-width: 768px) {
+  .landing-nav {
+    display: flex;
+  }
+}
+
+.scene {
+  position: relative;
+  --p: 0;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------ zoom */
+
+.scene-hero {
+  height: 240vh;
+}
+
+.hero-knot {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: min(92vmin, 820px);
+  height: min(92vmin, 820px);
+  overflow: visible;
+  /* Le zoom accélère : on plonge au croisement des deux courbes. */
+  transform: scale(calc(1 + var(--p) * var(--p) * 22));
+  opacity: clamp(0, calc((0.95 - var(--p)) * 4), 1);
+  will-change: transform;
+}
+
+@media (min-width: 1024px) {
+  .hero-knot {
+    left: 34vw;
+  }
+}
+
+.knot-line,
+.knot-echo {
+  fill: none;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: knot-draw 2.6s var(--ease-out-soft) 0.15s forwards;
+}
+
+.knot-line {
+  stroke: var(--color-brass);
+  stroke-width: 0.55;
+}
+
+.knot-echo {
+  stroke: var(--color-ivory-3);
+  stroke-width: 0.18;
+  transform-origin: 32px 32px;
+  transform: rotate(180deg) scale(1.18);
+  animation-delay: 0.6s;
+}
+
+.knot-head {
+  fill: var(--color-ivory);
+  opacity: 0;
+  animation: fade-in 0.6s ease 2.4s forwards;
+}
+
+@keyframes knot-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+.hero-copy {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 0 clamp(16px, 5vw, 72px) clamp(72px, 12vh, 120px);
+  max-width: 1440px;
+  margin-inline: auto;
+  transform: translateY(calc(var(--p) * -24vh));
+  opacity: clamp(0, calc(1 - var(--p) * 2.6), 1);
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(3.4rem, 16vw, 15rem);
+  line-height: 0.86;
+  font-weight: 700;
+  /* En défilant, les lettres s'écartent comme un accord qu'on arpège. */
+  letter-spacing: calc(-0.045em + var(--p) * 0.6em);
+  display: flex;
+}
+
+.hero-title span {
+  display: inline-block;
+  transform: translateY(105%);
+  opacity: 0;
+  animation: letter-in 0.9s var(--ease-out-soft) calc(0.9s + var(--i) * 70ms) forwards;
+}
+
+@keyframes letter-in {
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.hero-lede {
+  max-width: 46ch;
+  margin: clamp(16px, 3vh, 28px) 0 0;
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  color: var(--color-ivory-2);
+  opacity: 0;
+  animation: fade-in 0.8s ease 1.6s forwards;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.hero-copy .hero-actions {
+  opacity: 0;
+  animation: fade-in 0.8s ease 1.9s forwards;
+}
+
+.scroll-cue {
+  position: absolute;
+  right: clamp(16px, 5vw, 72px);
+  bottom: clamp(72px, 12vh, 120px);
+  display: none;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-ivory-3);
+  writing-mode: vertical-rl;
+  opacity: clamp(0, calc(1 - var(--p) * 6), 1);
+}
+
+.scroll-cue span {
+  width: 1px;
+  height: 64px;
+  background: linear-gradient(var(--color-brass), transparent);
+  animation: cue 1.8s ease-in-out infinite;
+  transform-origin: top;
+}
+
+@keyframes cue {
+  0% {
+    transform: scaleY(0);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .scroll-cue {
+    display: flex;
+  }
+}
+
+/* ------------------------------------------------------------ recul */
+
+.scene-circle {
+  height: 280vh;
+  /* Recul sur les 70 premiers pour cent de la scène. */
+  --q: clamp(0, calc(var(--p) / 0.7), 1);
+}
+
+.circle-art {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: min(86vmin, 760px);
+  height: min(86vmin, 760px);
+  overflow: visible;
+  /* On part de Do, plein écran, et on recule jusqu'au cercle entier. */
+  transform-origin: 50% 12.5%;
+  transform: scale(calc(9 - var(--q) * 8)) translateX(calc(var(--q) * clamp(0px, 14vw, 220px)));
+  will-change: transform;
+}
+
+.circle-ticks {
+  stroke: var(--color-ivory-3);
+  stroke-width: 1;
+  transform-origin: 200px 200px;
+  animation: spin 60s linear infinite;
+}
+
+.circle-ring {
+  fill: none;
+  stroke: var(--color-line);
+}
+
+.circle-key circle,
+.circle-home circle {
+  fill: var(--color-velvet);
+  stroke: var(--color-line);
+}
+
+.circle-home circle {
+  fill: var(--color-brass);
+  stroke: none;
+}
+
+.circle-key text,
+.circle-home text {
+  fill: var(--color-ivory);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.circle-home text:first-of-type {
+  fill: var(--color-night);
+  font-size: 18px;
+}
+
+.circle-minor {
+  fill: var(--color-ivory-3);
+  font-size: 11px;
+}
+
+/* Les tonalités voisines s'allument l'une après l'autre, en boucle. */
+.circle-key circle {
+  animation: neighbour 6s ease-in-out calc(var(--i) * 0.5s) infinite;
+}
+
+@keyframes neighbour {
+  0%,
+  70%,
+  100% {
+    fill: var(--color-velvet);
+  }
+  80% {
+    fill: var(--accent-soft);
+    stroke: var(--accent-line);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.circle-copy {
+  position: absolute;
+  left: clamp(16px, 6vw, 96px);
+  bottom: clamp(32px, 10vh, 120px);
+  max-width: min(32rem, calc(100vw - 32px));
+  opacity: clamp(0, calc((var(--p) - 0.55) * 4), 1);
+  transform: translateY(calc((1 - clamp(0, calc((var(--p) - 0.55) * 4), 1)) * 40px));
+}
+
+.circle-copy h2 {
+  margin: 0;
+  font-size: clamp(1.9rem, 4.4vw, 3.6rem);
+  line-height: 1.02;
+  font-weight: 650;
+}
+
+.circle-copy p {
+  margin: 16px 0 20px;
+  color: var(--color-ivory-2);
+}
+
+@media (max-width: 767px) {
+  .circle-art {
+    transform: scale(calc(9 - var(--q) * 8)) translateY(calc(var(--q) * -14vh));
+  }
+}
+
+.landing-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--color-brass);
+  border-bottom: 1px solid var(--accent-line);
+  padding-bottom: 2px;
+  transition: border-color 150ms;
+}
+
+.landing-link:hover {
+  border-color: var(--color-brass);
+}
+
+/* ------------------------------------------------------------ portée horizontale */
+
+.scene-staff {
+  height: 520vh;
+}
+
+.staff-lines {
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 112px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.staff-lines span {
+  display: block;
+  height: 1px;
+  background: var(--color-line);
+}
+
+/* Têtes de note qui glissent sur la portée, chacune à sa vitesse. */
+.staff-lines i {
+  position: absolute;
+  left: -40px;
+  top: calc(mod(var(--i), 5) * 28px - 7px);
+  width: 20px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-brass);
+  opacity: 0.55;
+  transform: rotate(-20deg);
+  animation: glide calc(14s + var(--i) * 3s) linear calc(var(--i) * -2.3s) infinite;
+}
+
+@keyframes glide {
+  to {
+    left: calc(100% + 40px);
+  }
+}
+
+.staff-track {
+  position: relative;
+  display: flex;
+  height: 100%;
+  width: max-content;
+  margin: 0;
+  padding: 0 10vw 0 8vw;
+  list-style: none;
+  /* Le défilement vertical devient horizontal. */
+  transform: translateX(calc(var(--p) * (100vw - 100%)));
+  will-change: transform;
+}
+
+.feature {
+  position: relative;
+  flex: none;
+  width: min(86vw, 540px);
+  margin-right: 12vw;
+  align-self: center;
+  padding: 28px;
+  border: 1px solid var(--glass-border);
+  border-radius: 26px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+@media (max-width: 767px) {
+  .feature {
+    width: 84vw;
+    margin-right: 6vw;
+    padding: 22px;
+  }
+
+  .drift svg {
+    opacity: 0.1;
+  }
+}
+
+.feature:nth-child(even) {
+  transform: translateY(14vh);
+}
+
+.feature:nth-child(odd) {
+  transform: translateY(-10vh);
+}
+
+.feature h2 {
+  margin: 18px 0 10px;
+  font-size: clamp(1.6rem, 3.2vw, 2.5rem);
+  line-height: 1.05;
+  font-weight: 650;
+}
+
+.feature p {
+  margin: 0 0 18px;
+  color: var(--color-ivory-2);
+  max-width: 44ch;
+}
+
+.feature-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 34vh;
+}
+
+.art-edge {
+  stroke: var(--color-line);
+  stroke-width: 1.5;
+}
+
+.art-node {
+  fill: var(--color-velvet);
+  stroke: var(--color-brass);
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulse 2.8s ease-in-out calc(var(--i) * 0.4s) infinite;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.35);
+    fill: var(--accent-soft);
+  }
+}
+
+.art-bar {
+  fill: var(--color-brass);
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: level 1.6s ease-in-out calc(var(--i) * -0.13s) infinite alternate;
+}
+
+@keyframes level {
+  from {
+    transform: scaleY(0.12);
+    opacity: 0.5;
+  }
+  to {
+    transform: scaleY(0.9);
+  }
+}
+
+.art-ring {
+  fill: none;
+  stroke: var(--color-brass);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ripple 2.7s ease-out calc(var(--i) * 0.9s) infinite;
+}
+
+.art-core {
+  fill: var(--color-brass);
+}
+
+@keyframes ripple {
+  from {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+.art-roll {
+  animation: roll 8s linear infinite;
+}
+
+.art-block {
+  fill: var(--color-brass);
+  opacity: 0.8;
+}
+
+.art-head {
+  stroke: var(--color-ivory);
+  stroke-width: 1.5;
+}
+
+@keyframes roll {
+  to {
+    transform: translateX(-300px);
+  }
+}
+
+.art-note {
+  fill: var(--color-brass);
+  transform-box: fill-box;
+  animation: hop 2.4s var(--ease-out-soft) calc(var(--i) * 0.18s) infinite;
+}
+
+@keyframes hop {
+  0%,
+  60%,
+  100% {
+    translate: 0 0;
+  }
+  30% {
+    translate: 0 -10px;
+  }
+}
+
+.staff-progress {
+  position: absolute;
+  left: clamp(16px, 5vw, 72px);
+  right: clamp(16px, 5vw, 72px);
+  bottom: 28px;
+  height: 2px;
+  background: var(--color-line);
+}
+
+.staff-progress span {
+  display: block;
+  height: 100%;
+  background: var(--color-brass);
+  transform-origin: left;
+  transform: scaleX(var(--p));
+}
+
+/* ------------------------------------------------------------ défilé */
+
+.marquee {
+  padding: clamp(48px, 10vh, 96px) 0;
+  overflow: hidden;
+  border-block: 1px solid var(--color-line);
+}
+
+.marquee-row {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+
+.marquee-reverse {
+  animation-direction: reverse;
+  animation-duration: 46s;
+  margin-top: 10px;
+}
+
+.marquee-row span {
+  display: flex;
+  align-items: baseline;
+}
+
+.marquee-row b {
+  padding: 0 0.6em;
+  white-space: nowrap;
+  font-size: clamp(2.2rem, 7vw, 6rem);
+  font-weight: 650;
+  line-height: 1.1;
+  color: var(--color-ivory);
+}
+
+.marquee-reverse b {
+  font-size: clamp(1.1rem, 2.6vw, 2rem);
+  font-weight: 500;
+  color: var(--color-ivory-3);
+}
+
+.marquee-row b + b::before {
+  content: "";
+  display: inline-block;
+  width: 0.28em;
+  height: 0.28em;
+  margin-right: 1.2em;
+  border-radius: 50%;
+  background: var(--color-brass);
+  vertical-align: 0.25em;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ------------------------------------------------------------ portes */
+
+.scene-gates {
+  height: 240vh;
+  --close: clamp(0, calc(var(--p) * 1.45), 1);
+}
+
+.gates-keys {
+  position: absolute;
+  inset: 22vh 4vw;
+  display: flex;
+  gap: 4px;
+  transform: scale(calc(1.15 - var(--close) * 0.15));
+}
+
+.key-white {
+  flex: 1;
+  border-radius: 0 0 10px 10px;
+  background: var(--color-ivory);
+  opacity: 0.92;
+  transform-origin: top;
+  animation: press 3.2s ease-in-out calc(var(--i) * 0.11s) infinite;
+}
+
+.key-black {
+  position: absolute;
+  top: 0;
+  left: calc(var(--x) / 22 * 100% - 1.6%);
+  width: 3.2%;
+  height: 60%;
+  border-radius: 0 0 6px 6px;
+  background: var(--color-night);
+  border: 1px solid var(--color-line);
+}
+
+@keyframes press {
+  0%,
+  16%,
+  100% {
+    transform: none;
+    background: var(--color-ivory);
+  }
+  6% {
+    transform: scaleY(0.97);
+    background: var(--color-brass);
+  }
+}
+
+.gate {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.5%;
+  display: flex;
+  align-items: center;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 46px, var(--color-line) 46px 47px),
+    var(--color-velvet);
+  box-shadow: 0 0 80px -10px var(--shadow);
+  will-change: transform;
+}
+
+.gate span {
+  font-size: clamp(2.6rem, 9vw, 9rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-ivory);
+  /* Le mot se lit pendant la fermeture, puis laisse place à l'invitation. */
+  opacity: min(calc(0.15 + var(--close) * 0.85), clamp(0, calc((0.74 - var(--p)) * 7), 1));
+}
+
+.gate-left {
+  left: 0;
+  justify-content: flex-end;
+  padding-right: 3vw;
+  border-right: 2px solid var(--color-brass);
+  transform: translateX(calc((var(--close) - 1) * 101%));
+}
+
+.gate-right {
+  right: 0;
+  padding-left: 3vw;
+  border-left: 2px solid var(--color-brass);
+  transform: translateX(calc((1 - var(--close)) * 101%));
+}
+
+/* Une fois les portes fermées, l'invitation apparaît par-dessus. */
+.gates-cta {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+  background: radial-gradient(closest-side, var(--color-night) 55%, color-mix(in oklab, var(--color-night) 70%, transparent));
+  opacity: clamp(0, calc((var(--p) - 0.72) * 6), 1);
+  pointer-events: none;
+}
+
+.scene-gates[data-done="true"] .gates-cta {
+  pointer-events: auto;
+}
+
+.gates-cta h2 {
+  margin: 8px 0 0;
+  font-size: clamp(2rem, 5.4vw, 4.6rem);
+  line-height: 1;
+  font-weight: 700;
+}
+
+.gates-cta p {
+  max-width: 50ch;
+  margin: 0;
+  color: var(--color-ivory-2);
+}
+
+.gates-cta .hero-actions {
+  justify-content: center;
+  margin-top: 8px;
+}
+
+/* ------------------------------------------------------------ croches */
+
+.drift {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.drift svg {
+  position: absolute;
+  left: calc(var(--i) * 7.3% + 2%);
+  top: mod(calc(var(--i) * 37%), 100%);
+  width: calc(14px + mod(var(--i), 4) * 6px);
+  fill: var(--color-brass);
+  stroke: var(--color-brass);
+  opacity: calc(0.12 + mod(var(--i), 3) * 0.08);
+  animation: float calc(9s + mod(var(--i), 5) * 3s) ease-in-out calc(var(--i) * -1.7s) infinite alternate;
+}
+
+@keyframes float {
+  from {
+    transform: translate(0, 0) rotate(-8deg);
+  }
+  to {
+    transform: translate(calc(mod(var(--i), 2) * 40px - 20px), -70px) rotate(10deg);
+  }
+}
+
+.landing main {
+  position: relative;
+  z-index: 2;
+}
+
+.landing-footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 28px clamp(16px, 5vw, 72px) 36px;
+  font-size: 0.8125rem;
+  color: var(--color-ivory-3);
+}
+
+.landing-footer a:hover {
+  color: var(--color-ivory-2);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ------------------------------------------------------------ moins d'animation */
+
+@media (prefers-reduced-motion: reduce) {
+  .landing *,
+  .landing *::before,
+  .landing *::after {
+    animation: none !important;
+  }
+
+  .scene {
+    height: auto !important;
+    --p: 1 !important;
+    --q: 1 !important;
+  }
+
+  .stage {
+    position: relative;
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .hero-knot {
+    transform: none;
+    opacity: 0.35;
+  }
+
+  .knot-line,
+  .knot-echo {
+    stroke-dashoffset: 0;
+  }
+
+  .hero-title span,
+  .hero-lede,
+  .hero-copy .hero-actions,
+  .knot-head {
+    transform: none;
+    opacity: 1;
+  }
+
+  .hero-copy {
+    position: relative;
+    transform: none;
+    opacity: 1;
+    padding-top: 40vh;
+  }
+
+  .hero-title {
+    letter-spacing: -0.045em;
+  }
+
+  .circle-art {
+    position: relative;
+    transform: none;
+  }
+
+  .circle-copy {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    margin: 0 auto 64px;
+    padding: 0 16px;
+    opacity: 1;
+    transform: none;
+  }
+
+  .staff-track {
+    flex-wrap: wrap;
+    width: auto;
+    gap: 24px;
+    padding: 96px 16px;
+    transform: none;
+    justify-content: center;
+  }
+
+  .feature,
+  .feature:nth-child(even),
+  .feature:nth-child(odd) {
+    margin: 0;
+    transform: none;
+  }
+
+  .staff-lines,
+  .staff-progress,
+  .drift,
+  .gates-keys,
+  .gate {
+    display: none;
+  }
+
+  .gates-cta {
+    position: relative;
+    min-height: 80dvh;
+    opacity: 1;
+    pointer-events: auto;
+  }
+}

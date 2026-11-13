@@ -105,13 +105,13 @@ function Correction({ trackId, event, onSaved }: { trackId: string; event: Timel
                 placeholder="Am7"
                 autoComplete="off"
                 spellCheck={false}
-                className="font-display min-h-11 rounded-xl border border-line bg-white/[0.03] px-3 outline-none focus:border-[var(--accent-line)]"
+                className="font-display min-h-11 rounded-xl border border-line bg-[var(--glass-bg)] px-3 outline-none focus:border-[var(--accent-line)]"
               />
             </label>
             <button type="submit" disabled={busy || !text.trim()} className="btn btn-primary">
               Corriger
             </button>
-            <button type="button" disabled={busy} onClick={() => void save({ action: "delete", event_id: event.id })} className="btn text-ivory-2 hover:bg-white/5">
+            <button type="button" disabled={busy} onClick={() => void save({ action: "delete", event_id: event.id })} className="btn text-ivory-2 hover:bg-[var(--hover)]">
               Retirer cet accord
             </button>
           </form>

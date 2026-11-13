@@ -265,7 +265,7 @@ export function EarTraining() {
                       type="button"
                       onClick={() => setEntry((current) => (current.length > 1 ? current.slice(0, -1) : current))}
                       disabled={entry.length <= 1}
-                      className="btn text-ivory-2 hover:bg-white/5"
+                      className="btn text-ivory-2 hover:bg-[var(--hover)]"
                     >
                       Effacer
                     </button>
@@ -322,7 +322,7 @@ export function EarTraining() {
                   <span className="text-ivory-2">{" — "}{question.reveal}</span>
                 </p>
                 <div className="flex gap-2">
-                  <button type="button" onClick={() => listen(question)} className="btn text-ivory-2 hover:bg-white/5">
+                  <button type="button" onClick={() => listen(question)} className="btn text-ivory-2 hover:bg-[var(--hover)]">
                     Réécouter
                   </button>
                   <button type="button" onClick={next} className="btn btn-primary">

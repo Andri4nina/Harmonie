@@ -108,7 +108,7 @@ export function StepSequencer({ project, trackIndex, position }: { project: Proj
         </div>
       </div>
       <div>
-        <button type="button" onClick={copyFirstBar} className="btn text-ivory-2 hover:bg-white/5">
+        <button type="button" onClick={copyFirstBar} className="btn text-ivory-2 hover:bg-[var(--hover)]">
           Répéter la première mesure partout
         </button>
       </div>

@@ -15,7 +15,7 @@ export function setup(wasm: BufferSource): void {
 
 /** Adresses à pré-rendre : l'accueil et chaque page du catalogue de référence. */
 export function pages(): string[] {
-  return ["/", "/telecharger", "/oreille", "/composer", "/cours", ...LESSONS.map((lesson) => `/cours/${lesson.slug}`), ...catalog().map(pathOf)];
+  return ["/", "/tableau-de-bord", "/telecharger", "/oreille", "/composer", "/cours", ...LESSONS.map((lesson) => `/cours/${lesson.slug}`), ...catalog().map(pathOf)];
 }
 
 export function render(pathname: string): { html: string; head: Head; hue: number } {

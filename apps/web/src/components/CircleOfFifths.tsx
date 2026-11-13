@@ -56,7 +56,7 @@ export function CircleOfFifths({ current, related }: { current?: string; related
           stroke={`oklch(0.84 0.09 ${hue} / ${isCurrent || isRelated ? 0.9 : 0.25})`}
           strokeWidth={1}
           strokeDasharray={isCurrent || isRelated ? undefined : "3 4"}
-          className="transition-[fill] duration-200 group-hover:fill-white/20 group-focus-visible:fill-white/20"
+          className="transition-[fill] duration-200 group-hover:fill-[var(--hover-strong)] group-focus-visible:fill-[var(--hover-strong)]"
         />
         <text
           x={x}

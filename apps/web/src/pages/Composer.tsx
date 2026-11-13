@@ -67,7 +67,7 @@ function Toggle({ on, label, onClick, children, className = "" }: { on: boolean;
       aria-label={label}
       onClick={onClick}
       className={`inline-flex min-h-9 min-w-9 items-center justify-center gap-1.5 rounded-full px-2.5 text-sm transition-colors duration-150 ${
-        on ? "bg-[var(--accent-soft)] text-brass" : "text-ivory-2 hover:bg-white/5 hover:text-ivory"
+        on ? "bg-[var(--accent-soft)] text-brass" : "text-ivory-2 hover:bg-[var(--hover)] hover:text-ivory"
       } ${className}`}
     >
       {children}
@@ -339,11 +339,11 @@ export function Composer() {
         </label>
         <span className="flex items-center gap-1">
           <span className="caption">Longueur</span>
-          <button type="button" aria-label="Une mesure de moins" onClick={() => resize(project.bars - 1)} className="min-h-9 min-w-8 rounded-full text-ivory-2 hover:bg-white/5">
+          <button type="button" aria-label="Une mesure de moins" onClick={() => resize(project.bars - 1)} className="min-h-9 min-w-8 rounded-full text-ivory-2 hover:bg-[var(--hover)]">
             −
           </button>
           <span className="w-6 text-center text-sm tabular-nums">{project.bars}</span>
-          <button type="button" aria-label="Une mesure de plus" onClick={() => resize(project.bars + 1)} className="min-h-9 min-w-8 rounded-full text-ivory-2 hover:bg-white/5">
+          <button type="button" aria-label="Une mesure de plus" onClick={() => resize(project.bars + 1)} className="min-h-9 min-w-8 rounded-full text-ivory-2 hover:bg-[var(--hover)]">
             +
           </button>
         </span>
@@ -354,7 +354,7 @@ export function Composer() {
           <Toggle on={false} label="Rétablir (Ctrl+Maj+Z)" onClick={redo} className={canRedo ? "" : "pointer-events-none opacity-40"}>
             <Icon name="redo" className="size-4" />
           </Toggle>
-          <button type="button" onClick={exportMidi} className="btn text-ivory-2 hover:bg-white/5">
+          <button type="button" onClick={exportMidi} className="btn text-ivory-2 hover:bg-[var(--hover)]">
             <Icon name="download" className="size-4" />
             MIDI
           </button>
@@ -363,7 +363,7 @@ export function Composer() {
             onClick={exportScore}
             disabled={edited}
             title={edited ? "La partition reprend le morceau généré : après une retouche, exportez en MIDI." : undefined}
-            className="btn text-ivory-2 hover:bg-white/5"
+            className="btn text-ivory-2 hover:bg-[var(--hover)]"
           >
             <Icon name="download" className="size-4" />
             MusicXML

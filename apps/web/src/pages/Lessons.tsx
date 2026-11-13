@@ -111,7 +111,7 @@ function QuizStep({ step, id }: { step: Extract<Step, { type: "quiz" }>; id: str
       ) : (
         <>
           <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={() => play(current.steps, current.playing === "timed" ? "sequence" : current.playing, id)} className="btn text-ivory-2 hover:bg-white/5" aria-label="Réécouter">
+            <button type="button" onClick={() => play(current.steps, current.playing === "timed" ? "sequence" : current.playing, id)} className="btn text-ivory-2 hover:bg-[var(--hover)]" aria-label="Réécouter">
               <Icon name="play" className="size-4" />
             </button>
             {current.choices.map((choice) => {
@@ -277,7 +277,7 @@ export function LessonPage() {
           {done[lesson.slug] ? "Terminé : marquer comme à revoir" : "J'ai terminé ce cours"}
         </button>
         {next && (
-          <Link to={`/cours/${next.slug}`} className="btn text-ivory-2 hover:bg-white/5">
+          <Link to={`/cours/${next.slug}`} className="btn text-ivory-2 hover:bg-[var(--hover)]">
             Cours suivant : {next.title}
           </Link>
         )}
