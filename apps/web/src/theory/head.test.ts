@@ -73,10 +73,12 @@ describe("libellés", () => {
 
   it("colore les notes selon le cercle des quintes", () => {
     const step = (a: number, b: number) => (hueOf(b) - hueOf(a) + 360) % 360;
-    // Deux notes à la quinte ont des teintes voisines (le vert est sauté).
-    expect(step(0, 7)).toBeGreaterThan(0);
+    // Deux notes à la quinte ont des teintes voisines, en tournant toujours
+    // dans le même sens ; un seul saut plus grand, celui qui évite le vert.
+    const steps = Array.from({ length: 12 }, (_, i) => step((i * 7) % 12, ((i + 1) * 7) % 12));
+    expect(steps.reduce((sum, value) => sum + value, 0)).toBe(360);
+    expect(steps.filter((value) => value > 40)).toHaveLength(1);
     expect(step(0, 7)).toBeLessThan(40);
-    expect(step(7, 2)).toBeLessThan(40);
     expect(new Set(Array.from({ length: 12 }, (_, pc) => hueOf(pc))).size).toBe(12);
   });
 });
