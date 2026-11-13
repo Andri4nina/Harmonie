@@ -1,6 +1,7 @@
 import { type FormEvent, useState } from "react";
 import { useIsApp } from "../app/platform";
 import { signIn, signInWithGoogle, signUp } from "../app/session";
+import { Logo } from "./Logo";
 import { Panel } from "./ui";
 
 /** Le « G » de Google, dans ses couleurs (charte de connexion Google). */
@@ -41,7 +42,11 @@ export function SignIn({ next, intro = "Vos morceaux et leurs analyses sont rang
   };
 
   return (
-    <Panel title="Connexion" className="max-w-md">
+    <Panel className="rise-in w-full max-w-md">
+      <div className="mb-4 flex items-center gap-3">
+        <Logo className="size-11 shrink-0" moving />
+        <h2 className="font-display text-xl font-semibold">Connexion</h2>
+      </div>
       <p className="mb-4 text-ivory-2">{intro}</p>
       {!inApp && (
         <>

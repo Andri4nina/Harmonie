@@ -12,6 +12,19 @@ une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
   l'adresse et du mot de passe ; page Compte (`/compte`) qui dit ce
   qu'Harmonie garde d'un compte ; lien « Se connecter » sur la page de
   présentation. Réglage de Google et de Supabase : `docs/DEPLOYMENT.md`.
+- Hors connexion d'abord : réglages, cours terminés, progrès d'oreille et
+  projet de Composer sont gardés sur l'appareil et marchent sans réseau ;
+  une fois connecté, ils sont synchronisés avec le compte (au démarrage, au
+  retour du réseau, chaque minute et après chaque modification ; la
+  modification la plus récente l'emporte). API : `GET /v1/sync`,
+  `PUT /v1/sync/{settings|lessons|composer}`, migration 0004.
+- Avatar du compte en haut à droite (photo Google ou initiales), pastille
+  d'état de la synchronisation et menu (synchroniser, compte, déconnexion).
+- Présentation aussi accessible dans les applications (`/presentation`,
+  par le logo).
+- Pied de page toujours en bas de l'écran quand la page est courte.
+- Messages d'état lisibles (serveur en veille, hors connexion) avec
+  « Réessayer » et nouvel essai automatique ; animations de connexion.
 - Session persistante : on reste connecté d'une visite à l'autre (jeton
   renouvelé en arrière-plan) jusqu'à « Se déconnecter » ; la barre latérale
   affiche le compte connecté.

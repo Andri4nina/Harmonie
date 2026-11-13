@@ -24,7 +24,7 @@ export function missingConfiguration(): string[] {
   return missing;
 }
 
-import { SESSION_KEY } from "./sessionHint";
+import { SESSION_EVENT, SESSION_KEY } from "./sessionHint";
 
 let client: SupabaseClient | null = null;
 function supabase(): SupabaseClient | null {
@@ -55,6 +55,8 @@ function apply(session: Session | null): void {
     token: session?.access_token ?? null,
     provider: (session?.user.app_metadata.provider as string | undefined) ?? null,
   });
+  // Avatar, navigation : relisent la session enregistrée tout de suite.
+  window.dispatchEvent(new Event(SESSION_EVENT));
 }
 
 /** Vrai si la connexion par compte est configurée sur ce site. */

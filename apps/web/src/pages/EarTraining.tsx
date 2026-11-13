@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { play, playTimed, stop } from "../audio/synth";
 import { RhythmNotation } from "../components/RhythmNotation";
 import { Icon, Panel } from "../components/ui";
+import { useStoredAccount } from "../app/sessionHint";
+import { useSync } from "../app/syncMeta";
 import { useEar } from "../state/ear";
 import {
   EXERCISE_LABEL,
@@ -33,26 +35,16 @@ export function EarTraining() {
   const [entry, setEntry] = useState<string[]>([]);
   const [score, setScore] = useState({ right: 0, total: 0 });
 
-  const [sync, setSync] = useState<"off" | "signed-out" | "synced" | "error">("off");
+  const syncStatus = useSync((state) => state.status);
+  const account = useStoredAccount();
+  const sync = !import.meta.env.VITE_API_URL ? "off" : account === null ? "signed-out" : syncStatus === "synced" || syncStatus === "syncing" ? "synced" : syncStatus === "error" ? "error" : "off";
 
   // Progrès enregistrés relus après l'hydratation de la page pré-rendue, puis
   // fusionnés avec ceux du compte si l'analyse en ligne est configurée.
   useEffect(() => {
-    let disconnect: (() => void) | undefined;
-    let cancelled = false;
-    void Promise.resolve(useEar.persist.rehydrate()).then(async () => {
-      setReady(true);
-      if (!import.meta.env.VITE_API_URL) return;
-      const { connect } = await import("../app/earSync");
-      const stopSync = await connect((status) => !cancelled && setSync(status));
-      if (cancelled) stopSync();
-      else disconnect = stopSync;
-    });
-    return () => {
-      cancelled = true;
-      disconnect?.();
-      stop();
-    };
+    // La synchronisation avec le compte tourne en arrière-plan (app/sync.ts).
+    void Promise.resolve(useEar.persist.rehydrate()).then(() => setReady(true));
+    return () => stop();
   }, []);
 
   const catalog = useMemo(() => exercises(), []);

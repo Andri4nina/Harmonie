@@ -401,6 +401,46 @@ a {
   }
 }
 
+/*
+ * Réponses aux gestes du compte : l'avatar apparaît d'un léger rebond à la
+ * connexion, le menu s'ouvre depuis l'avatar, le formulaire monte en place.
+ */
+.pop-in {
+  animation: pop-in 460ms cubic-bezier(0.3, 1.45, 0.45, 1) both;
+}
+.menu-in {
+  transform-origin: top right;
+  animation: menu-in 200ms var(--ease-out-soft) both;
+}
+.rise-in {
+  animation: rise-in 420ms var(--ease-out-soft) both;
+}
+@keyframes pop-in {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+}
+@keyframes menu-in {
+  from {
+    transform: scale(0.92) translateY(-6px);
+    opacity: 0;
+  }
+}
+@keyframes rise-in {
+  from {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pop-in,
+  .menu-in,
+  .rise-in {
+    animation: none;
+  }
+}
+
 /* Le menu glisse depuis la droite : il répond à un geste. */
 .drawer {
   animation: drawer-in 220ms var(--ease-out-soft) both;

@@ -245,5 +245,27 @@ async fn run(pool: sqlx::PgPool) {
     let bad = json!([{ "item": "x", "ease": 2.5, "streak": 0, "seen": 1, "correct": 3, "interval_ms": 0, "due_ms": 0 }]);
     assert_eq!(api.send(put(alice, bad)).await.0, StatusCode::BAD_REQUEST);
 
+    // Documents synchronisés : la modification la plus récente l'emporte,
+    // la réponse renvoie la version gardée, chacun ne voit que les siens.
+    let doc = |user: Uuid, key: &str, body: Value| {
+        Request::put(format!("/v1/sync/{key}"))
+            .header("authorization", format!("Bearer {}", token(user)))
+            .header("content-type", "application/json")
+            .body(Body::from(body.to_string()))
+            .unwrap()
+    };
+    let (status, kept, _) = api.send(doc(alice, "settings", json!({ "value": { "a4": 442 }, "modified_ms": 2000 }))).await;
+    assert_eq!((status, kept["value"]["a4"].as_i64()), (StatusCode::OK, Some(442)));
+    let (_, kept, _) = api.send(doc(alice, "settings", json!({ "value": { "a4": 440 }, "modified_ms": 1000 }))).await;
+    assert_eq!(kept["value"]["a4"], 442, "une modification plus ancienne n'écrase pas");
+    assert_eq!(kept["modified_ms"], 2000);
+    let (_, kept, _) = api.send(doc(alice, "settings", json!({ "value": { "a4": 415 }, "modified_ms": 3000 }))).await;
+    assert_eq!(kept["value"]["a4"], 415);
+    let (_, all) = api.user("GET", "/v1/sync", alice, None).await;
+    assert_eq!(all.as_array().unwrap().len(), 1);
+    assert_eq!(api.user("GET", "/v1/sync", bob, None).await.1.as_array().unwrap().len(), 0);
+    assert_eq!(api.send(doc(alice, "mots-de-passe", json!({ "value": {}, "modified_ms": 1 }))).await.0, StatusCode::BAD_REQUEST);
+    assert_eq!(api.send(doc(alice, "settings", json!({ "value": [1, 2], "modified_ms": 1 }))).await.0, StatusCode::BAD_REQUEST);
+
     let _ = std::fs::remove_dir_all(storage_dir);
 }

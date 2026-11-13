@@ -2,7 +2,10 @@ import { lazy, Suspense, useEffect } from "react";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router";
 import { useIsApp } from "./app/platform";
 import { Loader, TopProgress } from "./components/Loader";
+import { AccountMenu } from "./components/AccountMenu";
 import { Sidebar } from "./components/Sidebar";
+import { useStoredAccount } from "./app/sessionHint";
+import { trackChanges } from "./app/syncMeta";
 import { UpdateNotice } from "./components/UpdateNotice";
 import { TopoBackground } from "./components/TopoBackground";
 import { Composer } from "./pages/Composer";
@@ -57,10 +60,17 @@ export function App() {
   useEffect(() => {
     applyHead(headFor(pathname));
   }, [pathname]);
+  // Hors connexion d'abord : chaque modification est notée sur l'appareil ;
+  // la synchronisation avec le compte ne se charge qu'une fois connecté.
+  const account = useStoredAccount();
+  useEffect(trackChanges, []);
+  useEffect(() => {
+    if (account && import.meta.env.VITE_API_URL) void import("./app/sync").then((module) => module.startSync());
+  }, [account]);
 
   // Sur le web, la racine est la page de présentation, sans barre latérale.
   // Dans une application, on arrive directement au tableau de bord.
-  if (pathname === "/" && !inApp) {
+  if ((pathname === "/" && !inApp) || pathname === "/presentation") {
     return (
       <>
         <TopProgress />
@@ -73,9 +83,13 @@ export function App() {
     <>
       <TopProgress />
       <TopoBackground theme={theme} />
-      <div className="mx-auto flex min-h-full max-w-[1440px] flex-col gap-4 p-3 sm:p-4 lg:flex-row lg:gap-6">
+      <div className="mx-auto flex min-h-dvh max-w-[1440px] flex-col gap-4 p-3 sm:p-4 lg:flex-row lg:gap-6">
         <Sidebar />
-        <main id="contenu" className="min-w-0 flex-1 pb-10">
+        {/* Le pied de page reste en bas de l'écran, ou après le contenu s'il est plus long. */}
+        <main id="contenu" className="relative flex min-w-0 flex-1 flex-col pb-6">
+          <div className="absolute top-2 right-0 z-20 hidden lg:block">
+            <AccountMenu />
+          </div>
           {inApp && <UpdateNotice />}
           <Routes>
             <Route path="/" element={<Navigate to="/tableau-de-bord" replace />} />
@@ -93,7 +107,8 @@ export function App() {
             <Route path="/compte" element={<OnDemand><Account /></OnDemand>} />
             <Route path="*" element={<Explorer />} />
           </Routes>
-          <footer className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-[0.8125rem] text-ivory-3">
+          <div className="min-h-16 flex-1" aria-hidden="true" />
+          <footer className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-[0.8125rem] text-ivory-3">
             <span>
               Harmonie, conçu et développé par <span className="text-ivory-2">Andrianina Rasoamanana</span>
             </span>

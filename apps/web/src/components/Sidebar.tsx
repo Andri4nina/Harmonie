@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { useIsApp } from "../app/platform";
 import { useStoredAccount } from "../app/sessionHint";
+import { AccountMenu } from "./AccountMenu";
 import { Logo } from "./Logo";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { Icon } from "./ui";
@@ -53,8 +54,9 @@ function matches(to: string, pathname: string): boolean {
 }
 
 function Brand() {
+  const inApp = useIsApp();
   return (
-    <Link to="/" viewTransition className="flex items-center gap-3 rounded-xl" aria-label="Harmonie, présentation">
+    <Link to={inApp ? "/presentation" : "/"} viewTransition className="flex items-center gap-3 rounded-xl" aria-label="Harmonie, présentation">
       <Logo className="size-10 shrink-0" />
       <span className="font-display text-[1.2rem] leading-none font-semibold">Harmonie</span>
     </Link>
@@ -98,9 +100,9 @@ function Navigation({ onNavigate, mark = true }: { onNavigate?: () => void; mark
                       )}
                       <Icon name={entry.icon} className="relative size-[1.15rem]" />
                       <span className="relative min-w-0 truncate">
-                        {entry.to === "/compte" && account !== null ? account || "Connecté" : entry.label}
+                        {entry.to === "/compte" && account ? account.name ?? account.email : entry.label}
                       </span>
-                      {entry.to === "/compte" && account !== null && (
+                      {entry.to === "/compte" && account && (
                         <span className="relative ml-auto size-2 shrink-0 rounded-full bg-brass" title="Connecté" aria-label="connecté" />
                       )}
                     </Link>
@@ -155,8 +157,11 @@ export function Sidebar() {
         </div>
       </aside>
 
-      <header className="glass glass-frame sticky top-3 z-30 flex items-center justify-between px-3 py-2 lg:hidden">
+      <header className="glass glass-frame sticky top-3 z-30 flex items-center justify-between gap-2 px-3 py-2 lg:hidden">
         <Brand />
+        <span className="ml-auto">
+          <AccountMenu />
+        </span>
         <button
           type="button"
           onClick={() => setOpen(true)}

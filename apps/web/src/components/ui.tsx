@@ -68,6 +68,41 @@ export function NodeChip({
   );
 }
 
+/**
+ * Message d'état (serveur injoignable, hors connexion…) : ce qui se passe,
+ * ce qu'on peut faire, et une action quand il y en a une.
+ */
+export function Notice({
+  title,
+  children,
+  action,
+  tone = "info",
+}: {
+  title: string;
+  children?: ReactNode;
+  action?: { label: string; onClick: () => void; busy?: boolean };
+  tone?: "info" | "problem";
+}) {
+  return (
+    <div role={tone === "problem" ? "alert" : "status"} className="rise-in flex gap-3 rounded-[14px] border border-line bg-[var(--glass-bg)] p-4">
+      <span
+        className={`mt-1.5 size-2.5 shrink-0 rounded-full ${tone === "problem" ? "bg-[var(--color-danger)]" : "bg-brass"}`}
+        aria-hidden="true"
+      />
+      <div className="min-w-0 flex-1">
+        <p className="font-medium">{title}</p>
+        {children && <div className="mt-1 text-[0.9375rem] text-ivory-2">{children}</div>}
+        {action && (
+          <button type="button" onClick={action.onClick} disabled={action.busy} className="btn btn-ghost mt-3 min-h-10 px-4 text-sm">
+            <Icon name="loop" className={`size-4 ${action.busy ? "animate-spin" : ""}`} />
+            {action.label}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 const ICONS: Record<string, string> = {
   dashboard: "M4 13h6V4H4zm10 7h6v-9h-6zM4 20h6v-4H4zm10-12h6V4h-6z",
   explorer: "M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18zm3.5 5.5l-2 5l-5 2l2-5z",

@@ -2,10 +2,10 @@ import { type FormEvent, useCallback, useEffect, useRef, useState } from "react"
 import { Link } from "react-router";
 import { ACCEPTED, MAX_UPLOAD_MB, type Track, formatDuration, listTracks, uploadTrack } from "../app/api";
 import { useOnline } from "../app/platform";
-import { missingConfiguration, signOut, startSession, useSession } from "../app/session";
+import { missingConfiguration, startSession, useSession } from "../app/session";
 import { SignIn } from "../components/SignIn";
 import { Loader } from "../components/Loader";
-import { Icon, Panel } from "../components/ui";
+import { Icon, Notice, Panel } from "../components/ui";
 
 const STATUS: Record<string, string> = {
   queued: "en attente d'analyse",
@@ -125,6 +125,7 @@ function Upload({ onUploaded }: { onUploaded: () => void }) {
 export function TrackList({ version = 0 }: { version?: number }) {
   const [tracks, setTracks] = useState<Track[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [retrying, setRetrying] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -134,6 +135,13 @@ export function TrackList({ version = 0 }: { version?: number }) {
       setError((failure as Error).message);
     }
   }, []);
+
+  // Serveur en veille : il se réveille en une minute environ, on réessaie seul.
+  useEffect(() => {
+    if (!error) return;
+    const timer = window.setInterval(() => void load(), 15000);
+    return () => window.clearInterval(timer);
+  }, [error, load]);
 
   useEffect(() => {
     void load();
@@ -146,7 +154,24 @@ export function TrackList({ version = 0 }: { version?: number }) {
     return () => window.clearInterval(timer);
   }, [pending, load]);
 
-  if (error) return <p className="text-danger">{error}</p>;
+  if (error) {
+    return (
+      <Notice
+        tone="problem"
+        title="Vos morceaux ne sont pas encore disponibles"
+        action={{
+          label: retrying ? "Nouvel essai…" : "Réessayer",
+          busy: retrying,
+          onClick: () => {
+            setRetrying(true);
+            void load().finally(() => setRetrying(false));
+          },
+        }}
+      >
+        {error} Nouvel essai automatique toutes les quinze secondes.
+      </Notice>
+    );
+  }
   if (!tracks) return <Loader label="Chargement de la bibliothèque" />;
   if (tracks.length === 0) return <p className="text-ivory-2">Aucun morceau pour l'instant. Déposez-en un pour lancer sa première analyse.</p>;
   return (
@@ -170,33 +195,22 @@ export function TrackList({ version = 0 }: { version?: number }) {
 /** Garde commune : configuration, session, puis le contenu réservé aux connectés. */
 export function SignedIn({ children }: { children: React.ReactNode }) {
   useEffect(startSession, []);
-  const { ready, token, email } = useSession();
+  const { ready, token } = useSession();
   const online = useOnline();
   const missing = missingConfiguration();
   if (missing.length > 0) return <NotConfigured missing={missing} />;
   if (!online) {
     return (
-      <Panel framed={false}>
-        <p className="max-w-[62ch] text-ivory-2">
-          Vous êtes hors connexion. L'analyse se fait sur le serveur : elle reviendra avec le réseau. L'explorateur, les
-          cours, l'entraînement de l'oreille et le générateur fonctionnent sans connexion.
-        </p>
-      </Panel>
+      <Notice title="Hors connexion">
+        L'analyse se fait sur le serveur : elle reviendra avec le réseau. L'explorateur, les cours, l'entraînement de
+        l'oreille et Composer fonctionnent sans connexion.
+      </Notice>
     );
   }
   if (!ready) return <Loader label="Lecture de la session" />;
   if (!token) return <SignIn />;
-  return (
-    <>
-      {children}
-      <p className="caption mt-8">
-        Connecté : {email}.{" "}
-        <button type="button" onClick={() => void signOut()} className="underline underline-offset-4 hover:text-ivory">
-          Se déconnecter
-        </button>
-      </p>
-    </>
-  );
+  // Le compte connecté et la déconnexion sont dans le menu de l'avatar.
+  return <>{children}</>;
 }
 
 export function Analyzer() {

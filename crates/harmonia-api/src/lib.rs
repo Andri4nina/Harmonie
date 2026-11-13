@@ -15,6 +15,7 @@ pub mod events;
 pub mod jobs;
 pub mod routes;
 pub mod storage;
+pub mod sync;
 
 use std::sync::Arc;
 
@@ -70,7 +71,9 @@ pub fn router(state: AppState) -> Router {
         .route("/tracks/{id}/audio", get(routes::track_audio))
         .route("/tracks/{id}/analysis", get(routes::track_analysis))
         .route("/tracks/{id}/corrections", post(routes::add_correction))
-        .route("/ear/cards", get(ear::list).put(ear::save));
+        .route("/ear/cards", get(ear::list).put(ear::save))
+        .route("/sync", get(sync::list))
+        .route("/sync/{key}", axum::routing::put(sync::save));
 
     let internal = Router::new()
         .route("/jobs/claim", post(jobs::claim))
