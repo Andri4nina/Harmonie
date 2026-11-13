@@ -4,7 +4,7 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Numérotation : [SemVer](https://semver.org/lang/fr/). Chaque version correspond à
 une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
-## [Non publié] — vers 1.7.0
+## [1.7.0] — 2026-11-13
 
 Phase 7b : Android, mises à jour, publication simultanée.
 
