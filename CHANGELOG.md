@@ -4,6 +4,31 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Numérotation : [SemVer](https://semver.org/lang/fr/). Chaque version correspond à
 une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
+## [Non publié] — vers 1.7.0
+
+Phase 7b : Android, mises à jour, publication simultanée.
+
+### Ajouté
+
+- Application Android : la même application que pour ordinateur, compilée
+  par Tauri pour Android, avec le même site et le même moteur. APK signé
+  (clé gratuite) joint à chaque publication ; l'application signale les
+  nouvelles versions.
+- Mises à jour automatiques de l'application de bureau : à chaque lancement,
+  elle lit la dernière publication (`latest.json` signé), propose la nouvelle
+  version, l'installe et redémarre.
+- Publication simultanée : une étiquette `vX.Y.Z` publie le site, les
+  installateurs et l'APK (`release.yml`, `deploy-web.yml`) ; le site n'est
+  plus publié à chaque modification de `main`.
+- `scripts/set_version.py` : un seul numéro de version pour le site, les
+  applications et le worker.
+
+### Modifié
+
+- Mobile : Tauri au lieu d'Expo / React Native (décision D7 révisée,
+  `docs/ARCHITECTURE.md`).
+- Identifiant des applications : `app.harmonie`.
+
 ## [1.6.0] — 2026-11-13
 
 Phase 7a : application de bureau.

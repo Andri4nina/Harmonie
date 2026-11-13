@@ -1,7 +1,7 @@
 [package]
 name = "harmonie-desktop"
 description = "Harmonie pour ordinateur : le site et son moteur, hors connexion."
-version = "1.6.0"
+version = "1.7.0"
 edition = "2024"
 authors = ["Andrianina Rasoamanana"]
 
@@ -16,6 +16,13 @@ tauri-build = { version = "2.7.4", features = [] }
 tauri = { version = "2.12.5", features = [] }
 tauri-plugin-dialog = "2.8.4"
 tauri-plugin-fs = "2.7.1"
+# Requis par la configuration générée (greffon de mise à jour).
+serde_json = "1"
+
+# Mises à jour : ordinateur seulement (Android passe par l'APK publié).
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-updater = "2.14.1"
+tauri-plugin-process = "2.4.0"
 
 [profile.release]
 codegen-units = 1

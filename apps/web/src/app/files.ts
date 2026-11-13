@@ -3,9 +3,19 @@
 // le navigateur : téléchargement ordinaire. Les modules de Tauri ne sont
 // chargés que dans l'application de bureau.
 
-/** Vrai dans l'application de bureau (Tauri). */
-export function isDesktop(): boolean {
+/** Vrai dans une application Tauri (ordinateur ou Android). */
+export function isApp(): boolean {
   return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
+}
+
+/** Vrai dans l'application Android. */
+export function isAndroidApp(): boolean {
+  return isApp() && /android/i.test(navigator.userAgent);
+}
+
+/** Vrai dans l'application pour ordinateur. */
+export function isDesktop(): boolean {
+  return isApp() && !isAndroidApp();
 }
 
 export interface FileKind {
@@ -17,7 +27,7 @@ export interface FileKind {
 
 /** Enregistre `data` ; renvoie `false` si l'utilisateur a annulé. */
 export async function saveFile(fileName: string, data: Uint8Array | string, kind: FileKind): Promise<boolean> {
-  if (isDesktop()) {
+  if (isApp()) {
     const [{ save }, { writeFile, writeTextFile }] = await Promise.all([import("@tauri-apps/plugin-dialog"), import("@tauri-apps/plugin-fs")]);
     const path = await save({ defaultPath: fileName, filters: [{ name: kind.name, extensions: [kind.extension] }] });
     if (!path) return false;

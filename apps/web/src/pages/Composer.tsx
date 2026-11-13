@@ -101,6 +101,10 @@ export function Composer() {
 
   useEffect(() => () => stop(), []);
 
+  // Enregistrement refusé ou impossible (Android, droits) : on le dit.
+  const exportFile = (...args: Parameters<typeof saveFile>) => {
+    saveFile(...args).catch((error: unknown) => window.alert(`Le fichier n'a pas pu être enregistré : ${String((error as Error)?.message ?? error)}`));
+  };
   const listen = () => (playing ? stop() : playTimed(playback(piece), piece.bpm, PLAYER_ID));
   const renew = () => {
     stop();
@@ -215,13 +219,13 @@ export function Composer() {
             Composer un autre morceau
           </button>
           <span className="mx-1 hidden h-6 w-px bg-[var(--color-line)] sm:block" aria-hidden="true" />
-          <button type="button" onClick={() => void saveFile(`${fileName}.mid`, toMidi(piece), { name: "Fichier MIDI", extension: "mid", mime: "audio/midi" })} className="btn text-ivory-2 hover:bg-white/5">
+          <button type="button" onClick={() => exportFile(`${fileName}.mid`, toMidi(piece), { name: "Fichier MIDI", extension: "mid", mime: "audio/midi" })} className="btn text-ivory-2 hover:bg-white/5">
             <Icon name="download" className="size-4" />
             MIDI
           </button>
           <button
             type="button"
-            onClick={() => void saveFile(`${fileName}.musicxml`, toMusicXml(piece, title), { name: "Partition MusicXML", extension: "musicxml", mime: "application/vnd.recordare.musicxml+xml" })}
+            onClick={() => exportFile(`${fileName}.musicxml`, toMusicXml(piece, title), { name: "Partition MusicXML", extension: "musicxml", mime: "application/vnd.recordare.musicxml+xml" })}
             className="btn text-ivory-2 hover:bg-white/5"
           >
             <Icon name="download" className="size-4" />

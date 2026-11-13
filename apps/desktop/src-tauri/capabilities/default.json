@@ -1,7 +1,14 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Droits de la fenêtre principale : enregistrer un fichier choisi par l'utilisateur, rien d'autre.",
-  "windows": ["main"],
-  "permissions": ["core:default", "dialog:allow-save", "fs:allow-write-file", "fs:allow-write-text-file"]
+  "description": "Droits de la fenêtre principale : enregistrer un fichier choisi par l'utilisateur ; sur ordinateur, se mettre à jour et redémarrer.",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "dialog:allow-save",
+    "fs:allow-write-file",
+    "fs:allow-write-text-file"
+  ]
 }

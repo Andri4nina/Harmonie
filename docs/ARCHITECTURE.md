@@ -21,7 +21,7 @@ designer UX/UI · **graphiste** et **motion designer** ([DESIGN.md](DESIGN.md)) 
 | D4 | **File de tâches dans PostgreSQL** (`FOR UPDATE SKIP LOCKED` + heartbeat), pas de Redis/RabbitMQ. | Machines modestes, un service de moins, reprise après interruption native. |
 | D5 | **Les workers ne parlent qu'à l'orchestrateur Rust** (API interne) et au stockage objet via URLs pré-signées. Ils n'ont aucun accès direct à la base. | Isolation, même protocole en mode serveur et en mode desktop local. |
 | D6 | **Un résultat d'analyse n'est jamais écrasé.** Les corrections manuelles sont une couche séparée appliquée à la lecture. | Traçabilité, ré-analyse possible sans perdre le travail de l'utilisateur. |
-| D7 | **Mobile** : le moteur est exposé à React Native par un module natif généré (UniFFI) ; à défaut, par les endpoints `/theory` de l'API. Décision finale en Phase 7 après prototype. | Hermes n'exécute pas WASM de façon fiable ; ne pas réécrire le moteur en TypeScript. |
+| D7 | **Mobile (révisé en v1.7.0)** : Tauri 2 pour Android, avec le même code que le site et l'application de bureau. Expo / React Native imposait de réécrire l'interface et ne peut pas exécuter le moteur WebAssembly ; Tauri garde un seul code, un seul moteur, et des mises à jour publiées en même temps partout. Décision initiale (React Native + UniFFI) abandonnée après prototype. | Hermes n'exécute pas WASM de façon fiable ; ne pas réécrire le moteur en TypeScript. |
 | D8 | **Stockage derrière un trait** `ObjectStore` : RustFS (S3) en serveur, système de fichiers local en desktop hors ligne. Idem base : PostgreSQL en serveur, SQLite envisagé en desktop (SQLx supporte les deux). | Fonctionnement local sans imposer Postgres + RustFS à un utilisateur desktop. |
 | D10 | **Deux surfaces web** : un site public pré-rendu en HTML statique (accueil, cours, référence de théorie générée par le moteur) et l'application en rendu client. | L'application sera hébergée et doit être indexable ; voir [SEO.md](SEO.md). |
 | D11 | **Dernières versions stables partout**, édition Rust 2024, versions verrouillées par lockfiles. | Voir la politique dans [ROADMAP.md](ROADMAP.md). |
@@ -34,7 +34,7 @@ flowchart LR
   subgraph Clients
     WEB[Web — React/Vite]
     DESK[Desktop — Tauri 2]
-    MOB[Mobile — Expo / React Native]
+    MOB[Android — Tauri, même code que le site]
   end
 
   subgraph Shared["Logique partagée"]
@@ -154,7 +154,7 @@ harmonia/
 ├── apps/
 │   ├── web/                        ✅ Phase 3 — React + Vite + Tailwind
 │   ├── desktop/                    ✅ Phase 7 — Tauri 2 (enveloppe apps/web, hors connexion)
-│   └── mobile/                        Phase 7 — Expo / React Native
+│   └── (mobile)                    ✅ Phase 7 — Android : apps/desktop compilé par Tauri pour Android
 ├── packages/
 │   ├── api-contracts/                 Phase 4 — types TS générés depuis OpenAPI
 │   ├── theory/                        Phase 3 — chargeur WASM + API TS typée

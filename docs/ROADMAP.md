@@ -14,7 +14,7 @@ Une version n'est publiée que si ses tests passent.
 | **v1.4.0** | 5 | Ear training : notes, intervalles, accords, progressions, rythme ; niveaux ; répétition espacée. Mélodie (suivi de f0), reportée de la 1.3.0. | Questions générées par le moteur ; statistiques persistées. | ✅ Publiée : six exercices, 25 niveaux, répétition espacée, progrès synchronisés avec le compte ; mélodie de l'analyse par ligne supérieure (mesures dans `workers/audio-analyzer/README.md`). |
 | **v1.5.0** | 6 | Cours interactifs, générateur de progressions et de mélodies, export MIDI et MusicXML. | Chaque cours manipulable et audible ; MIDI relu sans erreur. | ✅ Publiée : six cours, générateur trois styles ; MIDI relu par `mido`, MusicXML par un parseur XML, en intégration continue. |
 | **v1.6.0** | 7a | Desktop Tauri 2, mode hors ligne. | Même moteur que le web ; installeur signé. | ✅ Publiée, sauf la signature : installateurs Windows construits et essayés (application pilotée, hors connexion) ; signature dès qu'un certificat est fourni (`apps/desktop/README.md`). |
-| v1.7.0 | 7b | Mobile Expo / React Native, synchronisation. | Même moteur sur les trois plateformes. | ⬜ |
+| v1.7.0 | 7b | Application Android (Tauri, même code que le site), mises à jour automatiques de l'application de bureau, publication simultanée du site et des applications. | Même moteur sur les trois plateformes ; une étiquette publie tout. | 🟡 En cours : construit en intégration continue ; à essayer sur un téléphone. |
 | **v2.0.0** | Finale | Mise en production : hébergement, SEO vérifié, audit des licences, audit d'accessibilité et de performance, documentation utilisateur. | Tous les critères ci-dessus tenus en production. | ⬜ |
 
 ### Règles

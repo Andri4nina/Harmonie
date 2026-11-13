@@ -24,3 +24,6 @@ deploy/env/*.env
 apps/desktop/src-tauri/target/
 apps/desktop/src-tauri/gen/
 *.egg-info/
+deploy/env/*.key
+deploy/env/*.key.pub
+deploy/env/*.p12

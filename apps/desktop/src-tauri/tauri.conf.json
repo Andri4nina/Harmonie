@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Harmonie",
-  "version": "1.6.0",
-  "identifier": "app.harmonie.desktop",
+  "version": "1.7.0",
+  "identifier": "app.harmonie",
   "build": {
     "frontendDist": "../../web/dist",
     "devUrl": "http://localhost:5173",
@@ -33,10 +33,36 @@
     "category": "Music",
     "shortDescription": "La théorie musicale sur une même carte.",
     "longDescription": "Harmonie relie notes, gammes, accords et tonalités ; elle propose des cours, un entraînement de l'oreille, un générateur de grilles et l'analyse de morceaux.",
-    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
     "windows": {
-      "webviewInstallMode": { "type": "downloadBootstrapper" },
-      "nsis": { "languages": ["French", "English"], "displayLanguageSelector": false }
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      },
+      "nsis": {
+        "languages": [
+          "French",
+          "English"
+        ],
+        "displayLanguageSelector": false
+      }
+    },
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEIyNkQyNjlFMzRENTVCMDYKUldRR1c5VTBuaVp0c2tDNWxIdUMwNWZJMGlsS3pkV3NKOStCVDlkMmhJM25KN0FEUTZaSE1YZTEK",
+      "endpoints": [
+        "https://github.com/Andri4nina/Harmonie/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
     }
   }
 }

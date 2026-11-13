@@ -1,8 +1,9 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router";
-import { useIsDesktop } from "./app/platform";
+import { useIsApp } from "./app/platform";
 import { Loader, TopProgress } from "./components/Loader";
 import { Sidebar } from "./components/Sidebar";
+import { UpdateNotice } from "./components/UpdateNotice";
 import { TopoBackground } from "./components/TopoBackground";
 import { Composer } from "./pages/Composer";
 import { Dashboard } from "./pages/Dashboard";
@@ -39,7 +40,7 @@ export function App() {
   const hue = hueForPath(pathname);
   const lite = useSettings((state) => state.lite);
   const theme = useTheme();
-  const desktop = useIsDesktop();
+  const inApp = useIsApp();
 
   // Les réglages enregistrés ne sont relus qu'après l'hydratation.
   useEffect(() => {
@@ -62,6 +63,7 @@ export function App() {
       <div className="mx-auto flex min-h-full max-w-[1440px] flex-col gap-4 p-3 sm:p-4 lg:flex-row lg:gap-6">
         <Sidebar />
         <main id="contenu" className="min-w-0 flex-1 pb-10">
+          {inApp && <UpdateNotice />}
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/explorer" element={<Navigate to={pathOf("note:C")} replace />} />
@@ -80,7 +82,7 @@ export function App() {
             <span>
               Harmonie, conçu et développé par <span className="text-ivory-2">Andrianina Rasoamanana</span>
             </span>
-            {!desktop && (
+            {!inApp && (
               <Link to="/telecharger" className="underline-offset-4 hover:text-ivory-2 hover:underline">
                 Télécharger l'application
               </Link>

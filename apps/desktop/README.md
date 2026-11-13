@@ -1,4 +1,4 @@
-# Harmonie pour ordinateur
+# Harmonie pour ordinateur et Android
 
 Application de bureau (Tauri 2) : une fenêtre qui affiche le site construit
 (`apps/web/dist`), servi depuis l'application. Même moteur, même code que le
@@ -13,6 +13,25 @@ site ; aucune logique musicale ici.
 Droits accordés à la fenêtre (`src-tauri/capabilities/default.json`) :
 ouvrir la boîte « Enregistrer sous » et écrire le fichier choisi. Rien
 d'autre.
+
+## Mises à jour
+
+Sur ordinateur, l'application lit au lancement
+`releases/latest/download/latest.json` du dépôt. Si une version plus récente
+est publiée, un bandeau propose « Mettre à jour et redémarrer ». Le fichier
+est signé : la clé publique est dans `tauri.conf.json`, la clé privée dans
+les secrets GitHub (`deploy/env/tauri-updater.env.example`).
+
+Sur Android, l'APK s'installe à la main (hors Play Store) : l'application
+compare sa version à la dernière publication et propose le nouvel APK.
+
+## Android
+
+La même application, compilée pour Android par Tauri. Construite par GitHub
+(`.github/workflows/release.yml`, tâche `android`) : SDK et NDK Android,
+`tauri android init`, `tauri android build --apk`, puis signature avec
+`apksigner` (clé dans `deploy/env/android.env.example`). En local, il faut
+le JDK 17, le SDK et le NDK Android (variables `ANDROID_HOME`, `NDK_HOME`).
 
 ## Développer
 

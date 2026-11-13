@@ -8,9 +8,9 @@
 name: Site web
 
 on:
+  # Publié avec les applications, à chaque version (voir release.yml).
   push:
-    branches: [main]
-    paths: ["apps/web/**", "crates/harmonia-theory/**", "crates/harmonia-theory-wasm/**"]
+    tags: ["v*"]
   workflow_dispatch:
 
 concurrency:

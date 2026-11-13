@@ -2,13 +2,20 @@
 // affichage (le HTML pré-rendu doit rester identique partout).
 
 import { useEffect, useState } from "react";
-import { isDesktop } from "./files";
+import { isApp, isDesktop } from "./files";
 
 /** Vrai dans l'application de bureau. */
 export function useIsDesktop(): boolean {
   const [desktop, setDesktop] = useState(false);
   useEffect(() => setDesktop(isDesktop()), []);
   return desktop;
+}
+
+/** Vrai dans une application (ordinateur ou Android). */
+export function useIsApp(): boolean {
+  const [app, setApp] = useState(false);
+  useEffect(() => setApp(isApp()), []);
+  return app;
 }
 
 /** Vrai tant que l'appareil a une connexion réseau. */

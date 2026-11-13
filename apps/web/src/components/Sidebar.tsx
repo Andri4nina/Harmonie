@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router";
-import { useIsDesktop } from "../app/platform";
+import { useIsApp } from "../app/platform";
 import { Logo } from "./Logo";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { Icon } from "./ui";
@@ -35,9 +35,9 @@ function Brand() {
 }
 
 function Navigation({ onNavigate }: { onNavigate?: () => void }) {
-  // Dans l'application de bureau, inutile de proposer de la télécharger.
-  const desktop = useIsDesktop();
-  const available = ENTRIES.filter((entry) => entry.to && !(desktop && entry.to === "/telecharger"));
+  // Dans une application (ordinateur, Android), inutile de proposer de la télécharger.
+  const inApp = useIsApp();
+  const available = ENTRIES.filter((entry) => entry.to && !(inApp && entry.to === "/telecharger"));
   const planned = ENTRIES.filter((entry) => !entry.to);
   return (
     <nav aria-label="Navigation principale" className="flex flex-col gap-6">
