@@ -38,6 +38,7 @@ const GROUPS: { title?: string; entries: Entry[] }[] = [
   {
     title: "Harmonie",
     entries: [
+      { label: "Compte", icon: "user", to: "/compte" },
       { label: "Télécharger", icon: "download", to: "/telecharger" },
       { label: "Réglages", icon: "settings", to: "/settings" },
     ],

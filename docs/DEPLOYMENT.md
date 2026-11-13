@@ -42,8 +42,20 @@ politique, ce qui ferme l'accès des clés publiques du projet aux tables.
    est faite pour le navigateur ; c'est `SUPABASE_PUBLISHABLE_KEY`. La clé
    secrète ne doit jamais aller dans le site. *Authentication* → *URL
    Configuration* : mettre l'adresse du site Vercel en *Site URL* et ajouter
-   `https://<site>/analyser` aux *Redirect URLs* (lien de confirmation des
-   inscriptions).
+   `https://<site>/**` aux *Redirect URLs* (confirmation des inscriptions et
+   retour de Google sur la page d'où l'on s'est connecté), plus
+   `http://localhost:5173/**` pour le développement.
+   **Connexion avec Google** (gratuite) : dans Google Cloud Console, créer un
+   projet, *Google Auth Platform* → *Branding* (nom « Harmonie », adresse de
+   contact, domaine du site), *Audience* → *External*, puis *Clients* →
+   *Create client* → *Web application*. En *Authorized JavaScript origins*,
+   l'adresse du site ; en *Authorized redirect URIs*,
+   `https://<ref>.supabase.co/auth/v1/callback`. Copier l'identifiant et le
+   secret du client dans Supabase : *Authentication* → *Sign In / Providers*
+   → *Google* → activer. Seules les portées par défaut (`openid`, `email`,
+   `profile`) sont demandées : aucune validation de Google n'est nécessaire.
+   Dans les applications (ordinateur, Android), Google refuse les vues web
+   intégrées : le bouton n'y est pas proposé, la connexion par adresse reste.
 4. **Stockage** : *Storage* → *New bucket* `audio`, **privé**. Puis
    *Storage* → *S3 Connection* → *New access key*. Reporter l'*Endpoint*
    (`S3_ENDPOINT`), la *Region* (`S3_REGION`) et la paire de clés

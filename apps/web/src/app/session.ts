@@ -36,12 +36,24 @@ interface SessionState {
   ready: boolean;
   email: string | null;
   token: string | null;
+  /** Moyen de connexion : « email » ou « google ». */
+  provider: string | null;
 }
 
-export const useSession = create<SessionState>(() => ({ ready: false, email: null, token: null }));
+export const useSession = create<SessionState>(() => ({ ready: false, email: null, token: null, provider: null }));
 
 function apply(session: Session | null): void {
-  useSession.setState({ ready: true, email: session?.user.email ?? null, token: session?.access_token ?? null });
+  useSession.setState({
+    ready: true,
+    email: session?.user.email ?? null,
+    token: session?.access_token ?? null,
+    provider: (session?.user.app_metadata.provider as string | undefined) ?? null,
+  });
+}
+
+/** Vrai si la connexion par compte est configurée sur ce site. */
+export function accountsConfigured(): boolean {
+  return Boolean(DEV_TOKEN || (SUPABASE_URL && SUPABASE_KEY));
 }
 
 let started = false;
@@ -88,6 +100,19 @@ export async function signUp(email: string, password: string): Promise<boolean> 
   const { data, error } = await authOrThrow().signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/analyser` } });
   if (error) throw new Error(explain(error.message));
   return data.session === null;
+}
+
+/**
+ * Connexion (ou inscription, c'est le même geste) avec un compte Google :
+ * Google renvoie ensuite sur `next`, où le client lit la session. Seules
+ * l'adresse et l'identité de base sont demandées (portées par défaut).
+ */
+export async function signInWithGoogle(next: string): Promise<void> {
+  const { error } = await authOrThrow().signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: `${window.location.origin}${next}` },
+  });
+  if (error) throw new Error(explain(error.message));
 }
 
 export async function signOut(): Promise<void> {

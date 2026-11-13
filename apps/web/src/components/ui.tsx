@@ -96,6 +96,7 @@ const ICONS: Record<string, string> = {
   redo: "M15 14l5-5l-5-5m5 5H10a6 6 0 0 0 0 12h3",
   trash: "M5 7h14M10 11v6m4-6v6M6 7l1 13h10l1-13M9 7V4h6v3",
   select: "M5 3l14 8l-6 2l-2 6z",
+  user: "M12 4a4 4 0 1 0 0 8a4 4 0 0 0 0-8zM4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5",
 };
 
 export function Icon({ name, className = "size-5" }: { name: string; className?: string }) {

@@ -4,6 +4,15 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Numérotation : [SemVer](https://semver.org/lang/fr/). Chaque version correspond à
 une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
+## [Non publié]
+
+### Ajouté
+
+- Connexion et inscription avec un compte Google (Supabase Auth), en plus de
+  l'adresse et du mot de passe ; page Compte (`/compte`) qui dit ce
+  qu'Harmonie garde d'un compte ; lien « Se connecter » sur la page de
+  présentation. Réglage de Google et de Supabase : `docs/DEPLOYMENT.md`.
+
 ## [1.7.0] — 2026-11-13
 
 Phase 7b : Android, mises à jour, publication simultanée.

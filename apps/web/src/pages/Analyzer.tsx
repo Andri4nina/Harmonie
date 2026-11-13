@@ -2,7 +2,8 @@ import { type FormEvent, useCallback, useEffect, useRef, useState } from "react"
 import { Link } from "react-router";
 import { ACCEPTED, MAX_UPLOAD_MB, type Track, formatDuration, listTracks, uploadTrack } from "../app/api";
 import { useOnline } from "../app/platform";
-import { missingConfiguration, signIn, signOut, signUp, startSession, useSession } from "../app/session";
+import { missingConfiguration, signOut, startSession, useSession } from "../app/session";
+import { SignIn } from "../components/SignIn";
 import { Loader } from "../components/Loader";
 import { Icon, Panel } from "../components/ui";
 
@@ -31,73 +32,6 @@ function NotConfigured({ missing }: { missing: string[] }) {
         Variables à définir à la construction : {missing.join(", ")}. La marche à suivre est dans{" "}
         <span className="text-ivory">docs/DEPLOYMENT.md</span>.
       </p>
-    </Panel>
-  );
-}
-
-function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<{ text: string; error: boolean } | null>(null);
-
-  const run = (action: "in" | "up") => async (event?: FormEvent) => {
-    event?.preventDefault();
-    setBusy(true);
-    setMessage(null);
-    try {
-      if (action === "in") await signIn(email, password);
-      else if (await signUp(email, password)) {
-        setMessage({ text: "Compte créé. Ouvrez le lien reçu par courriel pour le confirmer, puis connectez-vous.", error: false });
-      }
-    } catch (error) {
-      setMessage({ text: (error as Error).message, error: true });
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  return (
-    <Panel title="Connexion" className="max-w-md">
-      <p className="mb-4 text-ivory-2">Vos morceaux et leurs analyses sont rangés dans votre compte.</p>
-      <form onSubmit={run("in")} className="flex flex-col gap-3">
-        <label className="flex flex-col gap-1">
-          <span className="caption">Adresse électronique</span>
-          <input
-            type="email"
-            required
-            autoComplete="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            className="min-h-11 rounded-xl border border-line bg-[var(--glass-bg)] px-3 outline-none focus:border-[var(--accent-line)]"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="caption">Mot de passe</span>
-          <input
-            type="password"
-            required
-            minLength={6}
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="min-h-11 rounded-xl border border-line bg-[var(--glass-bg)] px-3 outline-none focus:border-[var(--accent-line)]"
-          />
-        </label>
-        {message && (
-          <p role={message.error ? "alert" : "status"} className={message.error ? "text-danger" : "text-ivory-2"}>
-            {message.text}
-          </p>
-        )}
-        <div className="mt-1 flex flex-wrap gap-2">
-          <button type="submit" disabled={busy} className="btn btn-primary">
-            Se connecter
-          </button>
-          <button type="button" disabled={busy || !email || password.length < 6} onClick={() => void run("up")()} className="btn btn-ghost">
-            Créer un compte
-          </button>
-        </div>
-      </form>
     </Panel>
   );
 }

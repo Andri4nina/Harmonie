@@ -192,6 +192,7 @@ export function headFor(pathname: string): Head {
       "/settings": "Réglages",
       "/analyser": "Analyser un morceau",
       "/bibliotheque": "Ma bibliothèque",
+      "/compte": "Compte",
     };
     const appTitle = APP_PAGES[path] ?? (path.startsWith("/analyser/") ? "Analyse d'un morceau" : "Page introuvable");
     return {

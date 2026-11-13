@@ -367,6 +367,9 @@ export function Landing() {
           <span className="hidden sm:block">
             <ThemeSwitch compact />
           </span>
+          <Link to="/compte" className="hidden min-h-10 items-center rounded-full px-3 text-sm text-ivory-2 hover:bg-[var(--hover)] hover:text-ivory sm:inline-flex">
+            Se connecter
+          </Link>
           <Link to="/tableau-de-bord" viewTransition className="btn btn-primary min-h-10 px-4 text-sm">
             Ouvrir
           </Link>

@@ -24,6 +24,7 @@ import { idOf, pathOf } from "./theory/routes";
 // n'alourdissent pas les pages publiques.
 const Analyzer = lazy(() => import("./pages/Analyzer").then((module) => ({ default: module.Analyzer })));
 const Library = lazy(() => import("./pages/Analyzer").then((module) => ({ default: module.Library })));
+const Account = lazy(() => import("./pages/Account").then((module) => ({ default: module.Account })));
 const TrackPage = lazy(() => import("./pages/TrackPage").then((module) => ({ default: module.TrackPage })));
 
 function OnDemand({ children }: { children: React.ReactNode }) {
@@ -89,6 +90,7 @@ export function App() {
             <Route path="/analyser" element={<OnDemand><Analyzer /></OnDemand>} />
             <Route path="/analyser/:id" element={<OnDemand><TrackPage /></OnDemand>} />
             <Route path="/bibliotheque" element={<OnDemand><Library /></OnDemand>} />
+            <Route path="/compte" element={<OnDemand><Account /></OnDemand>} />
             <Route path="*" element={<Explorer />} />
           </Routes>
           <footer className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-[0.8125rem] text-ivory-3">
