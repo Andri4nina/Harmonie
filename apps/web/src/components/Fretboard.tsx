@@ -112,7 +112,7 @@ export function Fretboard({ instrument, tones }: { instrument: InstrumentView; t
           return (
             <g
               key={`${mark.string}-${mark.stop}`}
-              onClick={() => playNote(mark.midi)}
+              onClick={() => playNote(mark.midi, instrument.id)}
               className="cursor-pointer"
               style={{ filter: sounding ? `drop-shadow(0 0 5px oklch(0.9 0.09 ${hue}))` : undefined }}
             >

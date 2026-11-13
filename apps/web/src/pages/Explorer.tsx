@@ -4,6 +4,7 @@ import { play, stop } from "../audio/synth";
 import { CircleOfFifths } from "../components/CircleOfFifths";
 import { Fretboard } from "../components/Fretboard";
 import { MusicGraph } from "../components/MusicGraph";
+import { KeyboardTranspose, SoundPicker } from "../components/KeyboardControls";
 import { Piano } from "../components/Piano";
 import { SearchBox } from "../components/SearchBox";
 import { Spectrum } from "../components/Spectrum";
@@ -169,6 +170,8 @@ export function Explorer() {
   const ready = useSettings((state) => state.ready);
   const instrumentId = useSettings((state) => state.instrumentId);
   const setInstrument = useSettings((state) => state.setInstrument);
+  const sound = useSettings((state) => state.sound);
+  const setSound = useSettings((state) => state.setSound);
 
   useEffect(() => {
     stop();
@@ -219,8 +222,16 @@ export function Explorer() {
         </Panel>
       </div>
 
-      <Panel title="Piano">
-        <Piano tones={view.tones} played={played} />
+      <Panel
+        title="Piano"
+        aside={
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <KeyboardTranspose />
+            <SoundPicker value={sound} onChange={setSound} />
+          </div>
+        }
+      >
+        <Piano tones={view.tones} played={played} keyboard />
       </Panel>
 
       {instrument && (

@@ -6,6 +6,8 @@ import {
   pieceMidi as wasmMidi,
   pieceMusicXml as wasmMusicXml,
   piecePlayback as wasmPlayback,
+  pieceProject as wasmProject,
+  projectMidi as wasmProjectMidi,
 } from "./pkg/harmonia_theory_wasm.js";
 
 export type Style = "pop" | "classical" | "jazz";
@@ -54,3 +56,48 @@ export const KEYS: string[] = [
   "C", "G", "D", "A", "E", "B", "F#", "Db", "Ab", "Eb", "Bb", "F",
   "A minor", "E minor", "B minor", "F# minor", "C# minor", "G# minor", "Eb minor", "Bb minor", "F minor", "C minor", "G minor", "D minor",
 ];
+
+// ------------------------------------------------------------ séquenceur
+// (crates/harmonia-theory/src/project.rs)
+
+/** Une note du rouleau de piano ; pour la batterie, `midi` est la pièce. */
+export interface RollNote {
+  midi: number;
+  /** Début, en temps (noires). */
+  beat: number;
+  length: number;
+  /** De 1 à 127. */
+  velocity: number;
+}
+
+export interface Track {
+  name: string;
+  /** Identifiant d'instrument du moteur ; « drum-kit » pour la batterie. */
+  sound: string;
+  /** De 0 à 1. */
+  volume: number;
+  notes: RollNote[];
+  /** Interface seulement : ignorés par le moteur. */
+  muted?: boolean;
+  solo?: boolean;
+}
+
+export interface Project {
+  bpm: number;
+  beats_per_bar: number;
+  bars: number;
+  tracks: Track[];
+}
+
+/** Nombre maximal de pistes (16 canaux MIDI). */
+export const MAX_TRACKS = 16;
+
+/** Le morceau généré, en pistes éditables. */
+export function pieceToProject(piece: Piece): Project {
+  return wasmProject(piece) as Project;
+}
+
+/** Le projet en fichier MIDI ; `key` donne l'armure (« C », « A minor »). */
+export function projectToMidi(project: Project, key?: string): Uint8Array {
+  return wasmProjectMidi(project, key ?? null);
+}

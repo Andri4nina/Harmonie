@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
-import { playNote } from "../audio/synth";
-import { usePlayer } from "../state/store";
+import { codesByNote, useKeyLabels } from "../audio/keyboard";
+import { noteOff, noteOn } from "../audio/synth";
+import { usePlayer, useSettings } from "../state/store";
+import { useKeyboardPlayer } from "./KeyboardControls";
 import type { Tone } from "../theory/engine";
 import { hueOf } from "../theory/labels";
 
@@ -34,10 +36,15 @@ const WIDTH = KEYS.filter((key) => !key.black).length * WHITE_WIDTH;
 /**
  * Clavier interactif. Les notes de l'élément exploré sont colorées à toutes
  * les octaves ; celles réellement jouées portent leur rôle ; celles qui
- * sonnent s'illuminent. Un clic joue la touche.
+ * sonnent s'illuminent. Une touche sonne tant qu'on l'appuie, à la souris, au
+ * doigt ou au clavier d'ordinateur (`keyboard`), avec l'instrument choisi.
  */
-export function Piano({ tones, played }: { tones: Tone[]; played: number[] }) {
+export function Piano({ tones, played, keyboard = false }: { tones: Tone[]; played: number[]; keyboard?: boolean }) {
   const active = usePlayer((state) => state.active);
+  const base = useSettings((state) => state.keyboardBase);
+  const labels = useKeyLabels();
+  const codes = keyboard ? codesByNote(base) : new Map<number, string>();
+  useKeyboardPlayer(keyboard);
   const scroller = useRef<HTMLDivElement>(null);
   // Sur un écran étroit, le clavier défile : il s'ouvre centré sur le do central.
   useEffect(() => {
@@ -60,7 +67,19 @@ export function Piano({ tones, played }: { tones: Tone[]; played: number[] }) {
     const width = key.black ? BLACK_WIDTH : WHITE_WIDTH;
     const keyHeight = key.black ? BLACK_HEIGHT : WHITE_HEIGHT;
     return (
-      <g key={key.midi} onClick={() => playNote(key.midi)} className="cursor-pointer">
+      <g
+        key={key.midi}
+        onPointerDown={(event) => {
+          event.currentTarget.releasePointerCapture?.(event.pointerId);
+          noteOn(`pointer:${event.pointerId}`, key.midi);
+        }}
+        // Glisser d'une touche à l'autre joue la suivante, comme un vrai clavier.
+        onPointerEnter={(event) => event.buttons === 1 && noteOn(`pointer:${event.pointerId}`, key.midi)}
+        onPointerUp={(event) => noteOff(`pointer:${event.pointerId}`)}
+        onPointerLeave={(event) => noteOff(`pointer:${event.pointerId}`)}
+        onPointerCancel={(event) => noteOff(`pointer:${event.pointerId}`)}
+        className="cursor-pointer"
+      >
         {tone && <title>{`${tone.note} — ${tone.role}`}</title>}
         <rect
           x={key.x + 0.75}
@@ -87,6 +106,20 @@ export function Piano({ tones, played }: { tones: Tone[]; played: number[] }) {
             fill={`oklch(0.8 0.09 ${hue} / 0.75)`}
             pointerEvents="none"
           />
+        )}
+        {codes.has(key.midi) && (
+          <text
+            x={key.x + width / 2}
+            y={key.black ? 11 : BLACK_HEIGHT + 14}
+            textAnchor="middle"
+            fontSize={key.black ? 6.5 : 7.5}
+            fontFamily="var(--font-sans)"
+            fontWeight={600}
+            fill={key.black ? "rgb(236 230 216 / 0.7)" : "rgb(22 26 46 / 0.5)"}
+            pointerEvents="none"
+          >
+            {labels[codes.get(key.midi) ?? ""]}
+          </text>
         )}
         {isExact && tone && (
           <text

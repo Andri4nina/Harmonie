@@ -10,6 +10,24 @@ Phase 7b : Android, mises à jour, publication simultanée.
 
 ### Ajouté
 
+- Composer devient un séquenceur : pistes avec instrument, volume, coupure
+  et solo ; rouleau de piano (crayon, gomme, sélection, grille, zoom,
+  vélocités, notes des autres pistes en filigrane) ; pas à pas pour la
+  batterie ; lecture en boucle, métronome, tempo modifiable pendant la
+  lecture ; enregistrement au clavier d'ordinateur aligné sur la grille ;
+  annuler et rétablir ; projet gardé sur l'appareil. Le morceau généré
+  devient un projet éditable (`project.rs`) et l'export MIDI reprend les
+  pistes entendues, la batterie sur le canal 10.
+- Clavier d'ordinateur : rangée Z → / pour les blanches et A → ' pour les
+  noires, rangée Q → ] et rangée des chiffres une octave plus haut. Les
+  touches sont lues par position : QWERTY, AZERTY ou QWERTZ jouent les mêmes
+  notes, et chaque touche du piano affiche le caractère de la disposition
+  détectée. Transposition par demi-ton et par octave.
+- Instruments : le son suit l'instrument choisi (piano, guitare, ukulélé,
+  basse, violon, violoncelle, flûte, saxophones, synthétiseur, batterie),
+  synthétisé sans échantillon donc hors connexion ; cordes pincées par
+  Karplus-Strong, justes à moins de 5 cents (testé).
+
 - Application Android : la même application que pour ordinateur, compilée
   par Tauri pour Android, avec le même site et le même moteur. APK signé
   (clé gratuite) joint à chaque publication ; l'application signale les

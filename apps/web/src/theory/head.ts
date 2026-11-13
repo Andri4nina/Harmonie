@@ -149,9 +149,9 @@ export function headFor(pathname: string): Head {
   }
   if (path === "/composer") {
     const description =
-      "Générateur de progressions d'accords et de mélodies : choisissez une tonalité et un style (pop, classique, jazz), écoutez, puis exportez en MIDI ou en partition MusicXML. Par Andrianina Rasoamanana.";
+      "Séquenceur en ligne gratuit : générez accords, mélodie, basse et batterie, retouchez-les au rouleau de piano et au pas à pas, jouez au clavier d'ordinateur, puis exportez en MIDI. Par Andrianina Rasoamanana.";
     return {
-      title: `Générateur d'accords et de mélodies, export MIDI et MusicXML | ${SITE_NAME}`,
+      title: `Séquenceur et générateur d'accords, rouleau de piano, export MIDI | ${SITE_NAME}`,
       description,
       indexable: true,
       path,

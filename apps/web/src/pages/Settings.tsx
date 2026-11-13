@@ -1,10 +1,11 @@
 import { playNote } from "../audio/synth";
+import { SoundPicker } from "../components/KeyboardControls";
 import { ThemeSwitch } from "../components/ThemeSwitch";
 import { Icon, Panel } from "../components/ui";
 import { A4_MAX, A4_MIN, useSettings } from "../state/store";
 
 export function Settings() {
-  const { lite, a4, setLite, setA4 } = useSettings();
+  const { lite, a4, sound, setLite, setA4, setSound } = useSettings();
   return (
     <div className="flex max-w-2xl flex-col gap-8">
       <section className="pt-4 sm:pt-8">
@@ -33,6 +34,20 @@ export function Settings() {
             </span>
           </span>
         </label>
+      </Panel>
+
+      <Panel title="Instrument">
+        <p className="mb-4 text-ivory-2">
+          L'instrument qui joue les notes du piano, des accords et des exercices. Choisir un instrument sous le manche
+          de l'explorateur le sélectionne aussi.
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <SoundPicker value={sound} onChange={setSound} />
+          <button type="button" onClick={() => playNote(60)} className="btn btn-ghost">
+            <Icon name="play" className="size-3.5" />
+            Écouter
+          </button>
+        </div>
       </Panel>
 
       <Panel title="Diapason">

@@ -1,9 +1,10 @@
-// Synthèse sonore en Web Audio : aucune ressource à télécharger, fonctionne
-// hors ligne. Toute la planification se fait sur l'horloge audio
+// Lecture sonore en Web Audio : aucune ressource à télécharger, fonctionne
+// hors ligne. Les timbres des instruments sont dans voices.ts. Toute la planification se fait sur l'horloge audio
 // (AudioContext.currentTime) ; l'affichage la suit, jamais l'inverse.
 
 import { usePlayer, useSettings } from "../state/store";
 import { type PlayMode, midiToFrequency } from "../theory/engine";
+import { type Voice, startVoice } from "./voices";
 
 let context: AudioContext | undefined;
 let master: GainNode | undefined;
@@ -14,7 +15,7 @@ export function getAnalyser(): AnalyserNode | undefined {
   return analyser;
 }
 
-function audio(): { ctx: AudioContext; out: GainNode } {
+export function audio(): { ctx: AudioContext; out: GainNode } {
   if (!context || !master) {
     context = new AudioContext();
     const compressor = context.createDynamicsCompressor();
@@ -29,45 +30,15 @@ function audio(): { ctx: AudioContext; out: GainNode } {
   return { ctx: context, out: master };
 }
 
-/** Une note : deux oscillateurs, un filtre passe-bas, une enveloppe. */
-function voice(
-  ctx: AudioContext,
-  out: AudioNode,
-  frequency: number,
-  start: number,
-  duration: number,
-  level: number,
-): void {
-  const envelope = ctx.createGain();
-  const filter = ctx.createBiquadFilter();
-  filter.type = "lowpass";
-  filter.frequency.setValueAtTime(Math.min(6000, frequency * 6), start);
-  filter.frequency.exponentialRampToValueAtTime(Math.min(3000, frequency * 3), start + duration);
-  filter.Q.value = 0.7;
+/** Instrument choisi dans les réglages (piano par défaut). */
+export function currentSound(): string {
+  return useSettings.getState().sound;
+}
 
-  const attack = 0.008;
-  const release = 0.28;
-  envelope.gain.setValueAtTime(0, start);
-  envelope.gain.linearRampToValueAtTime(level, start + attack);
-  envelope.gain.exponentialRampToValueAtTime(level * 0.55, start + Math.min(0.25, duration));
-  envelope.gain.setValueAtTime(level * 0.55, start + duration);
-  envelope.gain.exponentialRampToValueAtTime(0.0001, start + duration + release);
-
-  const partials: [OscillatorType, number, number][] = [
-    ["triangle", 1, 1],
-    ["sine", 2, 0.18],
-  ];
-  for (const [type, ratio, gain] of partials) {
-    const oscillator = ctx.createOscillator();
-    const partial = ctx.createGain();
-    oscillator.type = type;
-    oscillator.frequency.value = frequency * ratio;
-    partial.gain.value = gain;
-    oscillator.connect(partial).connect(filter);
-    oscillator.start(start);
-    oscillator.stop(start + duration + release + 0.05);
-  }
-  filter.connect(envelope).connect(out);
+/** Une note tenue `duration` secondes, jouée par l'instrument `sound`. */
+function voice(ctx: AudioContext, out: AudioNode, sound: string, midi: number, start: number, duration: number, level: number): void {
+  const frequency = midiToFrequency(midi, useSettings.getState().a4);
+  startVoice(ctx, out, sound, midi, frequency, start, level).release(start + duration);
 }
 
 const TIMING: Record<PlayMode, { step: number; hold: number }> = {
@@ -94,11 +65,10 @@ export function stop(): void {
  * Joue une suite de pas. `id` identifie ce qui est joué pour que l'interface
  * sache quel bouton est actif.
  */
-export function play(steps: number[][], mode: PlayMode, id: string): void {
+export function play(steps: number[][], mode: PlayMode, id: string, sound = currentSound()): void {
   stop();
   if (steps.length === 0) return;
   const { ctx, out } = audio();
-  const a4 = useSettings.getState().a4;
   const timing = TIMING[mode];
   const bus = ctx.createGain();
   bus.connect(out);
@@ -109,7 +79,7 @@ export function play(steps: number[][], mode: PlayMode, id: string): void {
     notes.forEach((midi, position) => {
       // Léger égrené des accords, du grave vers l'aigu.
       const strum = notes.length > 1 ? position * 0.014 : 0;
-      voice(ctx, bus, midiToFrequency(midi, a4), origin + index * timing.step + strum, timing.hold, level);
+      voice(ctx, bus, sound, midi, origin + index * timing.step + strum, timing.hold, level);
     });
   });
 
@@ -132,8 +102,41 @@ export function play(steps: number[][], mode: PlayMode, id: string): void {
   current = { bus, frame: requestAnimationFrame(follow) };
 }
 
-export function playNote(midi: number): void {
-  play([[midi]], "melodic", `midi:${midi}`);
+export function playNote(midi: number, sound = currentSound()): void {
+  play([[midi]], "melodic", `midi:${midi}`, sound);
+}
+
+// Notes tenues (clavier d'ordinateur, clic maintenu) : elles sonnent jusqu'au
+// relâchement et ne passent pas par `stop()`.
+const held = new Map<string, { voice: Voice; midi: number }>();
+
+function showHeld(): void {
+  const playingId = usePlayer.getState().playingId;
+  // Une lecture en cours garde la main sur l'affichage.
+  if (playingId !== null && playingId !== "live") return;
+  const notes = [...held.values()].map((note) => note.midi);
+  usePlayer.setState({ active: notes, step: null, playingId: notes.length ? "live" : null });
+}
+
+/** Commence une note tenue ; `key` l'identifie pour `noteOff`. */
+export function noteOn(key: string, midi: number, sound = currentSound(), level = 0.3): void {
+  noteOff(key);
+  const { ctx, out } = audio();
+  const frequency = midiToFrequency(midi, useSettings.getState().a4);
+  held.set(key, { voice: startVoice(ctx, out, sound, midi, frequency, ctx.currentTime + 0.005, level), midi });
+  showHeld();
+}
+
+export function noteOff(key: string): void {
+  const note = held.get(key);
+  if (!note || !context) return;
+  note.voice.release(context.currentTime);
+  held.delete(key);
+  showHeld();
+}
+
+export function allNotesOff(): void {
+  for (const key of [...held.keys()]) noteOff(key);
 }
 
 /** Un son placé dans le temps (en noires), tel que le calcule le moteur. */
@@ -145,7 +148,7 @@ export interface TimedEvent {
 }
 
 /** Clic de décompte : bruit bref filtré, distinct des notes. */
-function click(ctx: AudioContext, out: AudioNode, start: number, accent: boolean): void {
+export function click(ctx: AudioContext, out: AudioNode, start: number, accent: boolean): void {
   const length = Math.floor(ctx.sampleRate * 0.03);
   const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
   const data = buffer.getChannelData(0);
@@ -166,11 +169,10 @@ function click(ctx: AudioContext, out: AudioNode, start: number, accent: boolean
  * Joue des événements placés dans le temps (rythme, dictée). Les temps du
  * décompte sont des clics ; les notes gardent la durée écrite.
  */
-export function playTimed(events: TimedEvent[], bpm: number, id: string): void {
+export function playTimed(events: TimedEvent[], bpm: number, id: string, sound = currentSound()): void {
   stop();
   if (events.length === 0) return;
   const { ctx, out } = audio();
-  const a4 = useSettings.getState().a4;
   const beat = 60 / bpm;
   const bus = ctx.createGain();
   bus.connect(out);
@@ -185,7 +187,7 @@ export function playTimed(events: TimedEvent[], bpm: number, id: string): void {
     const level = 0.32 / Math.sqrt(Math.max(1, event.notes.length));
     // Une note s'arrête juste avant la suivante, pour que le rythme s'entende.
     const hold = Math.max(0.06, event.length * beat * 0.85);
-    for (const midi of event.notes) voice(ctx, bus, midiToFrequency(midi, a4), start, hold, level);
+    for (const midi of event.notes) voice(ctx, bus, sound, midi, start, hold, level);
   }
 
   const end = Math.max(...events.map((e) => e.beat + e.length)) * beat + 0.4;

@@ -226,7 +226,16 @@ const INSTRUMENT_LABEL: Record<string, string> = {
   "tenor-saxophone": "Saxophone ténor",
   "drum-kit": "Batterie",
   synthesizer: "Synthétiseur",
+  ukulele: "Ukulélé",
+  "guitar-drop-d": "Guitare (ré grave)",
 };
+
+const SOLFEGE = ["Do", "Do♯", "Ré", "Ré♯", "Mi", "Fa", "Fa♯", "Sol", "Sol♯", "La", "La♯", "Si"];
+
+/** Nom d'une hauteur MIDI en solfège, octave comprise (60 → « Do4 »). */
+export function solfege(midi: number): string {
+  return `${SOLFEGE[((midi % 12) + 12) % 12]}${Math.floor(midi / 12) - 1}`;
+}
 
 /** Nom français d'un instrument du moteur (le moteur les nomme en anglais). */
 export function instrumentLabel(id: string, fallback: string): string {

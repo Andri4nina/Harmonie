@@ -176,3 +176,33 @@ pub fn piece_musicxml(piece: JsValue, title: &str) -> Result<String, JsError> {
 pub fn piece_playback(piece: JsValue) -> Result<JsValue, JsError> {
     to_js(&export::playback(&piece_from(piece)?))
 }
+
+// ------------------------------------------------------------------ séquenceur
+
+use harmonia_theory::project::{self, MAX_TRACKS, Project};
+
+fn project_from(value: JsValue) -> Result<Project, JsError> {
+    let project: Project = serde_wasm_bindgen::from_value(value).map_err(|error| JsError::new(&error.to_string()))?;
+    if project.tracks.len() > MAX_TRACKS || !(40.0..=220.0).contains(&project.bpm) || !(1..=12).contains(&project.beats_per_bar) {
+        return Err(JsError::new("au plus 16 pistes, de 40 à 220 BPM"));
+    }
+    Ok(project)
+}
+
+/// Le morceau généré, en projet éditable (pistes et batterie).
+#[wasm_bindgen(js_name = pieceProject)]
+pub fn piece_project(piece: JsValue) -> Result<JsValue, JsError> {
+    to_js(&project::from_piece(&piece_from(piece)?))
+}
+
+/// Le projet en fichier MIDI. `key` : tonalité (« C », « A minor »), pour
+/// l'armure du fichier, ou rien.
+#[wasm_bindgen(js_name = projectMidi)]
+pub fn project_midi(value: JsValue, key: Option<String>) -> Result<Vec<u8>, JsError> {
+    let project = project_from(value)?;
+    let key = match key {
+        Some(text) => Some(text.parse::<harmonia_theory::Key>().map_err(|error| JsError::new(&error.to_string()))?),
+        None => None,
+    };
+    Ok(project::to_midi(&project, key.map(|k| (k.signature() as i8, k.mode))))
+}

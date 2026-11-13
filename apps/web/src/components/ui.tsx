@@ -86,10 +86,20 @@ const ICONS: Record<string, string> = {
   moon: "M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z",
   system: "M4 5h16v11H4zM9 20h6m-3-4v4",
   close: "M6 6l12 12M18 6L6 18",
+  keyboard: "M3 7h18v10H3zM7 11h.01M11 11h.01M15 11h.01M8 14h8",
+  pencil: "M4 20l4-1l10-10l-3-3L5 16zm11-14l3 3",
+  eraser: "M8 20h12M4 15l9-9l6 6l-6 6H8z",
+  loop: "M17 3l3 3l-3 3M4 11V9a3 3 0 0 1 3-3h13M7 21l-3-3l3-3m13-2v2a3 3 0 0 1-3 3H4",
+  record: "M12 7a5 5 0 1 0 0 10a5 5 0 0 0 0-10z",
+  plus: "M12 5v14M5 12h14",
+  undo: "M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3",
+  redo: "M15 14l5-5l-5-5m5 5H10a6 6 0 0 0 0 12h3",
+  trash: "M5 7h14M10 11v6m4-6v6M6 7l1 13h10l1-13M9 7V4h6v3",
+  select: "M5 3l14 8l-6 2l-2 6z",
 };
 
 export function Icon({ name, className = "size-5" }: { name: string; className?: string }) {
-  const filled = name === "play" || name === "stop";
+  const filled = name === "play" || name === "stop" || name === "record";
   return (
     <svg
       viewBox="0 0 24 24"

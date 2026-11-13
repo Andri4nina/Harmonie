@@ -32,6 +32,7 @@ pub mod interval;
 pub mod key;
 pub mod melody;
 pub mod pitch;
+pub mod project;
 pub mod relations;
 pub mod scale;
 #[cfg(feature = "serde")]

@@ -13,7 +13,7 @@ use crate::compose::Piece;
 use crate::ear::TimedEvent;
 use crate::{Chord, ChordQuality, Mode, Pitch};
 
-const TICKS_PER_BEAT: u32 = 480;
+pub(crate) const TICKS_PER_BEAT: u32 = 480;
 
 /// Entier à longueur variable du format MIDI.
 fn vlq(mut value: u32, out: &mut Vec<u8>) {
@@ -28,14 +28,14 @@ fn vlq(mut value: u32, out: &mut Vec<u8>) {
 }
 
 /// Un événement MIDI à un instant donné (en tics).
-struct Event {
+pub(crate) struct Event {
     tick: u32,
     /// Les fins de note passent avant les débuts au même instant.
     order: u8,
     bytes: Vec<u8>,
 }
 
-fn track(events: &mut [Event]) -> Vec<u8> {
+pub(crate) fn track(events: &mut [Event]) -> Vec<u8> {
     events.sort_by_key(|e| (e.tick, e.order));
     let mut data = Vec::new();
     let mut last = 0;
@@ -55,14 +55,14 @@ fn ticks(beats: f64) -> u32 {
     (beats * TICKS_PER_BEAT as f64).round() as u32
 }
 
-fn meta(tick: u32, kind: u8, payload: &[u8]) -> Event {
+pub(crate) fn meta(tick: u32, kind: u8, payload: &[u8]) -> Event {
     let mut bytes = vec![0xFF, kind];
     vlq(payload.len() as u32, &mut bytes);
     bytes.extend(payload);
     Event { tick, order: 0, bytes }
 }
 
-fn notes(channel: u8, program: u8, name: &str, items: impl Iterator<Item = (f64, f64, i32, u8)>) -> Vec<u8> {
+pub(crate) fn notes(channel: u8, program: u8, name: &str, items: impl Iterator<Item = (f64, f64, i32, u8)>) -> Vec<u8> {
     let mut events = vec![meta(0, 0x03, name.as_bytes()), Event { tick: 0, order: 0, bytes: vec![0xC0 | channel, program] }];
     for (beat, length, midi, velocity) in items {
         let key = midi.clamp(0, 127) as u8;
@@ -76,7 +76,7 @@ fn notes(channel: u8, program: u8, name: &str, items: impl Iterator<Item = (f64,
 }
 
 /// Voicing serré de l'accord, basse entre Do 3 et Si 3.
-fn voiced(chord: &Chord) -> Vec<i32> {
+pub(crate) fn voiced(chord: &Chord) -> Vec<i32> {
     let mut pitches: Vec<i32> = chord.voicing(3).iter().map(|p| p.midi()).collect();
     while pitches[0] < 48 {
         pitches.iter_mut().for_each(|m| *m += 12);
