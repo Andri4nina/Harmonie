@@ -212,8 +212,14 @@ export function factValue(key: string, value: string): string {
  * deux notes proches harmoniquement ont des couleurs proches.
  */
 export function hueOf(pitchClass: number): number {
-  return (((pitchClass * 7) % 12) * 30 + 40) % 360;
+  return FIFTHS_HUES[(((pitchClass * 7) % 12) + 12) % 12]!;
 }
+
+/**
+ * Douze teintes rangées dans l'ordre du cercle des quintes, du laiton vers le
+ * bleu puis le rose. Le vert (95° à 175°) est exclu de la charte.
+ */
+const FIFTHS_HUES = [62, 80, 188, 206, 224, 242, 262, 284, 308, 334, 4, 32];
 
 const INSTRUMENT_LABEL: Record<string, string> = {
   piano: "Piano",

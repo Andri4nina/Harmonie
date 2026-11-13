@@ -2,6 +2,7 @@
 // adresse canonique, données structurées. Utilisé à l'identique par le
 // pré-rendu statique et par le navigateur.
 
+import { ACCOUNTS } from "../app/sessionHint";
 import { type NodeView, catalog, nodeView } from "./engine";
 import { factValue, labelOf } from "./labels";
 import { lessonBySlug } from "./lessons";
@@ -157,7 +158,8 @@ export function headFor(pathname: string): Head {
     return {
       title: `Séquenceur et générateur d'accords, rouleau de piano, export MIDI | ${SITE_NAME}`,
       description,
-      indexable: true,
+      // Réservé aux comptes quand ils sont activés : le moteur ne verrait que la connexion.
+      indexable: !ACCOUNTS,
       path,
       jsonLd: website(description),
     };
@@ -168,7 +170,8 @@ export function headFor(pathname: string): Head {
     return {
       title: `Entraînement de l'oreille : intervalles, accords, progressions | ${SITE_NAME}`,
       description,
-      indexable: true,
+      // Réservé aux comptes quand ils sont activés : le moteur ne verrait que la connexion.
+      indexable: !ACCOUNTS,
       path,
       jsonLd: website(description),
     };
@@ -193,6 +196,7 @@ export function headFor(pathname: string): Head {
       "/analyser": "Analyser un morceau",
       "/bibliotheque": "Ma bibliothèque",
       "/compte": "Compte",
+      "/connexion": "Connexion",
     };
     const appTitle = APP_PAGES[path] ?? (path.startsWith("/analyser/") ? "Analyse d'un morceau" : "Page introuvable");
     return {

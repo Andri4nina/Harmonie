@@ -3,6 +3,7 @@ import { Link, Navigate, Route, Routes, useLocation } from "react-router";
 import { useIsApp } from "./app/platform";
 import { Loader, TopProgress } from "./components/Loader";
 import { AccountMenu } from "./components/AccountMenu";
+import { RequireAccount } from "./components/RequireAccount";
 import { Sidebar } from "./components/Sidebar";
 import { useStoredAccount } from "./app/sessionHint";
 import { trackChanges } from "./app/syncMeta";
@@ -27,6 +28,7 @@ import { idOf, pathOf } from "./theory/routes";
 // n'alourdissent pas les pages publiques.
 const Analyzer = lazy(() => import("./pages/Analyzer").then((module) => ({ default: module.Analyzer })));
 const Library = lazy(() => import("./pages/Analyzer").then((module) => ({ default: module.Library })));
+const Login = lazy(() => import("./pages/Login").then((module) => ({ default: module.Login })));
 const Account = lazy(() => import("./pages/Account").then((module) => ({ default: module.Account })));
 const TrackPage = lazy(() => import("./pages/TrackPage").then((module) => ({ default: module.TrackPage })));
 
@@ -70,6 +72,17 @@ export function App() {
 
   // Sur le web, la racine est la page de présentation, sans barre latérale.
   // Dans une application, on arrive directement au tableau de bord.
+  if (pathname === "/connexion") {
+    return (
+      <>
+        <TopProgress />
+        <TopoBackground theme={theme} />
+        <Suspense fallback={<Loader label="Chargement de la connexion" />}>
+          <Login />
+        </Suspense>
+      </>
+    );
+  }
   if ((pathname === "/" && !inApp) || pathname === "/presentation") {
     return (
       <>
@@ -93,17 +106,17 @@ export function App() {
           {inApp && <UpdateNotice />}
           <Routes>
             <Route path="/" element={<Navigate to="/tableau-de-bord" replace />} />
-            <Route path="/tableau-de-bord" element={<Dashboard />} />
+            <Route path="/tableau-de-bord" element={<RequireAccount><Dashboard /></RequireAccount>} />
             <Route path="/explorer" element={<Navigate to={pathOf("note:C")} replace />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/settings" element={<RequireAccount><Settings /></RequireAccount>} />
             <Route path="/telecharger" element={<Downloads />} />
-            <Route path="/oreille" element={<EarTraining />} />
-            <Route path="/composer" element={<Composer />} />
+            <Route path="/oreille" element={<RequireAccount><EarTraining /></RequireAccount>} />
+            <Route path="/composer" element={<RequireAccount><Composer /></RequireAccount>} />
             <Route path="/cours" element={<LessonsIndex />} />
             <Route path="/cours/:slug" element={<LessonPage />} />
-            <Route path="/analyser" element={<OnDemand><Analyzer /></OnDemand>} />
-            <Route path="/analyser/:id" element={<OnDemand><TrackPage /></OnDemand>} />
-            <Route path="/bibliotheque" element={<OnDemand><Library /></OnDemand>} />
+            <Route path="/analyser" element={<RequireAccount><OnDemand><Analyzer /></OnDemand></RequireAccount>} />
+            <Route path="/analyser/:id" element={<RequireAccount><OnDemand><TrackPage /></OnDemand></RequireAccount>} />
+            <Route path="/bibliotheque" element={<RequireAccount><OnDemand><Library /></OnDemand></RequireAccount>} />
             <Route path="/compte" element={<OnDemand><Account /></OnDemand>} />
             <Route path="*" element={<Explorer />} />
           </Routes>

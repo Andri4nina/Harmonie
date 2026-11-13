@@ -27,3 +27,6 @@ apps/desktop/src-tauri/gen/
 deploy/env/*.key
 deploy/env/*.key.pub
 deploy/env/*.p12
+
+# Lien local vers le projet Vercel (npx vercel link)
+.vercel/

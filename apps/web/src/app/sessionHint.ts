@@ -44,9 +44,24 @@ export function initials(account: StoredAccount): string {
   return ((words[0]?.[0] ?? "?") + (words.length > 1 ? (words.at(-1)?.[0] ?? "") : "")).toUpperCase();
 }
 
+/** Comptes activés sur ce site (projet Supabase configuré). */
+export const ACCOUNTS = Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+
+/** Jeton de développement local : vaut connexion (voir session.ts). */
+export const DEV_SESSION = Boolean(import.meta.env.DEV && import.meta.env.VITE_DEV_ACCESS_TOKEN);
+
 /** Compte connecté sur cet appareil ; suit connexions et déconnexions. */
 export function useStoredAccount(): StoredAccount | null {
-  const [account, setAccount] = useState<StoredAccount | null>(null);
+  return useAccountState().account;
+}
+
+/**
+ * Comme `useStoredAccount`, avec `checked` : faux tant que l'appareil n'a pas
+ * été lu (pré-rendu, premier affichage), pour ne rien décider trop tôt.
+ */
+export function useAccountState(): { checked: boolean; account: StoredAccount | null } {
+  const [state, setState] = useState<{ checked: boolean; account: StoredAccount | null }>({ checked: false, account: null });
+  const setAccount = (account: StoredAccount | null) => setState({ checked: true, account });
   useEffect(() => {
     let last = "";
     const read = () => {
@@ -58,7 +73,7 @@ export function useStoredAccount(): StoredAccount | null {
       }
       const next = storedAccount(raw);
       const key = JSON.stringify(next);
-      if (key !== last) {
+      if (key !== last || last === "") {
         last = key;
         setAccount(next);
       }
@@ -76,5 +91,5 @@ export function useStoredAccount(): StoredAccount | null {
       clearInterval(timer);
     };
   }, []);
-  return account;
+  return state;
 }

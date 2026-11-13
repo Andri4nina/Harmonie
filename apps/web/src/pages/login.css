@@ -1,0 +1,165 @@
+/* Page de connexion : la figure se trace à gauche, le formulaire à droite. */
+
+.login {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto 1fr;
+}
+
+.login-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px clamp(16px, 4vw, 40px);
+  position: relative;
+  z-index: 2;
+}
+
+.login-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 38vh;
+  min-height: 220px;
+  overflow: hidden;
+}
+
+.login-knot {
+  width: min(70vw, 360px);
+  height: min(70vw, 360px);
+  overflow: visible;
+  animation: knot-float 9s ease-in-out infinite alternate;
+}
+
+.login-line {
+  fill: none;
+  stroke: var(--color-brass);
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: login-draw 2.4s var(--ease-out-soft) 0.1s forwards;
+}
+
+.login-line-echo {
+  stroke: var(--color-ivory-3);
+  stroke-width: 0.2;
+  transform-origin: 32px 32px;
+  transform: rotate(90deg) scale(1.22);
+  animation-delay: 0.5s;
+}
+
+.login-head {
+  fill: var(--color-ivory);
+  opacity: 0;
+  animation: login-fade 0.6s ease 2s forwards;
+}
+
+@keyframes login-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes login-fade {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes knot-float {
+  from {
+    transform: rotate(-4deg) scale(0.98);
+  }
+  to {
+    transform: rotate(4deg) scale(1.03);
+  }
+}
+
+.login-quote {
+  display: none;
+}
+
+.login-form {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 8px 16px 48px;
+}
+
+.login-title {
+  margin: 0 0 10px;
+  font-size: clamp(1.9rem, 4.6vw, 3rem);
+  line-height: 1.02;
+  font-weight: 650;
+  animation: rise-in 520ms var(--ease-out-soft) both;
+}
+
+@media (min-width: 1024px) {
+  .login {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+
+  .login-art {
+    height: auto;
+    min-height: 0;
+    border-right: 1px solid var(--color-line);
+    margin: 0 0 24px 24px;
+    border-radius: 28px;
+    background:
+      radial-gradient(60% 50% at 50% 45%, var(--accent-soft), transparent 70%),
+      var(--glass-bg);
+  }
+
+  .login-knot {
+    width: min(34vw, 520px);
+    height: min(34vw, 520px);
+  }
+
+  .login-quote {
+    display: block;
+    position: absolute;
+    left: 40px;
+    bottom: 36px;
+    right: 40px;
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .login-quote span {
+    display: block;
+    margin-top: 6px;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    color: var(--color-ivory-2);
+  }
+
+  .login-form {
+    align-items: center;
+    padding: 24px 48px 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-knot,
+  .login-line,
+  .login-head,
+  .login-title {
+    animation: none;
+  }
+
+  .login-line {
+    stroke-dashoffset: 0;
+  }
+
+  .login-head {
+    opacity: 1;
+  }
+}

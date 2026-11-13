@@ -53,7 +53,7 @@ function apply(session: Session | null): void {
     ready: true,
     email: session?.user.email ?? null,
     token: session?.access_token ?? null,
-    provider: (session?.user.app_metadata.provider as string | undefined) ?? null,
+    provider: (session?.user.app_metadata?.provider as string | undefined) ?? null,
   });
   // Avatar, navigation : relisent la session enregistrée tout de suite.
   window.dispatchEvent(new Event(SESSION_EVENT));
@@ -105,7 +105,7 @@ export async function signIn(email: string, password: string): Promise<void> {
 
 /** Crée un compte. Renvoie `true` si une confirmation par courriel est attendue. */
 export async function signUp(email: string, password: string): Promise<boolean> {
-  const { data, error } = await authOrThrow().signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/analyser` } });
+  const { data, error } = await authOrThrow().signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/connexion` } });
   if (error) throw new Error(explain(error.message));
   return data.session === null;
 }

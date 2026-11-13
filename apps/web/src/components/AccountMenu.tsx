@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
-import { type StoredAccount, initials, useStoredAccount } from "../app/sessionHint";
+import { ACCOUNTS, type StoredAccount, initials, useStoredAccount } from "../app/sessionHint";
 import { type SyncStatus, useSync } from "../app/syncMeta";
 import { Icon } from "./ui";
 
-const ACCOUNTS = Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
 function syncText(status: SyncStatus, at: number | null): string {
   switch (status) {
@@ -61,7 +60,7 @@ export function AccountMenu() {
   if (!ACCOUNTS) return null;
   if (!account) {
     return (
-      <Link to="/compte" className="btn btn-ghost min-h-10 px-4 text-sm">
+      <Link to="/connexion" className="btn btn-ghost min-h-10 px-4 text-sm">
         <Icon name="user" className="size-4" />
         Se connecter
       </Link>

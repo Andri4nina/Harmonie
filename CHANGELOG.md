@@ -4,6 +4,28 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Numérotation : [SemVer](https://semver.org/lang/fr/). Chaque version correspond à
 une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
+## [Non publié]
+
+### Ajouté
+
+- Page de connexion (`/connexion`) : la figure de la quinte se trace, Google
+  ou adresse, retour à la page demandée. Les outils (tableau de bord,
+  oreille, Composer, analyse, bibliothèque, réglages) demandent un compte
+  quand les comptes sont activés ; les pages de théorie, les cours et la
+  présentation restent publics. Une fois connecté, on entre même hors
+  connexion (session lue sur l'appareil).
+- Présentation : aperçus de l'application (vraies captures) dans une
+  fenêtre qui se redresse au défilement, s'incline sous le pointeur et
+  change au clic ou toute seule ; cartes qui s'inclinent et s'éclairent
+  sous le pointeur ; onde au clic des boutons ; lettres du titre qui jouent
+  la gamme de do, tonalités du cercle et accords du défilé qui sonnent au
+  clic.
+- Guide de mise en ligne sur Vercel détaillé pas à pas (`docs/DEPLOYMENT.md`).
+
+### Modifié
+
+- Couleurs des notes : plus aucune teinte verte (charte).
+
 ## [1.7.1] — 2026-11-13
 
 Comptes et synchronisation ; publication complète (mise à jour automatique

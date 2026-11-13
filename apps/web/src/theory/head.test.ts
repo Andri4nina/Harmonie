@@ -73,8 +73,10 @@ describe("libellés", () => {
 
   it("colore les notes selon le cercle des quintes", () => {
     const step = (a: number, b: number) => (hueOf(b) - hueOf(a) + 360) % 360;
-    expect(step(0, 7)).toBe(30); // Do → Sol : une quinte, un cran de teinte
-    expect(step(7, 2)).toBe(30); // Sol → Ré
+    // Deux notes à la quinte ont des teintes voisines (le vert est sauté).
+    expect(step(0, 7)).toBeGreaterThan(0);
+    expect(step(0, 7)).toBeLessThan(40);
+    expect(step(7, 2)).toBeLessThan(40);
     expect(new Set(Array.from({ length: 12 }, (_, pc) => hueOf(pc))).size).toBe(12);
   });
 });

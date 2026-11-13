@@ -433,14 +433,6 @@
   }
 }
 
-.feature:nth-child(even) {
-  transform: translateY(14vh);
-}
-
-.feature:nth-child(odd) {
-  transform: translateY(-10vh);
-}
-
 .feature h2 {
   margin: 18px 0 10px;
   font-size: clamp(1.6rem, 3.2vw, 2.5rem);
@@ -903,5 +895,362 @@
     min-height: 80dvh;
     opacity: 1;
     pointer-events: auto;
+  }
+}
+
+/* ------------------------------------------------------------ aperçus */
+
+.scene-previews {
+  height: 220vh;
+  /* La fenêtre se redresse sur la première moitié de la scène. */
+  --q: clamp(0, calc(var(--p) / 0.45), 1);
+}
+
+.previews-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 2.4vh, 24px);
+  padding: 84px 16px 24px;
+  perspective: 1600px;
+}
+
+.previews-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px 32px;
+  width: min(1100px, 100%);
+}
+
+.previews-head h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4.2vw, 3.4rem);
+  line-height: 1;
+  font-weight: 700;
+}
+
+.preview-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: var(--glass-bg);
+}
+
+.preview-tab {
+  position: relative;
+  overflow: hidden;
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  color: var(--color-ivory-2);
+  transition:
+    background 160ms,
+    color 160ms,
+    transform 120ms var(--ease-out-soft);
+}
+
+.preview-tab:hover {
+  color: var(--color-ivory);
+  background: var(--hover);
+}
+
+.preview-tab:active {
+  transform: scale(0.95);
+}
+
+.preview-tab[aria-selected="true"] {
+  color: var(--color-night);
+  background: var(--color-brass);
+}
+
+/* Le temps avant l'aperçu suivant, sous l'onglet actif. */
+.preview-timer {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 5px;
+  height: 2px;
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--color-night) 60%, transparent);
+  transform-origin: left;
+  animation: timer 6s linear both;
+}
+
+.preview-timer.is-paused {
+  animation-play-state: paused;
+}
+
+@keyframes timer {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.preview-frame {
+  position: relative;
+  width: min(1100px, 100%);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--color-velvet);
+  box-shadow:
+    0 50px 120px -40px var(--shadow),
+    0 0 0 1px var(--accent-line);
+  transform-style: preserve-3d;
+  /* Couchée à l'entrée, droite ensuite ; puis suit le pointeur. */
+  transform: rotateX(calc((1 - var(--q)) * 32deg + var(--rx, 0deg))) rotateY(var(--ry, 0deg))
+    scale(calc(0.78 + var(--q) * 0.22));
+  transition: transform 180ms ease-out;
+  will-change: transform;
+}
+
+.preview-chrome {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--color-line);
+  background: var(--glass-raised);
+}
+
+.preview-chrome i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-line);
+}
+
+.preview-chrome i:first-child {
+  background: var(--color-brass);
+}
+
+.preview-chrome span {
+  margin-left: 10px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: var(--hover);
+  font-size: 0.75rem;
+  color: var(--color-ivory-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preview-screens {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  max-height: 58vh;
+  width: 100%;
+}
+
+.preview-screens img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  opacity: 0;
+  transform: translateX(6%) scale(1.04);
+  transition:
+    opacity 520ms var(--ease-out-soft),
+    transform 720ms var(--ease-out-soft);
+}
+
+.preview-screens img.is-before {
+  transform: translateX(-6%) scale(1.04);
+}
+
+.preview-screens img.is-active {
+  opacity: 1;
+  transform: none;
+}
+
+.preview-caption {
+  margin: 0;
+  min-height: 1.6em;
+  text-align: center;
+  color: var(--color-ivory-2);
+}
+
+/* ------------------------------------------------------------ pointeur */
+
+.tilt {
+  position: relative;
+}
+
+.feature.tilt {
+  transition:
+    transform 220ms ease-out,
+    border-color 200ms;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--lift, 0));
+}
+
+.feature.tilt:nth-child(even) {
+  --lift: 14vh;
+}
+
+.feature.tilt:nth-child(odd) {
+  --lift: -10vh;
+}
+
+.feature.tilt:hover {
+  border-color: var(--accent-line);
+}
+
+/* Lumière qui suit le pointeur. */
+.tilt-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--accent-soft), transparent 60%);
+  transition: opacity 240ms;
+}
+
+.tilt:hover .tilt-glow {
+  opacity: 1;
+}
+
+/* Onde au clic. */
+.landing .btn,
+.landing .preview-tab,
+.landing .landing-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.35;
+  pointer-events: none;
+  animation: ripple-out 620ms ease-out forwards;
+}
+
+@keyframes ripple-out {
+  to {
+    transform: scale(26);
+    opacity: 0;
+  }
+}
+
+/* Lettres du titre : elles se soulèvent au survol, sonnent au clic. */
+.hero-title span {
+  cursor: pointer;
+  transition:
+    color 200ms,
+    translate 260ms cubic-bezier(0.3, 1.6, 0.4, 1);
+}
+
+.hero-title span:hover {
+  translate: 0 -0.08em;
+  color: var(--color-brass);
+}
+
+.hero-title span:active {
+  translate: 0 0.03em;
+}
+
+/* Cercle : une tonalité grossit au survol, sonne et pulse au clic. */
+.circle-hit {
+  cursor: pointer;
+  transition: scale 220ms cubic-bezier(0.3, 1.5, 0.4, 1);
+}
+
+.circle-hit:hover {
+  scale: 1.14;
+}
+
+.circle-key:hover circle {
+  fill: var(--accent-soft);
+  stroke: var(--color-brass);
+}
+
+.circle-played {
+  animation: chord-pulse 520ms ease-out;
+}
+
+@keyframes chord-pulse {
+  30% {
+    scale: 1.32;
+  }
+}
+
+/* Défilé : il ralentit au survol, chaque accord s'éclaire et sonne au clic. */
+.marquee:hover .marquee-row {
+  animation-play-state: paused;
+}
+
+.marquee-chord {
+  cursor: pointer;
+  transition:
+    color 160ms,
+    translate 220ms var(--ease-out-soft);
+}
+
+.marquee-chord:hover {
+  color: var(--color-brass);
+  translate: 0 -6px;
+}
+
+.landing .btn {
+  transition:
+    background 150ms,
+    border-color 150ms,
+    transform 160ms var(--ease-out-soft),
+    box-shadow 200ms;
+}
+
+.landing .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -12px var(--accent-line);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-previews {
+    --q: 1 !important;
+  }
+
+  .previews-stage {
+    position: relative;
+    min-height: auto;
+    padding: 64px 16px;
+  }
+
+  .preview-frame,
+  .feature.tilt {
+    transform: none;
+  }
+
+  .preview-screens img {
+    transition: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .preview-tabs {
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+
+  .preview-tab {
+    flex: 1;
+    min-width: 0;
+    padding: 0 6px;
+    font-size: 0.8125rem;
   }
 }

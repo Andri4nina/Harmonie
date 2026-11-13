@@ -95,24 +95,101 @@ traiter :
 HARMONIE_API_URL=https://harmonie-api.onrender.com WORKER_TOKEN=… python -m harmonia_worker serve
 ```
 
-## 3. Vercel
+## 3. Vercel (le site)
 
-1. Sur <https://vercel.com> : *Add New* → *Project* → créer un projet vide
-   (sans importer de dépôt : la construction a lieu dans GitHub Actions, qui
-   dispose de Rust pour compiler le moteur).
-2. *Account Settings* → *Tokens* → créer un jeton. Dans `.vercel/project.json`
-   (créé par `npx vercel link` dans `apps/web`) ou les réglages du projet,
-   relever l'identifiant d'équipe et celui du projet.
-3. Sur GitHub, *Settings* → *Secrets and variables* → *Actions* :
-   - secrets : `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` ;
-   - variables : celles de `deploy/env/vercel.env`, mêmes noms
-     (`VITE_SITE_URL`, `VITE_API_URL`, `VITE_SUPABASE_URL`,
-     `VITE_SUPABASE_PUBLISHABLE_KEY`, facultatif
-     `VITE_GOOGLE_SITE_VERIFICATION`). Sans `API_URL` ni Supabase, la
-     page « Analyser un morceau » explique ce qui manque au lieu de proposer
-     une connexion qui échouerait.
-4. Chaque poussée sur `main` qui touche le site le publie
-   (`.github/workflows/deploy-web.yml`).
+Le site est **construit par GitHub** (il faut Rust pour compiler le moteur)
+puis **envoyé à Vercel**, qui ne fait que l'héberger. Vercel ne doit donc
+pas construire lui-même : on crée un projet vide et on donne à GitHub trois
+secrets pour y envoyer le site. Compter dix minutes, une seule fois.
+
+### 3.1 Créer le compte et le projet
+
+1. Ouvrir <https://vercel.com/signup> et s'inscrire avec **Continue with
+   GitHub** (offre *Hobby*, gratuite). Accepter l'accès demandé à GitHub.
+2. Installer Node.js si ce n'est pas fait (<https://nodejs.org>, version LTS).
+3. Dans un terminal, depuis le dossier du dépôt :
+
+   ```bash
+   cd apps/web
+   npx vercel login
+   ```
+
+   Choisir *Continue with GitHub* ; le navigateur s'ouvre, valider.
+4. Toujours dans `apps/web` :
+
+   ```bash
+   npx vercel link
+   ```
+
+   Répondre :
+   - *Set up and deploy?* → **Y** ;
+   - *Which scope?* → votre nom d'utilisateur ;
+   - *Link to existing project?* → **N** ;
+   - *What's your project's name?* → **harmonie** (ce nom donne l'adresse
+     `https://harmonie.vercel.app`, ou une variante s'il est pris) ;
+   - *In which directory is your code located?* → **./** (Entrée).
+
+   La commande crée `apps/web/.vercel/project.json` (non versionné), qui
+   contient `orgId` et `projectId`.
+5. Sur vercel.com, ouvrir le projet → *Settings* → *Build and Deployment* →
+   *Framework Preset* : **Other** ; désactiver *Build Command* et *Install
+   Command* (interrupteur *Override* puis champ vide). Le site arrive déjà
+   construit.
+6. *Account Settings* (avatar en haut à droite) → *Tokens* → *Create Token* :
+   nom « GitHub Harmonie », *Scope* : votre compte, *Expiration* : *No
+   expiration* (ou un an, à renouveler). Copier le jeton : il n'est affiché
+   qu'une fois.
+
+### 3.2 Donner les clés à GitHub
+
+Sur <https://github.com/Andri4nina/Harmonie/settings/secrets/actions> :
+
+1. Onglet **Secrets** → *New repository secret*, trois fois :
+
+   | Nom | Valeur |
+   | --- | --- |
+   | `VERCEL_TOKEN` | le jeton de l'étape 3.1.6 |
+   | `VERCEL_ORG_ID` | `orgId` de `apps/web/.vercel/project.json` |
+   | `VERCEL_PROJECT_ID` | `projectId` du même fichier |
+
+2. Onglet **Variables** → *New repository variable*, une par ligne de
+   `deploy/env/vercel.env` (mêmes noms) :
+
+   | Nom | Valeur |
+   | --- | --- |
+   | `VITE_SITE_URL` | l'adresse du site, ex. `https://harmonie.vercel.app` (sans `/` final) |
+   | `VITE_API_URL` | l'adresse de l'API Render (étape 2) |
+   | `VITE_SUPABASE_URL` | `https://<ref>.supabase.co` (étape 1.3) |
+   | `VITE_SUPABASE_PUBLISHABLE_KEY` | la clé `sb_publishable_…` (étape 1.3) |
+   | `VITE_GOOGLE_SITE_VERIFICATION` | facultatif (étape 5) |
+
+   Ces valeurs sont publiques par nature : elles finissent dans le site.
+   Sans `VITE_SUPABASE_*`, les outils ne demandent pas de connexion ; sans
+   `VITE_API_URL`, l'analyse explique ce qui manque.
+
+### 3.3 Publier et vérifier
+
+1. Publier sans nouvelle version : *Actions* → *Site web* → *Run workflow*
+   → *Run workflow*. Ensuite, chaque étiquette `vX.Y.Z` publie le site.
+2. Dans l'exécution, l'étape **Publier sur Vercel** doit être verte (et non
+   *Publication sautée*) ; son journal se termine par l'adresse du site.
+3. Ouvrir l'adresse : la page de présentation s'affiche. Vérifier aussi une
+   page profonde, ex. `/notes/do`, et `/robots.txt`.
+4. Reporter l'adresse finale dans Supabase (*Authentication* → *URL
+   Configuration* : *Site URL* et `https://<site>/**` en *Redirect URLs*) et
+   dans Google Cloud (*Authorized JavaScript origins*).
+5. Domaine personnel (facultatif) : projet Vercel → *Settings* → *Domains* →
+   *Add*, puis suivre les enregistrements DNS indiqués ; mettre ensuite à
+   jour `VITE_SITE_URL`, Supabase et Google avec ce domaine.
+
+**Problèmes fréquents**
+
+- *Publication sautée* : `VERCEL_TOKEN` absent ou rangé dans *Variables* au
+  lieu de *Secrets* (ou dans un *Environment*).
+- *Error: Project not found* : `VERCEL_ORG_ID` ou `VERCEL_PROJECT_ID`
+  inversés ou copiés avec des guillemets.
+- Page blanche après connexion Google : l'adresse du site manque dans les
+  *Redirect URLs* de Supabase.
 
 ## 4. Application de bureau
 
