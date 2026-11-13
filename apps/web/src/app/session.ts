@@ -24,10 +24,16 @@ export function missingConfiguration(): string[] {
   return missing;
 }
 
+import { SESSION_KEY } from "./sessionHint";
+
 let client: SupabaseClient | null = null;
 function supabase(): SupabaseClient | null {
   if (!SUPABASE_URL || !SUPABASE_KEY) return null;
-  client ??= createClient(SUPABASE_URL, SUPABASE_KEY);
+  // Session gardée sur l'appareil et renouvelée en arrière-plan : on reste
+  // connecté d'une visite à l'autre, jusqu'à « Se déconnecter ».
+  client ??= createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: SESSION_KEY },
+  });
   return client;
 }
 

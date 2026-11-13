@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { useIsApp } from "../app/platform";
+import { useStoredAccount } from "../app/sessionHint";
 import { Logo } from "./Logo";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { Icon } from "./ui";
@@ -64,6 +65,7 @@ function Navigation({ onNavigate, mark = true }: { onNavigate?: () => void; mark
   // Dans une application (ordinateur, Android), inutile de proposer de la télécharger.
   const inApp = useIsApp();
   const { pathname } = useLocation();
+  const account = useStoredAccount();
   return (
     <nav aria-label="Navigation principale" className="flex flex-col gap-5">
       {GROUPS.map((group) => {
@@ -95,7 +97,12 @@ function Navigation({ onNavigate, mark = true }: { onNavigate?: () => void; mark
                         />
                       )}
                       <Icon name={entry.icon} className="relative size-[1.15rem]" />
-                      <span className="relative">{entry.label}</span>
+                      <span className="relative min-w-0 truncate">
+                        {entry.to === "/compte" && account !== null ? account || "Connecté" : entry.label}
+                      </span>
+                      {entry.to === "/compte" && account !== null && (
+                        <span className="relative ml-auto size-2 shrink-0 rounded-full bg-brass" title="Connecté" aria-label="connecté" />
+                      )}
                     </Link>
                   </li>
                 );

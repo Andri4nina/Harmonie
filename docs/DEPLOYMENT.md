@@ -56,6 +56,10 @@ politique, ce qui ferme l'accès des clés publiques du projet aux tables.
    `profile`) sont demandées : aucune validation de Google n'est nécessaire.
    Dans les applications (ordinateur, Android), Google refuse les vues web
    intégrées : le bouton n'y est pas proposé, la connexion par adresse reste.
+   **Rester connecté** : la session est gardée sur l'appareil et renouvelée
+   en arrière-plan ; on reste connecté jusqu'à « Se déconnecter ». Dans
+   *Authentication* → *Sessions*, laisser *Time-box user sessions* et
+   *Inactivity timeout* désactivés (réglages par défaut).
 4. **Stockage** : *Storage* → *New bucket* `audio`, **privé**. Puis
    *Storage* → *S3 Connection* → *New access key*. Reporter l'*Endpoint*
    (`S3_ENDPOINT`), la *Region* (`S3_REGION`) et la paire de clés

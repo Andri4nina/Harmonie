@@ -12,6 +12,9 @@ une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
   l'adresse et du mot de passe ; page Compte (`/compte`) qui dit ce
   qu'Harmonie garde d'un compte ; lien « Se connecter » sur la page de
   présentation. Réglage de Google et de Supabase : `docs/DEPLOYMENT.md`.
+- Session persistante : on reste connecté d'une visite à l'autre (jeton
+  renouvelé en arrière-plan) jusqu'à « Se déconnecter » ; la barre latérale
+  affiche le compte connecté.
 
 ## [1.7.0] — 2026-11-13
 
