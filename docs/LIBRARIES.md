@@ -68,7 +68,7 @@
 
 | Bibliothèque | Licence | Décision |
 |---|---|---|
-| **Essentia** | **AGPL-3.0** (licence commerciale payante auprès de l'UPF) | Très bon (HPCP, détection de tonalité, rythme), mais l'AGPL impose de publier le code de ce qui l'intègre, y compris en service réseau. **Adaptateur optionnel**, isolé dans un worker séparé, désactivé par défaut. Le pipeline doit rester complet sans lui. Avis juridique requis avant tout usage commercial. |
+| **Essentia** | **AGPL-3.0** — compatible depuis qu'Harmonie est elle-même sous AGPL-3.0-or-later (v1.7.0) | Très bon (HPCP, détection de tonalité, rythme), mais l'AGPL impose de publier le code de ce qui l'intègre, y compris en service réseau. **Adaptateur optionnel**, isolé dans un worker séparé, désactivé par défaut. Le pipeline doit rester complet sans lui. Avis juridique requis avant tout usage commercial. |
 | FluidSynth | LGPL-2.1+ | Utilisable en liaison dynamique (rendu MIDI côté serveur/desktop). Non nécessaire tant que le rendu se fait en Web Audio. |
 | FFmpeg | LGPL ou GPL selon la compilation | Uniquement comme exécutable externe, build LGPL, si symphonia ne suffit pas pour un format. |
 | SoundTouchJS | LGPL-2.1 | Repli pour le time-stretch. |

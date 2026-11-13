@@ -3,6 +3,9 @@ name = "harmonia-api"
 description = "API HTTP d'Harmonie : morceaux, file d'analyse, résultats et corrections."
 version.workspace = true
 edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
 
 [dependencies]
 axum = { version = "0.8.9", features = ["multipart", "macros"] }

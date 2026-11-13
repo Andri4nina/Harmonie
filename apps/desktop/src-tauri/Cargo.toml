@@ -4,6 +4,8 @@ description = "Harmonie pour ordinateur : le site et son moteur, hors connexion.
 version = "1.7.0"
 edition = "2024"
 authors = ["Andrianina Rasoamanana"]
+license = "AGPL-3.0-or-later"
+repository = "https://github.com/Andri4nina/Harmonie"
 
 [lib]
 name = "harmonie_desktop_lib"

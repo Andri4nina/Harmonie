@@ -8,6 +8,11 @@ la musique.
 **Version actuelle : 1.7.0** — voir le [journal des versions](CHANGELOG.md) et le
 [suivi jusqu'à la version finale](docs/ROADMAP.md).
 
+Logiciel libre sous licence **AGPL-3.0-or-later** : vous pouvez l'utiliser,
+l'étudier, le modifier et le redistribuer. Toute version modifiée, y compris
+proposée comme service en ligne, doit publier son code sous la même licence.
+Texte complet : [LICENSE](LICENSE). Contributions : [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md) — décisions, services, pipeline audio, arborescence, modèle de données

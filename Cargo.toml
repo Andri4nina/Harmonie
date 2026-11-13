@@ -8,3 +8,6 @@ members = ["crates/harmonia-theory", "crates/harmonia-theory-wasm", "crates/harm
 [workspace.package]
 version = "1.7.0"
 edition = "2024"
+license = "AGPL-3.0-or-later"
+repository = "https://github.com/Andri4nina/Harmonie"
+authors = ["Andrianina Rasoamanana"]

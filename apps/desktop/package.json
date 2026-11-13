@@ -2,6 +2,12 @@
   "name": "@harmonia/desktop",
   "private": true,
   "version": "1.7.0",
+  "license": "AGPL-3.0-or-later",
+  "author": "Andrianina Rasoamanana",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Andri4nina/Harmonie.git"
+  },
   "type": "module",
   "scripts": {
     "tauri": "tauri",

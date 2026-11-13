@@ -52,6 +52,8 @@ function website(description: string): Record<string, unknown> {
         operatingSystem: "Web, Windows, macOS, Linux, Android",
         inLanguage: "fr",
         isAccessibleForFree: true,
+        license: "https://www.gnu.org/licenses/agpl-3.0.html",
+        codeRepository: "https://github.com/Andri4nina/Harmonie",
         offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
         description,
         author,

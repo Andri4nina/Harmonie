@@ -23,6 +23,10 @@ Phase 7b : Android, mises à jour, publication simultanée.
 - `scripts/set_version.py` : un seul numéro de version pour le site, les
   applications et le worker.
 
+- Harmonie devient un logiciel libre : licence AGPL-3.0-or-later (`LICENSE`),
+  déclarée dans chaque paquet et dans les installateurs ; lien vers le code
+  source au bas du site et des applications ; `CONTRIBUTING.md`.
+
 ### Modifié
 
 - Mobile : Tauri au lieu d'Expo / React Native (décision D7 révisée,

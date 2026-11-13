@@ -3,6 +3,9 @@ name = "harmonia-theory"
 description = "Moteur de théorie musicale d'Harmonia : pur, sans I/O."
 version.workspace = true
 edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
 
 [features]
 # Sérialisation JSON des types du moteur (API, WASM, stockage des instruments).

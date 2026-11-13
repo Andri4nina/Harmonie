@@ -52,7 +52,9 @@
         "displayLanguageSelector": false
       }
     },
-    "createUpdaterArtifacts": true
+    "createUpdaterArtifacts": true,
+    "license": "AGPL-3.0-or-later",
+    "licenseFile": "../../../LICENSE"
   },
   "plugins": {
     "updater": {

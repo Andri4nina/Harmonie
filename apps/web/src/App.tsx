@@ -82,11 +82,16 @@ export function App() {
             <span>
               Harmonie, conçu et développé par <span className="text-ivory-2">Andrianina Rasoamanana</span>
             </span>
-            {!inApp && (
-              <Link to="/telecharger" className="underline-offset-4 hover:text-ivory-2 hover:underline">
-                Télécharger l'application
-              </Link>
-            )}
+            <span className="flex flex-wrap gap-x-5 gap-y-1">
+              <a href="https://github.com/Andri4nina/Harmonie" rel="noopener" className="underline-offset-4 hover:text-ivory-2 hover:underline">
+                Code source, licence AGPL-3.0
+              </a>
+              {!inApp && (
+                <Link to="/telecharger" className="underline-offset-4 hover:text-ivory-2 hover:underline">
+                  Télécharger l'application
+                </Link>
+              )}
+            </span>
           </footer>
         </main>
       </div>
