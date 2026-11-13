@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "harmonia-worker"
-version = "1.7.0"
+version = "1.7.1"
 description = "Worker audio d'Harmonia : extraction des descripteurs du signal."
 requires-python = ">=3.12"
 license = "AGPL-3.0-or-later"

@@ -1,7 +1,7 @@
 [package]
 name = "harmonie-desktop"
 description = "Harmonie pour ordinateur : le site et son moteur, hors connexion."
-version = "1.7.0"
+version = "1.7.1"
 edition = "2024"
 authors = ["Andrianina Rasoamanana"]
 license = "AGPL-3.0-or-later"

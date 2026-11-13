@@ -1238,7 +1238,7 @@ dependencies = [
 
 [[package]]
 name = "harmonie-desktop"
-version = "1.7.0"
+version = "1.7.1"
 dependencies = [
  "serde_json",
  "tauri",

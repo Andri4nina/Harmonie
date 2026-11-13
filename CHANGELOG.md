@@ -4,7 +4,10 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/).
 Numérotation : [SemVer](https://semver.org/lang/fr/). Chaque version correspond à
 une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
-## [Non publié]
+## [1.7.1] — 2026-11-13
+
+Comptes et synchronisation ; publication complète (mise à jour automatique
+et APK signés).
 
 ### Ajouté
 

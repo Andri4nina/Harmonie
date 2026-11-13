@@ -6,7 +6,7 @@ exclude = ["apps/desktop/src-tauri"]
 members = ["crates/harmonia-theory", "crates/harmonia-theory-wasm", "crates/harmonia-audio", "crates/harmonia-api"]
 
 [workspace.package]
-version = "1.7.0"
+version = "1.7.1"
 edition = "2024"
 license = "AGPL-3.0-or-later"
 repository = "https://github.com/Andri4nina/Harmonie"

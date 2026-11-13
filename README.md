@@ -5,7 +5,7 @@ Par **Andrianina Rasoamanana**.
 Environnement interactif pour comprendre, explorer, écouter, analyser et pratiquer
 la musique.
 
-**Version actuelle : 1.7.0** — voir le [journal des versions](CHANGELOG.md) et le
+**Version actuelle : 1.7.1** — voir le [journal des versions](CHANGELOG.md) et le
 [suivi jusqu'à la version finale](docs/ROADMAP.md).
 
 Logiciel libre sous licence **AGPL-3.0-or-later** : vous pouvez l'utiliser,
