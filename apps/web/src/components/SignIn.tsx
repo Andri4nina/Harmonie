@@ -1,4 +1,5 @@
 import { type FormEvent, useEffect, useState } from "react";
+import { Link } from "react-router";
 import { useIsApp } from "../app/platform";
 import { enabledProviders, signIn, signInWithGoogle, signUp } from "../app/session";
 import { CAPTCHA_SITE_KEY, Captcha } from "./Captcha";
@@ -118,6 +119,17 @@ export function SignIn({ next, intro = "Vos morceaux et leurs analyses sont rang
           </p>
         )}
         <Captcha onToken={setCaptcha} resetKey={attempt} />
+        <p className="caption">
+          En continuant, vous acceptez les{" "}
+          <Link to="/conditions-utilisation" className="underline underline-offset-4 hover:text-ivory">
+            conditions d'utilisation
+          </Link>{" "}
+          et la{" "}
+          <Link to="/confidentialite" className="underline underline-offset-4 hover:text-ivory">
+            politique de confidentialité
+          </Link>
+          .
+        </p>
         <div className="mt-1 flex flex-wrap gap-2">
           <button type="submit" disabled={busy || needsCaptcha} className="btn btn-primary">
             Se connecter

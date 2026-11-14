@@ -16,6 +16,7 @@ import { LessonPage, LessonsIndex } from "./pages/Lessons";
 import { EarTraining } from "./pages/EarTraining";
 import { Explorer } from "./pages/Explorer";
 import { Landing } from "./pages/Landing";
+import { LEGAL_LINKS, LegalNotice, PrivacyPolicy, TermsOfUse } from "./pages/Legal";
 import { Settings } from "./pages/Settings";
 import { useSettings } from "./state/store";
 import { useTheme } from "./state/theme";
@@ -110,6 +111,9 @@ export function App() {
             <Route path="/explorer" element={<Navigate to={pathOf("note:C")} replace />} />
             <Route path="/settings" element={<RequireAccount><Settings /></RequireAccount>} />
             <Route path="/telecharger" element={<Downloads />} />
+            <Route path="/mentions-legales" element={<LegalNotice />} />
+            <Route path="/conditions-utilisation" element={<TermsOfUse />} />
+            <Route path="/confidentialite" element={<PrivacyPolicy />} />
             <Route path="/oreille" element={<RequireAccount><EarTraining /></RequireAccount>} />
             <Route path="/composer" element={<RequireAccount><Composer /></RequireAccount>} />
             <Route path="/cours" element={<LessonsIndex />} />
@@ -134,6 +138,11 @@ export function App() {
                   Télécharger l'application
                 </Link>
               )}
+              {LEGAL_LINKS.map((link) => (
+                <Link key={link.to} to={link.to} className="underline-offset-4 hover:text-ivory-2 hover:underline">
+                  {link.label}
+                </Link>
+              ))}
             </span>
           </footer>
         </main>

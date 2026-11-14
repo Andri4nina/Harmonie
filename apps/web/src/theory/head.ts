@@ -136,6 +136,15 @@ export function headFor(pathname: string): Head {
       "Harmonie, par Andrianina Rasoamanana : la théorie musicale qu'on entend. Notes, gammes, accords et tonalités à écouter et à voir au piano et à la guitare, entraînement de l'oreille, analyse de morceaux et séquenceur. Libre et gratuit.";
     return { title: SITE_NAME, description, indexable: true, path, jsonLd: website(description) };
   }
+  const LEGAL: Record<string, [string, string]> = {
+    "/mentions-legales": ["Mentions légales", "Éditeur, hébergeurs et propriété intellectuelle d'Harmonie, d'Andrianina Rasoamanana."],
+    "/conditions-utilisation": ["Conditions d'utilisation", "Les règles d'usage d'Harmonie : compte, morceaux déposés, analyses indicatives, usages interdits."],
+    "/confidentialite": ["Politique de confidentialité", "Ce qu'Harmonie garde de vos données, pourquoi, et comment les récupérer ou les effacer. Aucun pistage."],
+  };
+  const legal = LEGAL[path];
+  if (legal) {
+    return { title: `${legal[0]} | ${SITE_NAME}`, description: legal[1], indexable: true, path, jsonLd: website(legal[1]) };
+  }
   if (path === "/tableau-de-bord") {
     const description = "Votre tableau de bord Harmonie : points de départ dans la théorie, pages visitées et progression.";
     return { title: `Tableau de bord | ${SITE_NAME}`, description, indexable: false, path, jsonLd: website(description) };

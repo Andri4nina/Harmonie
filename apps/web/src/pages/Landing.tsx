@@ -5,6 +5,7 @@ import { FIFTH_PATH, Logo } from "../components/Logo";
 import { ThemeSwitch } from "../components/ThemeSwitch";
 import { Icon } from "../components/ui";
 import { circleOfFifths, nodeView } from "../theory/engine";
+import { LEGAL_LINKS } from "./Legal";
 import "./landing.css";
 
 /**
@@ -562,9 +563,16 @@ export function Landing() {
         <span>
           Harmonie, conçu et développé par <span className="text-ivory-2">Andrianina Rasoamanana</span>
         </span>
-        <a href="https://github.com/Andri4nina/Harmonie" rel="noopener">
-          Code source, licence AGPL-3.0
-        </a>
+        <span className="flex flex-wrap gap-x-5 gap-y-1">
+          <a href="https://github.com/Andri4nina/Harmonie" rel="noopener">
+            Code source, licence AGPL-3.0
+          </a>
+          {LEGAL_LINKS.map((link) => (
+            <Link key={link.to} to={link.to}>
+              {link.label}
+            </Link>
+          ))}
+        </span>
       </footer>
     </div>
   );
