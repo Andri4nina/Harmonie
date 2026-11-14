@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { catalog } from "./engine";
-import { headFor } from "./head";
+import { headFor, normalizeSiteUrl } from "./head";
 import { detailLabel, factValue, hueOf, labelOf, shortLabelOf } from "./labels";
 import { pathOf } from "./routes";
 
@@ -80,5 +80,16 @@ describe("libellés", () => {
     expect(steps.filter((value) => value > 40)).toHaveLength(1);
     expect(step(0, 7)).toBeLessThan(40);
     expect(new Set(Array.from({ length: 12 }, (_, pc) => hueOf(pc))).size).toBe(12);
+  });
+});
+
+describe("adresse du site", () => {
+  it("est toujours absolue, en https, sans / final", () => {
+    expect(normalizeSiteUrl("andrianina-rasoamanana-harmonie.vercel.app")).toBe("https://andrianina-rasoamanana-harmonie.vercel.app");
+    expect(normalizeSiteUrl(" https://exemple.org/ ")).toBe("https://exemple.org");
+    expect(normalizeSiteUrl("http://localhost:5173//")).toBe("http://localhost:5173");
+    expect(normalizeSiteUrl("")).toBeUndefined();
+    expect(normalizeSiteUrl(undefined)).toBeUndefined();
+    expect(normalizeSiteUrl("pas une adresse")).toBeUndefined();
   });
 });

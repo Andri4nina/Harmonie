@@ -19,7 +19,22 @@ export interface Head {
 }
 
 /** Adresse publique du site (sans barre finale), si elle est connue au build. */
-export const SITE_URL: string | undefined = (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/+$/, "");
+/**
+ * Adresse publique du site, toujours absolue : « https:// » ajouté s'il manque,
+ * sans « / » final. `undefined` si la valeur est vide ou n'est pas une adresse.
+ */
+export function normalizeSiteUrl(raw: string | undefined): string | undefined {
+  const value = raw?.trim();
+  if (!value) return undefined;
+  try {
+    const url = new URL(/^https?:\/\//i.test(value) ? value : `https://${value}`);
+    return `${url.origin}${url.pathname}`.replace(/\/+$/, "");
+  } catch {
+    return undefined;
+  }
+}
+
+export const SITE_URL: string | undefined = normalizeSiteUrl(import.meta.env.VITE_SITE_URL as string | undefined);
 
 /** Nom affiché dans les résultats de recherche. */
 export const SITE_NAME = "Andrianina Rasoamanana - Harmonie";

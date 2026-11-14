@@ -6,6 +6,9 @@ import { StaticRouter } from "react-router";
 import { App, hueForPath } from "./App";
 import { catalog, loadEngineSync } from "./theory/engine";
 import { type Head, headFor } from "./theory/head";
+
+/** Adresse publique du site, normalisée (voir head.ts), pour le plan du site. */
+export { SITE_URL } from "./theory/head";
 import { LESSONS } from "./theory/lessons";
 import { pathOf } from "./theory/routes";
 

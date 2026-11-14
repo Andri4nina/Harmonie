@@ -11,11 +11,11 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const web = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = resolve(web, "dist");
-const siteUrl = process.env.VITE_SITE_URL?.replace(/\/+$/, "");
 // Jeton de validation de Google Search Console (facultatif).
 const verification = process.env.VITE_GOOGLE_SITE_VERIFICATION;
 
-const { setup, pages, render } = await import(pathToFileURL(resolve(web, "dist-ssr/entry-server.js")).href);
+// Adresse du site normalisée par le moteur de pré-rendu (https ajouté, sans / final).
+const { setup, pages, render, SITE_URL: siteUrl } = await import(pathToFileURL(resolve(web, "dist-ssr/entry-server.js")).href);
 setup(readFileSync(resolve(web, "src/theory/pkg/harmonia_theory_wasm_bg.wasm")));
 
 // Les deux polices du texte courant sont préchargées : le titre principal
@@ -78,9 +78,22 @@ for (const path of pages()) {
   if (head.indexable) indexed.push(head.path);
 }
 
-const robots = ["User-agent: *", "Disallow: /settings", "Disallow: /explorer", "Disallow: /analyser", "Disallow: /bibliotheque", "Disallow: /compte"];
+const robots = [
+  "User-agent: *",
+  "Disallow: /settings",
+  "Disallow: /explorer",
+  "Disallow: /analyser",
+  "Disallow: /bibliotheque",
+  "Disallow: /compte",
+  "Disallow: /connexion",
+  "Disallow: /tableau-de-bord",
+];
 if (siteUrl) {
-  const urls = indexed.map((path) => `  <url><loc>${siteUrl}${path === "/" ? "/" : path}</loc></url>`).join("\n");
+  // Date de la construction : chaque publication remet tout le site à jour.
+  const lastmod = new Date().toISOString().slice(0, 10);
+  const urls = indexed
+    .map((path) => `  <url><loc>${siteUrl}${path === "/" ? "/" : path}</loc><lastmod>${lastmod}</lastmod></url>`)
+    .join("\n");
   writeFileSync(
     resolve(dist, "sitemap.xml"),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`,
