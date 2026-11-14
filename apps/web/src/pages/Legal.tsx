@@ -78,6 +78,7 @@ export function LegalNotice() {
         </p>
         <p>
           Contact : par le suivi des demandes du projet, <External href={CONTACT}>{CONTACT.replace("https://", "")}</External>.
+          Ce suivi est public : n'y indiquez aucune information personnelle.
         </p>
       </Section>
       <Section title="Hébergement">
@@ -258,6 +259,11 @@ export function PrivacyPolicy() {
           Vous pouvez à tout moment accéder à vos données, les corriger, les récupérer, vous opposer à leur traitement ou
           demander leur effacement complet avec la suppression de votre compte. Écrivez par le suivi des demandes ; une
           réponse est apportée dans le délai d'un mois.
+        </p>
+        <p>
+          <strong>Le suivi des demandes est public</strong> : n'y écrivez ni votre adresse électronique ni aucune autre
+          information personnelle. Décrivez seulement votre demande ; la réponse vous indiquera comment confirmer votre
+          identité sans l'exposer.
         </p>
         <p>
           Vous pouvez aussi saisir l'autorité de protection des données de votre pays, en France la CNIL (
