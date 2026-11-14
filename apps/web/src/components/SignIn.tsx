@@ -1,6 +1,6 @@
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { useIsApp } from "../app/platform";
-import { signIn, signInWithGoogle, signUp } from "../app/session";
+import { enabledProviders, signIn, signInWithGoogle, signUp } from "../app/session";
 import { Logo } from "./Logo";
 import { Panel } from "./ui";
 
@@ -20,6 +20,14 @@ export function SignIn({ next, intro = "Vos morceaux et leurs analyses sont rang
   // Google refuse les connexions depuis une vue web intégrée (applications) :
   // le bouton n'y est pas proposé.
   const inApp = useIsApp();
+  const [google, setGoogle] = useState(false);
+  useEffect(() => {
+    let live = true;
+    void enabledProviders().then((providers) => live && setGoogle(Boolean(providers.google)));
+    return () => {
+      live = false;
+    };
+  }, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -48,7 +56,7 @@ export function SignIn({ next, intro = "Vos morceaux et leurs analyses sont rang
         <h2 className="font-display text-xl font-semibold">Connexion</h2>
       </div>
       <p className="mb-4 text-ivory-2">{intro}</p>
-      {!inApp && (
+      {!inApp && google && (
         <>
           <button
             type="button"

@@ -115,6 +115,25 @@ export async function signUp(email: string, password: string): Promise<boolean> 
  * Google renvoie ensuite sur `next`, où le client lit la session. Seules
  * l'adresse et l'identité de base sont demandées (portées par défaut).
  */
+let providersRequest: Promise<Record<string, boolean>> | undefined;
+
+/**
+ * Moyens de connexion activés dans le projet Supabase (réglages publics du
+ * service d'authentification). Le bouton Google n'est proposé que s'il est
+ * activé : sinon Supabase renverrait une erreur brute.
+ */
+export function enabledProviders(): Promise<Record<string, boolean>> {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return Promise.resolve({});
+  providersRequest ??= fetch(`${SUPABASE_URL}/auth/v1/settings`, { headers: { apikey: SUPABASE_KEY } })
+    .then((response) => (response.ok ? response.json() : { external: {} }))
+    .then((settings: { external?: Record<string, boolean> }) => settings.external ?? {})
+    .catch(() => {
+      providersRequest = undefined;
+      return {};
+    });
+  return providersRequest;
+}
+
 export async function signInWithGoogle(next: string): Promise<void> {
   const { error } = await authOrThrow().signInWithOAuth({
     provider: "google",

@@ -3,11 +3,15 @@ import { describe, expect, it } from "vitest";
 import { SignIn } from "./SignIn";
 
 describe("formulaire de connexion", () => {
-  it("propose Google, puis l'adresse et le mot de passe", () => {
+  it("propose l'adresse et le mot de passe d'emblée", () => {
     const html = renderToString(<SignIn intro="Test" />);
-    expect(html).toContain("Continuer avec Google");
     expect(html).toContain("Se connecter");
     expect(html).toContain("Créer un compte");
-    expect(html.indexOf("Continuer avec Google")).toBeLessThan(html.indexOf("Se connecter"));
+  });
+
+  it("n'affiche Google qu'une fois son activation vérifiée", () => {
+    // Au premier affichage, l'activation de Google n'est pas encore connue :
+    // pas de bouton qui mènerait à une erreur de Supabase.
+    expect(renderToString(<SignIn intro="Test" />)).not.toContain("Continuer avec Google");
   });
 });
