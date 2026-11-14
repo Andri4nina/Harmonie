@@ -4,16 +4,9 @@ import { ACCEPTED, MAX_UPLOAD_MB, type Track, formatDuration, listTracks, upload
 import { useOnline } from "../app/platform";
 import { missingConfiguration, startSession, useSession } from "../app/session";
 import { SignIn } from "../components/SignIn";
+import { AnalysisProgress } from "../components/AnalysisProgress";
 import { Loader } from "../components/Loader";
 import { Icon, Notice, Panel } from "../components/ui";
-
-const STATUS: Record<string, string> = {
-  queued: "en attente d'analyse",
-  running: "analyse en cours",
-  succeeded: "analysé",
-  failed: "analyse impossible",
-  cancelled: "analyse annulée",
-};
 
 function Title({ children }: { children: string }) {
   return (
@@ -24,13 +17,12 @@ function Title({ children }: { children: string }) {
 }
 
 /** Ce qui manque pour brancher l'analyse sur ce site. */
-function NotConfigured({ missing }: { missing: string[] }) {
+function NotConfigured() {
   return (
     <Panel framed={false}>
       <p className="max-w-[62ch] text-ivory-2">
-        L'analyse demande un compte et le serveur d'analyse, qui ne sont pas encore reliés à cette version du site.
-        Variables à définir à la construction : {missing.join(", ")}. La marche à suivre est dans{" "}
-        <span className="text-ivory">docs/DEPLOYMENT.md</span>.
+        L'analyse de morceaux n'est pas encore disponible sur ce site. Explorer la théorie, apprendre, entraîner
+        l'oreille et composer fonctionnent dès maintenant.
       </p>
     </Panel>
   );
@@ -43,6 +35,8 @@ function Upload({ onUploaded }: { onUploaded: () => void }) {
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState<number | null>(null);
+  const [done, setDone] = useState<string | null>(null);
 
   const choose = (chosen: File | undefined) => {
     setError(null);
@@ -60,8 +54,11 @@ function Upload({ onUploaded }: { onUploaded: () => void }) {
     if (!file) return;
     setBusy(true);
     setError(null);
+    setDone(null);
+    setSent(0);
     try {
-      await uploadTrack(file, title);
+      const created = await uploadTrack(file, title, setSent);
+      setDone(created.title);
       setFile(null);
       setTitle("");
       onUploaded();
@@ -69,6 +66,7 @@ function Upload({ onUploaded }: { onUploaded: () => void }) {
       setError((failure as Error).message);
     } finally {
       setBusy(false);
+      setSent(null);
     }
   };
 
@@ -108,9 +106,25 @@ function Upload({ onUploaded }: { onUploaded: () => void }) {
             />
           </label>
           <button type="submit" disabled={busy} className="btn btn-primary">
-            {busy ? "Envoi en cours" : "Analyser ce morceau"}
+            {busy ? "Envoi en cours…" : "Analyser ce morceau"}
           </button>
         </div>
+      )}
+      {sent !== null && (
+        <div className="flex flex-col gap-1.5" role="status">
+          <span className="flex items-center gap-2 text-[0.875rem] text-ivory-2">
+            <span className="analysis-pulse" aria-hidden="true" />
+            {sent < 1 ? `Envoi du fichier : ${Math.round(sent * 100)} %` : "Fichier reçu, mise en file d'analyse…"}
+          </span>
+          <span className="analysis-bar">
+            <span style={{ width: `${Math.max(3, Math.round(sent * 100))}%` }} />
+          </span>
+        </div>
+      )}
+      {done && (
+        <p className="rise-in text-[0.9375rem] text-brass" role="status">
+          « {done} » est envoyé : son analyse apparaît dans « Vos morceaux ».
+        </p>
       )}
       {error && (
         <p role="alert" className="text-danger">
@@ -181,10 +195,7 @@ export function TrackList({ version = 0 }: { version?: number }) {
           <Link to={`/analyser/${track.id}`} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3 hover:text-brass">
             <span className="min-w-0 flex-1 basis-48 truncate font-medium">{track.title}</span>
             <span className="caption">{formatDuration(track.duration_ms)}</span>
-            <span className={`caption ${track.status === "failed" ? "!text-danger" : ""}`}>
-              {STATUS[track.status ?? ""] ?? "sans analyse"}
-              {track.status === "running" && track.progress !== null ? `, ${Math.round(track.progress * 100)} %` : ""}
-            </span>
+            <AnalysisProgress status={track.status} stage={track.stage} progress={track.progress} compact />
           </Link>
         </li>
       ))}
@@ -198,7 +209,7 @@ export function SignedIn({ children }: { children: React.ReactNode }) {
   const { ready, token } = useSession();
   const online = useOnline();
   const missing = missingConfiguration();
-  if (missing.length > 0) return <NotConfigured missing={missing} />;
+  if (missing.length > 0) return <NotConfigured />;
   if (!online) {
     return (
       <Notice title="Hors connexion">

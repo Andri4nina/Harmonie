@@ -56,6 +56,15 @@ politique, ce qui ferme l'accès des clés publiques du projet aux tables.
    `profile`) sont demandées : aucune validation de Google n'est nécessaire.
    Dans les applications (ordinateur, Android), Google refuse les vues web
    intégrées : le bouton n'y est pas proposé, la connexion par adresse reste.
+   **Anti-robots (Cloudflare Turnstile, gratuit)** : sur
+   <https://dash.cloudflare.com> → *Turnstile* → *Add widget* : nom
+   « Harmonie », domaines `andrianina-rasoamanana-harmonie.vercel.app` et
+   `tauri.localhost` (applications), mode *Managed*. Copier la **clé de site**
+   dans la variable GitHub `VITE_TURNSTILE_SITE_KEY`, et la **clé secrète**
+   dans Supabase : *Authentication* → *Attack Protection* → *Enable Captcha
+   protection* → *Turnstile*. Activer côté Supabase seulement une fois le site
+   republié avec la clé de site, sinon les connexions par adresse seraient
+   refusées.
    **Rester connecté** : la session est gardée sur l'appareil et renouvelée
    en arrière-plan ; on reste connecté jusqu'à « Se déconnecter ». Dans
    *Authentication* → *Sessions*, laisser *Time-box user sessions* et

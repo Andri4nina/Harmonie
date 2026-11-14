@@ -6,8 +6,8 @@ import {
   setSequencerOptions,
   startSequencer,
   stopSequencer,
+  usePlayhead,
   useSequencerPlaying,
-  useSequencerPosition,
 } from "../audio/sequencer";
 import { allNotesOff } from "../audio/synth";
 import { DRUM_PIECES, PITCHED_SOUNDS } from "../audio/voices";
@@ -58,6 +58,16 @@ function snapNear(value: number, snap: number): number {
   return Math.round(value / snap) * snap;
 }
 
+/** Mesure et temps en cours, mis à jour à chaque image sans rendu de la page. */
+function PositionReadout({ cursor, beatsPerBar }: { cursor: number; beatsPerBar: number }) {
+  const span = useRef<HTMLSpanElement>(null);
+  const format = (beat: number) => `${Math.floor(beat / beatsPerBar) + 1}.${Math.floor(beat % beatsPerBar) + 1}`;
+  usePlayhead((position) => {
+    if (span.current) span.current.textContent = format(position ?? cursor);
+  });
+  return <span ref={span}>{format(cursor)}</span>;
+}
+
 function Toggle({ on, label, onClick, children, className = "" }: { on: boolean; label: string; onClick: () => void; children: ReactNode; className?: string }) {
   return (
     <button
@@ -103,7 +113,6 @@ export function Composer() {
   const [recording, setRecording] = useState(false);
   const [newSound, setNewSound] = useState("guitar");
   const playing = useSequencerPlaying();
-  const position = useSequencerPosition();
   const total = project.bars * project.beats_per_bar;
 
   useEffect(() => {
@@ -197,6 +206,25 @@ export function Composer() {
     setCursor(0);
   };
 
+  // Partir de zéro : les quatre pistes habituelles, vides (annulable).
+  const startBlank = () => {
+    stopSequencer();
+    load({
+      bpm: project.bpm,
+      beats_per_bar: project.beats_per_bar,
+      bars: generator.bars,
+      tracks: [
+        { name: "Mélodie", sound: "piano", volume: 0.85, notes: [] },
+        { name: "Accords", sound: "piano", volume: 0.6, notes: [] },
+        { name: "Basse", sound: "bass", volume: 0.8, notes: [] },
+        { name: "Batterie", sound: "drum-kit", volume: 0.7, notes: [] },
+      ],
+    });
+    // Rien n'est généré : la partition du générateur ne correspond plus.
+    useComposer.setState({ edited: true });
+    setCursor(0);
+  };
+
   const exportFile = (...args: Parameters<typeof saveFile>) => {
     saveFile(...args).catch((error: unknown) => window.alert(`Le fichier n'a pas pu être enregistré : ${String((error as Error)?.message ?? error)}`));
   };
@@ -231,9 +259,6 @@ export function Composer() {
     setCursor((c) => Math.min(c, (next - 1) * project.beats_per_bar));
   };
 
-  const shown = position ?? cursor;
-  const barOf = Math.floor(shown / project.beats_per_bar) + 1;
-  const beatOf = Math.floor(shown % project.beats_per_bar) + 1;
 
   return (
     <div className="flex flex-col gap-7 sm:gap-9">
@@ -305,6 +330,10 @@ export function Composer() {
         <button type="button" onClick={() => compose_({}, true)} className="btn btn-ghost">
           Composer un autre morceau
         </button>
+        <button type="button" onClick={startBlank} className="btn text-ivory-2 hover:bg-[var(--hover)]" title="Quatre pistes vides : tout s'écrit à la main (Ctrl+Z pour revenir)">
+          <Icon name="eraser" className="size-4" />
+          Partir de zéro
+        </button>
       </section>
 
       {/* Transport */}
@@ -324,7 +353,7 @@ export function Composer() {
           <span className="text-[0.8125rem] font-semibold">1 2 3 4</span>
         </Toggle>
         <span className="font-display min-w-24 text-sm tabular-nums text-ivory-2" aria-live="off">
-          {barOf}.{beatOf} <span className="text-ivory-3">/ {project.bars}</span>
+          <PositionReadout cursor={cursor} beatsPerBar={project.beats_per_bar} /> <span className="text-ivory-3">/ {project.bars}</span>
         </span>
         <label className="flex items-center gap-2">
           <span className="caption">Tempo</span>
@@ -423,10 +452,21 @@ export function Composer() {
                         className="min-w-0 flex-1 accent-[var(--color-brass)]"
                       />
                     </label>
-                    <button type="button" onClick={() => removeTrack(index)} disabled={project.tracks.length <= 1} className="inline-flex items-center gap-1.5 self-start text-sm text-ivory-3 hover:text-[var(--color-danger)] disabled:opacity-40">
-                      <Icon name="trash" className="size-3.5" />
-                      Supprimer la piste
-                    </button>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1">
+                      <button
+                        type="button"
+                        onClick={() => edit((p) => withTrack(p, index, (t) => ({ ...t, notes: [] })))}
+                        disabled={item.notes.length === 0}
+                        className="inline-flex items-center gap-1.5 text-sm text-ivory-3 hover:text-ivory disabled:opacity-40"
+                      >
+                        <Icon name="eraser" className="size-3.5" />
+                        Vider la piste
+                      </button>
+                      <button type="button" onClick={() => removeTrack(index)} disabled={project.tracks.length <= 1} className="inline-flex items-center gap-1.5 text-sm text-ivory-3 hover:text-[var(--color-danger)] disabled:opacity-40">
+                        <Icon name="trash" className="size-3.5" />
+                        Supprimer la piste
+                      </button>
+                    </div>
                   </div>
                 )}
               </li>
@@ -494,9 +534,9 @@ export function Composer() {
           </div>
           {track &&
             (drums ? (
-              <StepSequencer project={project} trackIndex={selected} position={position} />
+              <StepSequencer project={project} trackIndex={selected} />
             ) : (
-              <PianoRoll hue={TRACK_HUES[selected % TRACK_HUES.length]!} project={project} trackIndex={selected} snap={snap} zoom={zoom} tool={tool} position={position} cursor={cursor} onCursor={setCursor} />
+              <PianoRoll hue={TRACK_HUES[selected % TRACK_HUES.length]!} project={project} trackIndex={selected} snap={snap} zoom={zoom} tool={tool} cursor={cursor} onCursor={setCursor} />
             ))}
           <p className="caption max-w-[72ch]">
             {drums

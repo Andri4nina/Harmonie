@@ -1,16 +1,11 @@
 import { type FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router";
 import { type Analysis, type TimelineEvent, correctEvent, formatDuration, getAnalysis, getAudio } from "../app/api";
+import { AnalysisProgress } from "../components/AnalysisProgress";
 import { Loader } from "../components/Loader";
 import { CERTAINTY, Timeline, chordPitchClass, keyLabel } from "../components/Timeline";
 import { Icon, Panel, hueStyle } from "../components/ui";
 import { SignedIn } from "./Analyzer";
-
-const STAGE: Record<string, string> = {
-  decode: "décodage du fichier",
-  features: "mesure du signal",
-  interpret: "lecture musicale",
-};
 
 function clock(ms: number): string {
   const seconds = Math.floor(ms / 1000);
@@ -303,25 +298,19 @@ function Content({ id }: { id: string }) {
 
       {(status === "queued" || status === "running") && (
         <Panel>
-          <Loader
-            label={
-              status === "queued"
-                ? "En attente d'un worker d'analyse"
-                : `Analyse en cours : ${STAGE[data.track.stage ?? ""] ?? data.track.stage ?? ""}, ${Math.round((data.track.progress ?? 0) * 100)} %`
-            }
-          />
-          {status === "queued" && (
-            <p className="caption text-center">
-              Si l'attente se prolonge, aucun worker n'est en marche : voir docs/DEPLOYMENT.md.
-            </p>
-          )}
+          <AnalysisProgress status={status} stage={data.track.stage} progress={data.track.progress} />
+          <p className="caption mt-4">
+            {status === "queued"
+              ? "L'analyse démarre dès qu'un analyseur est libre. Vous pouvez quitter cette page : le résultat vous attendra dans votre bibliothèque."
+              : "Quelques dizaines de secondes à quelques minutes selon la durée du morceau. Cette page se met à jour toute seule."}
+          </p>
         </Panel>
       )}
       {status === "failed" && (
         <Panel title="Analyse impossible">
           <p className="text-ivory-2">
-            Le worker a renoncé après trois essais : {data.track.error ?? "raison inconnue"}. Vérifiez que le fichier se
-            lit dans un lecteur audio, puis déposez-le de nouveau.
+            Harmonie n'a pas réussi à analyser ce fichier. Vérifiez qu'il se lit dans un lecteur audio, puis
+            déposez-le de nouveau.
           </p>
         </Panel>
       )}

@@ -1,4 +1,5 @@
 import { type PointerEvent as ReactPointerEvent, useEffect, useMemo, useRef, useState } from "react";
+import { usePlayhead } from "../audio/sequencer";
 import { noteOff, noteOn } from "../audio/synth";
 import { useComposer, withTrack } from "../state/composer";
 import type { Project, RollNote } from "../theory/compose";
@@ -46,7 +47,6 @@ export function PianoRoll({
   snap,
   zoom,
   tool,
-  position,
   cursor,
   onCursor,
   hue,
@@ -57,7 +57,6 @@ export function PianoRoll({
   snap: number;
   zoom: number;
   tool: Tool;
-  position: number | null;
   cursor: number;
   onCursor: (beat: number) => void;
 }) {
@@ -85,13 +84,20 @@ export function PianoRoll({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trackIndex]);
 
-  // La vue suit la tête de lecture.
-  useEffect(() => {
+  // Tête de lecture : déplacée à chaque image, et la vue la suit.
+  const head = useRef<HTMLDivElement>(null);
+  const rulerHead = useRef<HTMLSpanElement>(null);
+  usePlayhead((position) => {
+    for (const line of [head.current, rulerHead.current]) {
+      if (!line) continue;
+      line.style.display = position === null ? "none" : "block";
+      if (position !== null) line.style.transform = `translateX(${position * zoom}px)`;
+    }
     const element = scroller.current;
     if (!element || position === null) return;
     const x = position * zoom;
     if (x > element.scrollLeft + element.clientWidth - KEYS_WIDTH - 40 || x < element.scrollLeft) element.scrollLeft = Math.max(0, x - 40);
-  }, [position, zoom]);
+  });
 
   const ghosts = useMemo(
     () => project.tracks.flatMap((other, index) => (index === trackIndex || other.sound === "drum-kit" || other.muted ? [] : other.notes)),
@@ -335,7 +341,7 @@ export function PianoRoll({
               className="absolute bottom-0 h-0 w-0 border-x-[6px] border-t-[8px] border-x-transparent border-t-brass"
               style={{ left: cursor * zoom - 6 }}
             />
-            {position !== null && <span className="absolute inset-y-0 w-px bg-brass" style={{ left: position * zoom }} />}
+            <span ref={rulerHead} className="absolute inset-y-0 left-0 hidden w-px bg-brass will-change-transform" />
           </div>
         </div>
 
@@ -412,7 +418,7 @@ export function PianoRoll({
                 style={{ left: Math.min(box.x0, box.x1), top: Math.min(box.y0, box.y1), width: Math.abs(box.x1 - box.x0), height: Math.abs(box.y1 - box.y0) }}
               />
             )}
-            {position !== null && <div className="pointer-events-none absolute inset-y-0 w-px bg-brass" style={{ left: position * zoom }} />}
+            <div ref={head} className="pointer-events-none absolute inset-y-0 left-0 hidden w-px bg-brass shadow-[0_0_8px_var(--color-brass)] will-change-transform" />
           </div>
         </div>
 

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { usePlayhead } from "../audio/sequencer";
 import { noteOn } from "../audio/synth";
 import { DRUM_PIECES } from "../audio/voices";
 import { useComposer, withTrack } from "../state/composer";
@@ -13,21 +14,30 @@ const LABEL = 132;
  * mesure de 4/4. Un clic allume ou éteint un pas ; glisser en allume (ou en
  * éteint) plusieurs d'affilée.
  */
-export function StepSequencer({ project, trackIndex, position }: { project: Project; trackIndex: number; position: number | null }) {
+export function StepSequencer({ project, trackIndex }: { project: Project; trackIndex: number }) {
   const { begin, live, edit } = useComposer.getState();
   const track = project.tracks[trackIndex];
   const steps = Math.round((project.bars * project.beats_per_bar) / STEP);
   const perBar = Math.round(project.beats_per_bar / STEP);
   const painting = useRef<{ on: boolean } | null>(null);
   const scroller = useRef<HTMLDivElement>(null);
-  const current = position === null ? -1 : Math.floor(position / STEP + 1e-9);
+  const column = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const element = scroller.current;
-    if (!element || current < 0) return;
-    const x = current * CELL;
-    if (x > element.scrollLeft + element.clientWidth - LABEL - 40 || x < element.scrollLeft) element.scrollLeft = Math.max(0, x - 40);
-  }, [current]);
+  // Pas en cours : une colonne éclairée qui saute de pas en pas, sans rendu React.
+  usePlayhead((position) => {
+    const element = column.current;
+    if (!element) return;
+    if (position === null) {
+      element.style.display = "none";
+      return;
+    }
+    const step = Math.floor(position / STEP + 1e-9);
+    const x = LABEL + step * CELL + Math.floor(step / perBar) * 6;
+    element.style.display = "block";
+    element.style.transform = `translateX(${x}px)`;
+    const view = scroller.current;
+    if (view && (x > view.scrollLeft + view.clientWidth - 40 || x < view.scrollLeft + LABEL)) view.scrollLeft = Math.max(0, x - LABEL - 40);
+  });
 
   useEffect(() => {
     const stopPainting = () => (painting.current = null);
@@ -64,7 +74,13 @@ export function StepSequencer({ project, trackIndex, position }: { project: Proj
   return (
     <div className="flex flex-col gap-3">
       <div ref={scroller} className="relative max-h-[min(64vh,600px)] overflow-auto overscroll-contain rounded-[12px] border border-line bg-[var(--color-night)]">
-        <div style={{ width: LABEL + steps * CELL + project.bars * 6 }}>
+        <div className="relative" style={{ width: LABEL + steps * CELL + project.bars * 6 }}>
+          <div
+            ref={column}
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 left-0 z-20 hidden rounded-[6px] border border-[var(--color-ivory-3)] bg-[color-mix(in_oklab,var(--color-ivory)_10%,transparent)] will-change-transform"
+            style={{ width: CELL }}
+          />
           {DRUM_PIECES.map((piece) => (
             <div key={piece.midi} className="flex" style={{ height: CELL + 6 }}>
               <button
@@ -97,7 +113,7 @@ export function StepSequencer({ project, trackIndex, position }: { project: Proj
                         on
                           ? "border-brass bg-brass"
                           : `${shade ? "bg-[color-mix(in_oklab,var(--color-ivory)_9%,transparent)]" : "bg-[color-mix(in_oklab,var(--color-ivory)_4%,transparent)]"} border-transparent hover:border-[var(--accent-line)]`
-                      } ${step === current ? "ring-2 ring-[var(--color-ivory)]" : ""} ${step % perBar === 0 && step > 0 ? "ml-[6px]" : ""}`}
+                      } ${step % perBar === 0 && step > 0 ? "ml-[6px]" : ""}`}
                       style={{ width: CELL - 4, height: CELL - 4 }}
                     />
                   );

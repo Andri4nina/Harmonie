@@ -38,10 +38,10 @@ export const PLATFORMS: Platform[] = [
   {
     id: "linux",
     name: "Linux",
-    detail: "AppImage ou paquet Debian",
+    detail: "Paquet Debian, Fedora ou AppImage",
     planned: "v1.6",
-    matches: (file) => /\.(appimage|deb)$/i.test(file),
-    preference: [/\.appimage$/i, /\.deb$/i],
+    matches: (file) => /\.(appimage|deb|rpm)$/i.test(file),
+    preference: [/\.deb$/i, /\.appimage$/i, /\.rpm$/i],
   },
   {
     id: "android",
@@ -68,6 +68,8 @@ export interface Asset {
   bytes: number;
   version: string;
   publishedAt: string;
+  /** Les autres fichiers de la même plateforme dans cette publication (Linux : .deb, .rpm, AppImage). */
+  variants: { name: string; url: string; bytes: number }[];
 }
 
 interface GitHubRelease {
@@ -101,6 +103,9 @@ export function pickAssets(releases: GitHubRelease[]): Partial<Record<PlatformId
           bytes: asset.size,
           version: release.tag_name,
           publishedAt: release.published_at,
+          variants: release.assets
+            .filter((candidate) => platform.matches(candidate.name))
+            .map((candidate) => ({ name: candidate.name, url: candidate.browser_download_url, bytes: candidate.size })),
         };
         break;
       }

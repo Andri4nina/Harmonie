@@ -7,12 +7,14 @@ import { A4_MAX, A4_MIN, useSettings } from "../state/store";
 export function Settings() {
   const { lite, a4, sound, setLite, setA4, setSound } = useSettings();
   return (
-    <div className="flex max-w-2xl flex-col gap-8">
+    <div className="flex flex-col gap-8">
       <section className="pt-4 sm:pt-8">
         <h1 className="font-display engrave text-[clamp(2.1rem,6vw,3.5rem)] leading-none font-semibold tracking-[-0.015em]">Réglages</h1>
         <p className="mt-3 text-ivory-2">Enregistrés sur cet appareil.</p>
       </section>
 
+      {/* Deux colonnes sur grand écran : pas de vide à côté des réglages. */}
+      <div className="grid items-start gap-6 lg:grid-cols-2">
       <Panel title="Thème">
         <p className="mb-4 text-ivory-2">« Système » suit le réglage clair ou sombre de votre appareil.</p>
         <ThemeSwitch />
@@ -87,6 +89,7 @@ export function Settings() {
           </button>
         </div>
       </Panel>
+      </div>
     </div>
   );
 }

@@ -3,7 +3,7 @@
 // le rythme reste exact même si l'interface est occupée, et une note ajoutée
 // pendant la lecture est entendue au tour suivant de la boucle.
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSettings } from "../state/store";
 import { midiToFrequency } from "../theory/engine";
 import type { Project } from "../theory/compose";
@@ -107,18 +107,22 @@ function linearBeat(time: number): number {
 }
 
 /** Lance la lecture depuis `beat` ; `project` est relu à chaque planification. */
-export function startSequencer(project: () => Project, beat: number, ended?: () => void): void {
+export async function startSequencer(project: () => Project, beat: number, ended?: () => void): Promise<void> {
   stopSequencer();
   stopOthers();
   getProject = project;
   onEnd = ended;
   const { ctx, out } = audio();
+  // Horloge audio suspendue (avant le premier geste) : on attend qu'elle
+  // tourne, sinon la tête de lecture resterait figée.
+  if (ctx.state !== "running") await ctx.resume().catch(() => undefined);
   const bus = ctx.createGain();
   bus.connect(out);
   const origin = ctx.currentTime + 0.05;
   running = { originTime: origin, originBeat: beat, bpm: project().bpm, cursor: beat, timer: setInterval(schedule, TICK_MS), bus, voices: new Set() };
   schedule();
   notify();
+  startFrames();
 }
 
 export function stopSequencer(): void {
@@ -130,6 +134,7 @@ export function stopSequencer(): void {
   setTimeout(() => bus.disconnect(), 250);
   running = undefined;
   notify();
+  stopFrames();
 }
 
 export function setSequencerOptions(next: Partial<typeof options>): void {
@@ -144,7 +149,10 @@ export function isSequencerPlaying(): boolean {
 export function sequencerPosition(): number | null {
   if (!running) return null;
   const { ctx } = audio();
-  const beat = linearBeat(ctx.currentTime);
+  // Ce qu'on entend sort des haut-parleurs un peu après l'horloge audio :
+  // la tête de lecture suit le son entendu, pas le son calculé.
+  const latency = ctx.outputLatency || ctx.baseLatency || 0;
+  const beat = linearBeat(ctx.currentTime - latency);
   if (beat < running.originBeat) return running.originBeat;
   return wrap(beat, length(getProject()));
 }
@@ -160,6 +168,51 @@ export function useSequencerPlaying(): boolean {
     };
   }, []);
   return playing;
+}
+
+// ------------------------------------------------------------ tête de lecture
+
+const frameListeners = new Set<(position: number | null) => void>();
+let frame = 0;
+
+function startFrames(): void {
+  if (frame || frameListeners.size === 0) return;
+  const tick = () => {
+    const position = sequencerPosition();
+    for (const listener of frameListeners) listener(position);
+    frame = running ? requestAnimationFrame(tick) : 0;
+  };
+  frame = requestAnimationFrame(tick);
+}
+
+function stopFrames(): void {
+  cancelAnimationFrame(frame);
+  frame = 0;
+  for (const listener of frameListeners) listener(null);
+}
+
+/**
+ * Suit la tête de lecture à chaque image, sans rendu React : `listener`
+ * déplace directement l'élément (trait, case, compteur). Renvoie l'arrêt.
+ */
+export function onPlayhead(listener: (position: number | null) => void): () => void {
+  frameListeners.add(listener);
+  listener(sequencerPosition());
+  if (running) startFrames();
+  return () => {
+    frameListeners.delete(listener);
+    if (frameListeners.size === 0) {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    }
+  };
+}
+
+/** Comme `onPlayhead`, pour un composant ; `listener` peut changer à chaque rendu. */
+export function usePlayhead(listener: (position: number | null) => void): void {
+  const latest = useRef(listener);
+  latest.current = listener;
+  useEffect(() => onPlayhead((position) => latest.current(position)), []);
 }
 
 /** Position de lecture rafraîchie à chaque image, ou `null` à l'arrêt. */

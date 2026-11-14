@@ -1,6 +1,7 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { useIsApp } from "../app/platform";
 import { enabledProviders, signIn, signInWithGoogle, signUp } from "../app/session";
+import { CAPTCHA_SITE_KEY, Captcha } from "./Captcha";
 import { Logo } from "./Logo";
 import { Panel } from "./ui";
 
@@ -31,6 +32,10 @@ export function SignIn({ next, intro = "Vos morceaux et leurs analyses sont rang
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  // Vérification anti-robots (si activée) : un jeton par essai.
+  const [captcha, setCaptcha] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  const needsCaptcha = Boolean(CAPTCHA_SITE_KEY) && !captcha;
   const [message, setMessage] = useState<{ text: string; error: boolean } | null>(null);
 
   const run = (action: "in" | "up") => async (event?: FormEvent) => {
@@ -38,14 +43,16 @@ export function SignIn({ next, intro = "Vos morceaux et leurs analyses sont rang
     setBusy(true);
     setMessage(null);
     try {
-      if (action === "in") await signIn(email, password);
-      else if (await signUp(email, password)) {
+      if (action === "in") await signIn(email, password, captcha ?? undefined);
+      else if (await signUp(email, password, captcha ?? undefined)) {
         setMessage({ text: "Compte créé. Ouvrez le lien reçu par courriel pour le confirmer, puis connectez-vous.", error: false });
       }
     } catch (error) {
       setMessage({ text: (error as Error).message, error: true });
     } finally {
       setBusy(false);
+      // Le jeton ne sert qu'une fois : on en redemande un.
+      setAttempt((count) => count + 1);
     }
   };
 
@@ -110,11 +117,12 @@ export function SignIn({ next, intro = "Vos morceaux et leurs analyses sont rang
             {message.text}
           </p>
         )}
+        <Captcha onToken={setCaptcha} resetKey={attempt} />
         <div className="mt-1 flex flex-wrap gap-2">
-          <button type="submit" disabled={busy} className="btn btn-primary">
+          <button type="submit" disabled={busy || needsCaptcha} className="btn btn-primary">
             Se connecter
           </button>
-          <button type="button" disabled={busy || !email || password.length < 6} onClick={() => void run("up")()} className="btn btn-ghost">
+          <button type="button" disabled={busy || needsCaptcha || !email || password.length < 6} onClick={() => void run("up")()} className="btn btn-ghost">
             Créer un compte
           </button>
         </div>

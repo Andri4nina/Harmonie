@@ -22,12 +22,24 @@ describe("pickAssets", () => {
     expect(assets.macos).toBeUndefined();
   });
 
-  it("conseille l'installateur .exe avant le .msi, et l'AppImage avant le .deb", () => {
+  it("conseille l'installateur .exe avant le .msi, et le paquet .deb sous Linux", () => {
     const assets = pickAssets([
-      release("v1.6.0", "2027-01-01T00:00:00Z", ["Harmonie_1.6.0_x64_en-US.msi", "Harmonie_1.6.0_x64-setup.exe", "Harmonie_1.6.0_amd64.deb", "Harmonie_1.6.0_amd64.AppImage"]),
+      release("v1.6.0", "2027-01-01T00:00:00Z", [
+        "Harmonie_1.6.0_x64_en-US.msi",
+        "Harmonie_1.6.0_x64-setup.exe",
+        "Harmonie_1.6.0_amd64.AppImage",
+        "Harmonie_1.6.0_amd64.deb",
+        "Harmonie-1.6.0-1.x86_64.rpm",
+      ]),
     ]);
     expect(assets.windows?.name).toBe("Harmonie_1.6.0_x64-setup.exe");
-    expect(assets.linux?.name).toBe("Harmonie_1.6.0_amd64.AppImage");
+    expect(assets.linux?.name).toBe("Harmonie_1.6.0_amd64.deb");
+    // Les trois formats Linux restent proposés en ligne de commande.
+    expect(assets.linux?.variants.map((variant) => variant.name).sort()).toEqual([
+      "Harmonie-1.6.0-1.x86_64.rpm",
+      "Harmonie_1.6.0_amd64.AppImage",
+      "Harmonie_1.6.0_amd64.deb",
+    ]);
   });
 
   it("ignore les brouillons et les préversions", () => {

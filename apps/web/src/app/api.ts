@@ -58,7 +58,7 @@ export class ApiError extends Error {
 }
 
 async function request(path: string, init: RequestInit = {}, label = "Échange avec le serveur"): Promise<Response> {
-  if (!API_URL) throw new ApiError(0, "L'adresse de l'API n'est pas configurée.");
+  if (!API_URL) throw new ApiError(0, "L'analyse n'est pas disponible pour le moment.");
   const token = useSession.getState().token;
   if (!token) throw new ApiError(401, "Connectez-vous pour continuer.");
   return track(label, async () => {
@@ -70,7 +70,7 @@ async function request(path: string, init: RequestInit = {}, label = "Échange a
     }
     if (!response.ok) {
       const body = (await response.json().catch(() => null)) as { message?: string } | null;
-      throw new ApiError(response.status, body?.message ?? `Le serveur a répondu ${response.status}.`);
+      throw new ApiError(response.status, body?.message ?? "Le serveur n'a pas pu répondre. Réessayez dans un instant.");
     }
     return response;
   });
@@ -88,11 +88,36 @@ export async function getAudio(id: string): Promise<Blob> {
   return (await request(`/v1/tracks/${id}/audio`, {}, "Chargement du fichier audio")).blob();
 }
 
-export async function uploadTrack(file: File, title: string): Promise<Track> {
+/** Envoie un morceau ; `onProgress` reçoit la part envoyée, de 0 à 1. */
+export function uploadTrack(file: File, title: string, onProgress?: (part: number) => void): Promise<Track> {
+  const token = useSession.getState().token;
+  if (!API_URL) return Promise.reject(new ApiError(0, "L'analyse n'est pas disponible pour le moment."));
+  if (!token) return Promise.reject(new ApiError(401, "Connectez-vous pour continuer."));
   const form = new FormData();
   form.append("title", title);
   form.append("file", file);
-  return (await request("/v1/tracks", { method: "POST", body: form }, "Envoi du fichier")).json() as Promise<Track>;
+  return track("Envoi du fichier", () =>
+    new Promise<Track>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", `${API_URL}/v1/tracks`);
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) onProgress?.(event.loaded / event.total);
+      };
+      xhr.onerror = () => reject(new ApiError(0, "Le serveur d'analyse ne répond pas. Il peut être en veille : réessayez dans une minute."));
+      xhr.onload = () => {
+        let body: { message?: string } | Track | null = null;
+        try {
+          body = JSON.parse(xhr.responseText) as Track;
+        } catch {
+          body = null;
+        }
+        if (xhr.status >= 200 && xhr.status < 300 && body) resolve(body as Track);
+        else reject(new ApiError(xhr.status, (body as { message?: string } | null)?.message ?? "L'envoi n'a pas abouti. Réessayez dans un instant."));
+      };
+      xhr.send(form);
+    }),
+  );
 }
 
 export async function correctEvent(trackId: string, body: Record<string, unknown>): Promise<void> {

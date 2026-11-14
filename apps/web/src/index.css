@@ -441,6 +441,81 @@ a {
   }
 }
 
+/* Analyse en cours : une pastille qui respire, une barre qui avance. */
+.analysis-pulse {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-brass);
+}
+.analysis-pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--color-brass);
+  animation: analysis-ping 1.4s ease-out infinite;
+}
+.analysis-pulse.is-large {
+  width: 12px;
+  height: 12px;
+}
+.analysis-pulse-dot {
+  animation: analysis-blink 1.2s ease-in-out infinite;
+}
+.analysis-bar {
+  display: block;
+  position: relative;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-line);
+}
+.analysis-bar.is-large {
+  height: 6px;
+}
+.analysis-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-brass);
+  transition: width 600ms var(--ease-out-soft);
+}
+/* Étape sans pourcentage (file d'attente) : un trait qui balaie la barre. */
+.analysis-bar > span.is-waiting {
+  width: 30%;
+  animation: analysis-sweep 1.6s ease-in-out infinite;
+}
+@keyframes analysis-ping {
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+@keyframes analysis-blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes analysis-sweep {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .analysis-pulse::after,
+  .analysis-pulse-dot,
+  .analysis-bar > span.is-waiting {
+    animation: none;
+  }
+}
+
 /* Le menu glisse depuis la droite : il répond à un geste. */
 .drawer {
   animation: drawer-in 220ms var(--ease-out-soft) both;

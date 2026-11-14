@@ -95,17 +95,22 @@ function explain(message: string): string {
   if (/already registered/i.test(message)) return "Un compte existe déjà avec cette adresse : connectez-vous.";
   if (/password should be at least/i.test(message)) return "Le mot de passe doit compter au moins 6 caractères.";
   if (/rate limit/i.test(message)) return "Trop de tentatives : réessayez dans quelques minutes.";
+  if (/captcha/i.test(message)) return "La vérification anti-robots a échoué : cochez-la de nouveau, puis réessayez.";
   return message;
 }
 
-export async function signIn(email: string, password: string): Promise<void> {
-  const { error } = await authOrThrow().signInWithPassword({ email, password });
+export async function signIn(email: string, password: string, captchaToken?: string): Promise<void> {
+  const { error } = await authOrThrow().signInWithPassword({ email, password, options: { captchaToken } });
   if (error) throw new Error(explain(error.message));
 }
 
 /** Crée un compte. Renvoie `true` si une confirmation par courriel est attendue. */
-export async function signUp(email: string, password: string): Promise<boolean> {
-  const { data, error } = await authOrThrow().signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/connexion` } });
+export async function signUp(email: string, password: string, captchaToken?: string): Promise<boolean> {
+  const { data, error } = await authOrThrow().signUp({
+    email,
+    password,
+    options: { emailRedirectTo: `${window.location.origin}/connexion`, captchaToken },
+  });
   if (error) throw new Error(explain(error.message));
   return data.session === null;
 }

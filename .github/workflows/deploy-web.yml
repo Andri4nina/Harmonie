@@ -44,6 +44,7 @@ jobs:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
       - run: cp vercel.json dist/
       # Sans jeton Vercel (projet pas encore créé), le site est construit et
       # vérifié, mais pas publié.

@@ -18,6 +18,50 @@ type State =
   | { status: "ready"; assets: Partial<Record<PlatformId, Asset>> }
   | { status: "error"; message: string; private: boolean };
 
+/** Commande à copier pour installer depuis un terminal Linux. */
+function Command({ label, command }: { label: string; command: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span className="caption">{label}</span>
+      <div className="flex items-stretch gap-2">
+        <code className="min-w-0 flex-1 overflow-x-auto rounded-xl border border-line bg-[var(--color-night)] px-3 py-2.5 text-[0.8125rem] whitespace-nowrap text-ivory">
+          {command}
+        </code>
+        <button
+          type="button"
+          onClick={() => {
+            void navigator.clipboard?.writeText(command).then(() => {
+              setCopied(true);
+              window.setTimeout(() => setCopied(false), 1600);
+            });
+          }}
+          className="btn btn-ghost min-h-10 shrink-0 px-3 text-sm"
+          aria-label={`Copier la commande : ${label}`}
+        >
+          {copied ? "Copié" : "Copier"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function LinuxCommands({ asset }: { asset: Asset }) {
+  const find = (pattern: RegExp) => asset.variants.find((variant) => pattern.test(variant.name));
+  const deb = find(/\.deb$/i);
+  const rpm = find(/\.rpm$/i);
+  const image = find(/\.appimage$/i);
+  if (!deb && !rpm && !image) return null;
+  return (
+    <div className="mt-6 flex flex-col gap-3 border-t border-line pt-5">
+      <p className="text-[0.9375rem] font-medium">Ou en une ligne, dans un terminal</p>
+      {deb && <Command label="Debian, Ubuntu, Mint" command={`curl -fLO ${deb.url} && sudo apt install ./${deb.name}`} />}
+      {rpm && <Command label="Fedora, openSUSE" command={`sudo dnf install ${rpm.url}`} />}
+      {image && <Command label="Toutes distributions (AppImage)" command={`curl -fLO ${image.url} && chmod +x ${image.name} && ./${image.name}`} />}
+    </div>
+  );
+}
+
 export function Downloads() {
   const [state, setState] = useState<State>({ status: "loading" });
   const [mine, setMine] = useState<PlatformId | null>(null);
@@ -58,10 +102,8 @@ export function Downloads() {
       {state.status === "error" && state.private && (
         <Panel title="Pas encore de téléchargement public">
           <p className="max-w-[62ch] text-ivory-2">
-            Les installateurs sont publiés sur le dépôt GitHub du projet, qui n'est pas encore public. Les applications
-            de bureau (Windows, macOS, Linux) sont prévues pour la version 1.6 et
-            l'application Android pour la version 1.7 ; les fichiers apparaîtront ici dès
-            leur publication.
+            Les installateurs ne sont pas encore accessibles. Ils apparaîtront ici dès leur publication ; en
+            attendant, Harmonie fonctionne entièrement dans le navigateur.
           </p>
         </Panel>
       )}
@@ -69,7 +111,8 @@ export function Downloads() {
       {state.status === "error" && !state.private && (
         <Panel title="Publications indisponibles">
           <p className="text-ivory-2">
-            La liste des installateurs n'a pas pu être lue ({state.message}). Elle reste consultable sur GitHub.
+            La liste des installateurs n'a pas pu être chargée. Réessayez dans un instant, ou consultez-la directement
+            sur GitHub.
           </p>
           <a href={RELEASES_PAGE} className="btn btn-ghost mt-4" rel="noopener">
             Ouvrir les publications
@@ -107,11 +150,12 @@ export function Downloads() {
                     </div>
                   ) : (
                     <p className="text-ivory-2">
-                      Pas encore publié : prévu pour la version {platform.planned.replace("v", "")}. Cette
-                      page proposera le fichier dès sa publication.
+                      Pas encore disponible au téléchargement. Le fichier apparaîtra ici dès sa publication ; en
+                      attendant, Harmonie s'utilise dans le navigateur de l'appareil.
                     </p>
                   )}
                 </div>
+                {platform.id === "linux" && asset && <LinuxCommands asset={asset} />}
               </section>
             );
           })}
