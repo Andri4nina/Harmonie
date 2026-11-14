@@ -46,6 +46,24 @@ pub fn fretboard(instrument_id: &str, notes: Vec<String>) -> Result<JsValue, JsE
     to_js(&view::fretboard(instrument_id, &notes))
 }
 
+/// Doigté d'une mélodie (MIDI réels) sur un instrument à cordes.
+#[wasm_bindgen]
+pub fn tablature(instrument_id: &str, midis: Vec<i32>) -> Result<JsValue, JsError> {
+    to_js(&view::tablature(instrument_id, &midis))
+}
+
+/// Notes écrites pour un instrument transpositeur (« Eb4 »…).
+#[wasm_bindgen(js_name = writtenNotes)]
+pub fn written_notes(instrument_id: &str, midis: Vec<i32>, flats: bool) -> Vec<String> {
+    view::written_notes(instrument_id, &midis, flats)
+}
+
+/// Symboles d'accords écrits pour un instrument transpositeur.
+#[wasm_bindgen(js_name = writtenChords)]
+pub fn written_chords(instrument_id: &str, symbols: Vec<String>) -> Vec<String> {
+    view::written_chords(instrument_id, &symbols)
+}
+
 /// Identifiants des pages de référence (voir [`view::catalog`]).
 #[wasm_bindgen]
 pub fn catalog() -> Vec<String> {

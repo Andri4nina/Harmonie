@@ -2,6 +2,7 @@ import { type FormEvent, useCallback, useEffect, useMemo, useRef, useState } fro
 import { Link, useParams } from "react-router";
 import { type Analysis, type TimelineEvent, correctEvent, formatDuration, getAnalysis, getAudio } from "../app/api";
 import { AnalysisProgress } from "../components/AnalysisProgress";
+import { ReadingView } from "../components/ReadingView";
 import { Loader } from "../components/Loader";
 import { CERTAINTY, Timeline, chordPitchClass, keyLabel } from "../components/Timeline";
 import { Icon, Panel, hueStyle } from "../components/ui";
@@ -241,6 +242,16 @@ function Player({ data, onReload }: { data: Analysis; onReload: () => void }) {
           />
         </div>
       </section>
+
+      <ReadingView
+        events={events}
+        durationMs={duration}
+        downbeatsMs={analysis.summary?.downbeats_ms ?? []}
+        positionMs={position}
+        playing={playing}
+        musicalKey={key ? String(key.payload.key) : null}
+        onSeek={seek}
+      />
 
       {selected && (
         <Correction

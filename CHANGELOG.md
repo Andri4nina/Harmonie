@@ -26,6 +26,23 @@ une étape du [plan](docs/ROADMAP.md) et à une étiquette git `vX.Y.Z`.
 
 - Couleurs des notes : plus aucune teinte verte (charte).
 
+## [Non publié]
+
+### Ajouté
+
+- Analyse d'un morceau : « Lire le morceau », une partition qui défile avec
+  la lecture. Trois vues : grille d'accords (avec le doigté de l'accord en
+  cours sur le manche ou le clavier), mélodie en noms de notes (A B C ou
+  Do Ré Mi), tablature (guitare, basse, ukulélé). Écriture pour
+  l'instrument choisi : saxophones alto et ténor transposés. Doigté et
+  transposition calculés par le moteur (`Instrument::tablature`,
+  `written_chord`).
+- Mentions légales, conditions d'utilisation, politique de confidentialité.
+- Composer : « Partir de zéro », « Vider la piste » ; tête de lecture exacte.
+- Analyse : avancement de l'envoi et de l'analyse visible.
+- Captcha Cloudflare Turnstile à la connexion par adresse.
+- Télécharger : commandes Linux (deb, rpm, AppImage).
+
 ## [1.7.1] — 2026-11-13
 
 Comptes et synchronisation ; publication complète (mise à jour automatique

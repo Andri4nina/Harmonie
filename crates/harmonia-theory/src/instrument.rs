@@ -377,6 +377,71 @@ impl Instrument {
         positions
     }
 
+    /// Doigté d'une ligne mélodique (hauteurs réelles, en MIDI), note après
+    /// note : la position qui limite les déplacements de la main et préfère le
+    /// bas du manche. `None` pour une hauteur hors de l'instrument (elle
+    /// n'interrompt pas le reste du doigté).
+    pub fn tablature(&self, sounding: &[i32]) -> Vec<Option<StringPosition>> {
+        // Chaque note : ses positions possibles. Puis plus court chemin
+        // (Viterbi) : coût d'une position + coût du passage de l'une à l'autre.
+        let candidates: Vec<Vec<StringPosition>> =
+            sounding.iter().map(|&midi| self.positions(Pitch::from_midi(midi, Spelling::Sharps))).collect();
+        let place = |p: &StringPosition| f64::from(p.stop) * 0.12;
+        let shift = |a: &StringPosition, b: &StringPosition| {
+            // Une corde à vide ne bouge pas la main.
+            let hand = if a.stop == 0 || b.stop == 0 { 0.5 } else { f64::from((i32::from(a.stop) - i32::from(b.stop)).unsigned_abs()) };
+            hand + 0.3 * (a.string as f64 - b.string as f64).abs()
+        };
+        let mut result = vec![None; sounding.len()];
+        let mut start = 0;
+        while start < candidates.len() {
+            if candidates[start].is_empty() {
+                start += 1;
+                continue;
+            }
+            // Tronçon de notes jouables consécutives.
+            let mut end = start;
+            while end < candidates.len() && !candidates[end].is_empty() {
+                end += 1;
+            }
+            let mut cost: Vec<f64> = candidates[start].iter().map(place).collect();
+            let mut back: Vec<Vec<usize>> = vec![vec![0; candidates[start].len()]];
+            for i in start + 1..end {
+                let mut next_cost = Vec::with_capacity(candidates[i].len());
+                let mut next_back = Vec::with_capacity(candidates[i].len());
+                for b in &candidates[i] {
+                    let (best, value) = candidates[i - 1]
+                        .iter()
+                        .enumerate()
+                        .map(|(k, a)| (k, cost[k] + shift(a, b)))
+                        .min_by(|x, y| x.1.total_cmp(&y.1))
+                        .unwrap_or((0, 0.0));
+                    next_cost.push(value + place(b));
+                    next_back.push(best);
+                }
+                cost = next_cost;
+                back.push(next_back);
+            }
+            let mut k = cost.iter().enumerate().min_by(|x, y| x.1.total_cmp(y.1)).map(|(k, _)| k).unwrap_or(0);
+            for i in (start..end).rev() {
+                result[i] = Some(candidates[i][k]);
+                k = back[i - start][k];
+            }
+            start = end;
+        }
+        result
+    }
+
+    /// Accord écrit pour cet instrument, pour faire entendre `sounding`
+    /// (identique pour un instrument en ut).
+    pub fn written_chord(&self, sounding: &crate::Chord) -> crate::Chord {
+        match self.transposition {
+            Transposition::Concert => *sounding,
+            Transposition::SoundsBelow(interval) => sounding.transposed_up(interval),
+            Transposition::SoundsAbove(interval) => sounding.transposed_down(interval),
+        }
+    }
+
     /// Hauteur réelle produite à une position.
     pub fn pitch_at(&self, position: StringPosition, spelling: Spelling) -> Option<Pitch> {
         let Layout::Strings { open, span, .. } = &self.layout else {
@@ -394,6 +459,36 @@ mod tests {
 
     fn at(string: usize, stop: u8) -> StringPosition {
         StringPosition { string, stop }
+    }
+
+    #[test]
+    fn tablature_keeps_the_hand_still_and_skips_what_cannot_be_played() {
+        let guitar = Instrument::guitar();
+        // Mi grave, la à vide, puis une gamme montante : positions sobres.
+        let tab = guitar.tablature(&[40, 45, 47, 48, 50]);
+        assert_eq!(tab[0], Some(at(0, 0)));
+        assert_eq!(tab[1], Some(at(1, 0)));
+        assert!(tab.iter().flatten().all(|p| p.stop <= 5), "{tab:?}");
+        // Chaque position sonne bien la hauteur demandée.
+        for (midi, position) in [40, 45, 47, 48, 50].iter().zip(&tab) {
+            let pitch = guitar.pitch_at(position.unwrap(), Spelling::Sharps).unwrap();
+            assert_eq!(pitch.midi(), *midi);
+        }
+        // Trop grave pour la guitare : rien, et le reste continue.
+        let tab = guitar.tablature(&[20, 64]);
+        assert_eq!(tab[0], None);
+        assert!(tab[1].is_some());
+        assert!(Instrument::flute().tablature(&[60]).iter().all(Option::is_none));
+    }
+
+    #[test]
+    fn transposing_instruments_read_chords_shifted() {
+        let chord: crate::Chord = "C".parse().unwrap();
+        // Saxophone alto en mi bémol : pour entendre do, il lit la.
+        assert_eq!(Instrument::alto_saxophone().written_chord(&chord).to_string(), "A");
+        // Saxophone ténor en si bémol : il lit ré.
+        assert_eq!(Instrument::tenor_saxophone().written_chord(&chord).to_string(), "D");
+        assert_eq!(Instrument::piano().written_chord(&chord).to_string(), "C");
     }
 
     #[test]

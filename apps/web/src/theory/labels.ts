@@ -238,6 +238,26 @@ const INSTRUMENT_LABEL: Record<string, string> = {
 
 const SOLFEGE = ["Do", "Do♯", "Ré", "Ré♯", "Mi", "Fa", "Fa♯", "Sol", "Sol♯", "La", "La♯", "Si"];
 
+const LETTER_SOLFEGE: Record<string, string> = { C: "Do", D: "Ré", E: "Mi", F: "Fa", G: "Sol", A: "La", B: "Si" };
+
+/** « Eb4 » → « E♭4 » (lettres) ou « Mi♭4 » (solfège) ; `octave: false` l'ôte. */
+export function noteName(name: string, style: "letters" | "solfege", octave = true): string {
+  const match = /^([A-G])(#{1,2}|b{1,2})?(-?\d+)?$/.exec(name);
+  if (!match) return name;
+  const [, letter = "", accidental = "", number = ""] = match;
+  const sign = accidental.replaceAll("#", "♯").replaceAll("b", "♭");
+  const base = style === "solfege" ? (LETTER_SOLFEGE[letter] ?? letter) : letter;
+  return `${base}${sign}${octave ? number : ""}`;
+}
+
+/** Symbole d'accord avec sa fondamentale (et sa basse) en solfège : « Am7 » → « Lam7 », « C/E » → « Do/Mi ». */
+export function chordName(symbol: string, style: "letters" | "solfege"): string {
+  const rename = (part: string) =>
+    part.replace(/^([A-G])(#|b)?/, (_, letter: string, accidental = "") => noteName(`${letter}${accidental}`, style, false));
+  const [main = "", bass] = symbol.split("/");
+  return bass ? `${rename(main)}/${rename(bass)}` : rename(main);
+}
+
 /** Nom d'une hauteur MIDI en solfège, octave comprise (60 → « Do4 »). */
 export function solfege(midi: number): string {
   return `${SOLFEGE[((midi % 12) + 12) % 12]}${Math.floor(midi / 12) - 1}`;

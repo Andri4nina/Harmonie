@@ -364,6 +364,9 @@ pub struct InstrumentView {
     pub fretted: bool,
     /// Tessiture réelle en numéros MIDI.
     pub range: Option<[i32; 2]>,
+    /// Note entendue quand l'instrument lit un do (« Eb » pour un
+    /// instrument en mi bémol), ou `None` pour un instrument en ut.
+    pub pitched_in: Option<String>,
 }
 
 pub fn instrument_view(instrument: &Instrument) -> InstrumentView {
@@ -394,7 +397,59 @@ pub fn instrument_view(instrument: &Instrument) -> InstrumentView {
         span,
         fretted,
         range: instrument.range.map(|(low, high)| [low.midi(), high.midi()]),
+        pitched_in: match instrument.transposition {
+            Transposition::Concert => None,
+            other => Some(other.to_sounding(Pitch::new("C".parse().expect("do"), 4)).note.to_string()),
+        },
     }
+}
+
+/// Une position de tablature.
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct TabPosition {
+    /// 0 = corde la plus grave.
+    pub string: usize,
+    pub stop: u8,
+}
+
+/// Doigté d'une ligne mélodique (MIDI réels) sur un instrument à cordes ;
+/// `None` pour une note hors de l'instrument. Vide si l'instrument est inconnu.
+pub fn tablature(instrument_id: &str, midis: &[i32]) -> Vec<Option<TabPosition>> {
+    let Some(instrument) = Instrument::presets().into_iter().find(|i| i.id == instrument_id) else {
+        return Vec::new();
+    };
+    instrument
+        .tablature(midis)
+        .into_iter()
+        .map(|p| p.map(|p| TabPosition { string: p.string, stop: p.stop }))
+        .collect()
+}
+
+/// Notes à lire sur l'instrument pour faire entendre `midis` (« Eb4 »).
+/// `flats` choisit l'orthographe des notes réelles (tonalité en bémols).
+pub fn written_notes(instrument_id: &str, midis: &[i32], flats: bool) -> Vec<String> {
+    let transposition = Instrument::presets()
+        .into_iter()
+        .find(|i| i.id == instrument_id)
+        .map_or(Transposition::Concert, |i| i.transposition);
+    let spelling = if flats { Spelling::Flats } else { Spelling::Sharps };
+    midis
+        .iter()
+        .map(|&midi| transposition.to_written(Pitch::from_midi(midi, spelling)).to_string())
+        .collect()
+}
+
+/// Symboles d'accords à lire sur l'instrument ; un symbole illisible est
+/// rendu tel quel.
+pub fn written_chords(instrument_id: &str, symbols: &[String]) -> Vec<String> {
+    let instrument = Instrument::presets().into_iter().find(|i| i.id == instrument_id);
+    symbols
+        .iter()
+        .map(|symbol| match (&instrument, symbol.parse::<harmonia_theory::Chord>()) {
+            (Some(instrument), Ok(chord)) => instrument.written_chord(&chord).to_string(),
+            _ => symbol.clone(),
+        })
+        .collect()
 }
 
 /// Une note placée sur le manche.

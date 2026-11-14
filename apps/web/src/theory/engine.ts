@@ -9,6 +9,9 @@ import init, {
   circleOfFifths as wasmCircleOfFifths,
   fretboard as wasmFretboard,
   instruments as wasmInstruments,
+  tablature as wasmTablature,
+  writtenChords as wasmWrittenChords,
+  writtenNotes as wasmWrittenNotes,
   midiToFrequency as wasmMidiToFrequency,
   nodeView as wasmNodeView,
   resolveQuery as wasmResolveQuery,
@@ -66,6 +69,37 @@ export interface InstrumentView {
   span: number;
   fretted: boolean;
   range: [number, number] | null;
+  /** Note entendue quand l'instrument lit un do (« Eb »), ou `null` en ut. */
+  pitchedIn: string | null;
+}
+
+export interface TabPosition {
+  /** 0 = corde la plus grave. */
+  string: number;
+  stop: number;
+}
+
+/** Doigté d'une mélodie (MIDI réels) ; `null` pour une note hors de l'instrument. */
+export function tablatureFor(instrumentId: string, midis: number[]): (TabPosition | null)[] {
+  return wasmTablature(instrumentId, Int32Array.from(midis)) as (TabPosition | null)[];
+}
+
+/** Notes à lire sur l'instrument pour faire entendre `midis` (« Eb4 »). */
+export function writtenNotes(instrumentId: string, midis: number[], flats: boolean): string[] {
+  return wasmWrittenNotes(instrumentId, Int32Array.from(midis), flats);
+}
+
+/** Symboles d'accords à lire sur l'instrument. */
+export function writtenChords(instrumentId: string, symbols: string[]): string[] {
+  return wasmWrittenChords(instrumentId, symbols);
+}
+
+/** Vrai si la tonalité (« Eb major », « F minor ») s'écrit en bémols. */
+export function keyUsesFlats(key: string | null | undefined): boolean {
+  if (!key) return false;
+  const [tonic = "", mode = "major"] = key.split(" ");
+  const sector = circleOfFifths().find((s) => (mode === "minor" ? s.minor === `${tonic}m` : s.major === tonic));
+  return sector ? sector.signature < 0 : tonic.includes("b");
 }
 
 export interface FretMark {
